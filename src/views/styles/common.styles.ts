@@ -18,7 +18,7 @@ export const commonStyles = StyleSheet.create({
     paddingBottom: theme.spacing.xxxl,
   },
   formContainer: {
-    paddingHorizontal: theme.spacing.md,
+    paddingHorizontal: theme.spacing.xxl,
     marginBottom: theme.spacing.xxxl,
   },
   centerContainer: {
