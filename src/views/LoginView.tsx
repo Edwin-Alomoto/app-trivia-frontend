@@ -8,6 +8,7 @@ import {
   PrimaryButton, 
   AuthLink 
 } from './components/auth';
+import { GeometricBackground } from './components/GeometricBackground';
 import { commonStyles } from './styles/common.styles';
 import { authStyles } from './styles/auth.styles';
 
@@ -38,6 +39,7 @@ export default function LoginView(): React.JSX.Element {
 
   return (
     <SafeAreaView style={commonStyles.container}>
+      <GeometricBackground />
       <StatusBar style="light" />
       
       <ScrollView 

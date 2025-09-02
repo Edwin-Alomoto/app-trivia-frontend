@@ -6,7 +6,7 @@ const { height } = Dimensions.get('screen');
 export const commonStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.secondary.background,
+    backgroundColor: 'transparent', // Transparente para que se vea el fondo decorativo
   },
   scrollContainer: {
     flexGrow: 1,
