@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useCounterViewModel } from '../viewmodels/CounterViewModel';
 
-export default function HomeView(): JSX.Element {
+export default function HomeView(): React.JSX.Element {
   const { value, increase, decrease, reset } = useCounterViewModel();
 
   return (
