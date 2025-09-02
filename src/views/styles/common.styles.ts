@@ -1,0 +1,30 @@
+import { StyleSheet, Dimensions } from 'react-native';
+import { theme } from './theme';
+
+const { height } = Dimensions.get('window');
+
+export const commonStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.secondary.background,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    paddingBottom: theme.spacing.xxxl,
+  },
+  headerSection: {
+    alignItems: 'center',
+    paddingTop: height * 0.12,
+    paddingBottom: theme.spacing.xxxl,
+  },
+  formContainer: {
+    paddingHorizontal: theme.spacing.md,
+    marginBottom: theme.spacing.xxxl,
+  },
+  centerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.xxxl,
+  },
+});

@@ -1,86 +1,102 @@
-import React from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Text, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { 
+  AuthHeader, 
+  FormInput, 
+  PasswordInput, 
+  PrimaryButton, 
+  AuthLink 
+} from './components/auth';
+import { commonStyles } from './styles/common.styles';
+import { authStyles } from './styles/auth.styles';
 
 export default function LoginView(): React.JSX.Element {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email || !password) return;
+    
+    setIsLoading(true);
+    // Simular login
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  };
+
+  const handleForgotPassword = () => {
+    // Navegar a pantalla de recuperar contraseña
+    console.log('Navegar a recuperar contraseña');
+  };
+
+  const handleSignUp = () => {
+    // Navegar a pantalla de registro
+    console.log('Navegar a registro');
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Iniciar sesión</Text>
-
-      <View style={styles.form}>
-        <TextInput
-          style={styles.input}
-          placeholder="Correo electrónico"
-          keyboardType="email-address"
-          autoCapitalize="none"
+    <KeyboardAvoidingView 
+      style={commonStyles.container} 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <StatusBar style="light" />
+      
+      <ScrollView 
+        contentContainerStyle={commonStyles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <AuthHeader 
+          title="Bienvenido"
+          subtitle="Inicia sesión para continuar"
         />
-        <TextInput
-          style={styles.input}
-          placeholder="Contraseña"
-          secureTextEntry
-        />
-        <Pressable style={styles.button}>
-          <Text style={styles.buttonText}>Entrar</Text>
-        </Pressable>
 
-        <View style={styles.linksRow}>
-          <Pressable>
-            <Text style={styles.linkText}>Crear cuenta</Text>
-          </Pressable>
-          <Pressable>
-            <Text style={styles.linkText}>Olvidé mi contraseña</Text>
-          </Pressable>
+        <View style={commonStyles.formContainer}>
+          <FormInput
+            label="Email"
+            placeholder="Tu email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoComplete="email"
+          />
+          
+          <PasswordInput
+            label="Contraseña"
+            placeholder="Tu contraseña"
+            value={password}
+            onChangeText={setPassword}
+            autoComplete="password"
+          />
+          
+          <View style={authStyles.forgotPasswordContainer}>
+            <TouchableOpacity onPress={handleForgotPassword}>
+              <Text style={authStyles.forgotPasswordText}>
+                ¿Olvidaste tu contraseña?
+              </Text>
+            </TouchableOpacity>
+          </View>
+          
+          <PrimaryButton
+            title="Iniciar Sesión"
+            onPress={handleLogin}
+            loading={isLoading}
+            disabled={!email || !password || isLoading}
+          />
         </View>
-      </View>
-    </View>
+
+        <View style={commonStyles.centerContainer}>
+          <AuthLink
+            text="¿No tienes una cuenta?"
+            linkText="Regístrate aquí"
+            onPress={handleSignUp}
+          />
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 16,
-    padding: 24,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-  },
-  form: {
-    width: '100%',
-    gap: 12,
-    maxWidth: 420,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: '#1e90ff',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-  linksRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  linkText: {
-    color: '#1e90ff',
-    fontWeight: '600',
-  },
-});
 
 
