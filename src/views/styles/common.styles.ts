@@ -11,12 +11,11 @@ export const commonStyles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     paddingBottom: theme.spacing.xxxl,
-    minHeight: height, // Mantiene altura mínima para evitar que se mueva
   },
   headerSection: {
     alignItems: 'center',
-    paddingTop: height * 0.08, // Mantenido el espaciado original
-    paddingBottom: theme.spacing.xxxl, // Mantenido el espaciado original
+    paddingTop: height * 0.12,
+    paddingBottom: theme.spacing.xxxl,
   },
   formContainer: {
     paddingHorizontal: theme.spacing.xxl,

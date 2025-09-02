@@ -18,7 +18,7 @@ export const authStyles = StyleSheet.create({
   
   // Textos más modernos y atractivos
   welcomeText: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '700',
     color: '#1a202c',
     marginBottom: theme.spacing.md,
@@ -29,13 +29,12 @@ export const authStyles = StyleSheet.create({
     textShadowRadius: 2,
   },
   subtitleText: {
-    fontSize: 18,
+    fontSize: 15,
     color: '#4a5568',
     textAlign: 'center',
-    fontWeight: '500',
-    letterSpacing: 0.2,
+    fontWeight: '400',
     lineHeight: 24,
-    opacity: 0.9,
+    opacity: 0.7,
   },
   
   // Inputs más amplios y sutiles
@@ -45,7 +44,7 @@ export const authStyles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#4a5568',
     marginBottom: theme.spacing.sm,
     letterSpacing: 0.2,
@@ -54,7 +53,7 @@ export const authStyles = StyleSheet.create({
     borderWidth: 2, // Borde más grueso para mejor definición
     borderRadius: 12, // Más redondeado para modernidad
     paddingHorizontal: theme.spacing.lg,
-    paddingVertical: 16,
+    paddingVertical: 13,
     fontSize: 15,
     backgroundColor: '#ffffff',
     color: '#2d3748',
@@ -91,17 +90,16 @@ export const authStyles = StyleSheet.create({
   passwordInput: {
     flex: 1,
     paddingHorizontal: theme.spacing.lg,
-    paddingVertical: 16,
+    paddingVertical: 14,
     fontSize: 15,
     color: '#2d3748',
   },
   eyeButton: {
     paddingHorizontal: theme.spacing.lg,
-    paddingVertical: 16,
   },
   eyeIcon: {
     fontSize: 18,
-    opacity: 0.6,
+    opacity: 0.4,
   },
   
   // Enlaces más sutiles

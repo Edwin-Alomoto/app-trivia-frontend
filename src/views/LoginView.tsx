@@ -45,8 +45,8 @@ export default function LoginView(): React.JSX.Element {
         showsVerticalScrollIndicator={false}
       >
         <AuthHeader 
-          title="Bienvenido a WinUp"
-          subtitle="Inicia sesión para continuar"
+          title="¡Bienvenido a WinUp!"
+          subtitle="Accede a tu cuenta para continuar"
         />
 
         <View style={commonStyles.formContainer}>
