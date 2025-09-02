@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Text, View } from 'react-native';
+import { ScrollView, TouchableOpacity, Text, View, SafeAreaView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { 
   AuthHeader, 
@@ -37,10 +37,7 @@ export default function LoginView(): React.JSX.Element {
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={commonStyles.container} 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+    <SafeAreaView style={commonStyles.container}>
       <StatusBar style="light" />
       
       <ScrollView 
@@ -48,7 +45,7 @@ export default function LoginView(): React.JSX.Element {
         showsVerticalScrollIndicator={false}
       >
         <AuthHeader 
-          title="Bienvenido"
+          title="Bienvenido a WinUp"
           subtitle="Inicia sesión para continuar"
         />
 
@@ -95,7 +92,7 @@ export default function LoginView(): React.JSX.Element {
           />
         </View>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
