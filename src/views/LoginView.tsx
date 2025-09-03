@@ -11,13 +11,15 @@ import {
 import { DecorativeBackground } from './components/DecorativeBackground';
 import { commonStyles } from './styles/common.styles';
 import { authStyles } from './styles/auth.styles';
+import { theme } from './styles/theme';
 
 interface LoginViewProps {
   onForgotPassword: () => void;
   onSignUp: () => void;
+  onSubscription: () => void;
 }
 
-export default function LoginView({ onForgotPassword, onSignUp }: LoginViewProps): React.JSX.Element {
+export default function LoginView({ onForgotPassword, onSignUp, onSubscription }: LoginViewProps): React.JSX.Element {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -29,6 +31,7 @@ export default function LoginView({ onForgotPassword, onSignUp }: LoginViewProps
     // Simular login
     setTimeout(() => {
       setIsLoading(false);
+      onSubscription(); // Navegar a la pantalla de suscripción
     }, 2000);
   };
 
@@ -95,6 +98,14 @@ export default function LoginView({ onForgotPassword, onSignUp }: LoginViewProps
             linkText="Regístrate aquí"
             onPress={handleSignUp}
           />
+          
+          {/* <View style={{ marginTop: theme.spacing.md }}>
+            <AuthLink
+              text="¿Quieres ver las opciones de suscripción?"
+              linkText="Ver planes"
+              onPress={onSubscription}
+            />
+          </View> */}
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -4,10 +4,11 @@ import { useState } from 'react';
 import LoginView from './src/views/LoginView';
 import ResetPasswordView from './src/views/ResetPasswordView';
 import RegisterView from './src/views/RegisterView';
+import SubscriptionView from './src/views/SubscriptionView';
 import { theme } from './src/views/styles/theme';
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<'login' | 'resetPassword' | 'register'>('login');
+  const [currentScreen, setCurrentScreen] = useState<'login' | 'resetPassword' | 'register' | 'subscription'>('login');
 
   const navigateToResetPassword = () => {
     setCurrentScreen('resetPassword');
@@ -21,17 +22,24 @@ export default function App() {
     setCurrentScreen('register');
   };
 
+  const navigateToSubscription = () => {
+    setCurrentScreen('subscription');
+  };
+
   return (
     <View style={styles.container}>
       {currentScreen === 'login' ? (
         <LoginView 
           onForgotPassword={navigateToResetPassword} 
           onSignUp={navigateToRegister}
+          onSubscription={navigateToSubscription}
         />
       ) : currentScreen === 'resetPassword' ? (
         <ResetPasswordView onBackToLogin={navigateToLogin} />
-      ) : (
+      ) : currentScreen === 'register' ? (
         <RegisterView onBackToLogin={navigateToLogin} />
+      ) : (
+        <SubscriptionView onBackToLogin={navigateToLogin} />
       )}
       <StatusBar style="auto" />
     </View>
