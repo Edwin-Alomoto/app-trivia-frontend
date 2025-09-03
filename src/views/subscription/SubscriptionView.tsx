@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
-import { SubscriptionCard, DemoModal, PremiumModal } from './components/subscription';
-import { DecorativeBackground } from './components/DecorativeBackground';
-import { theme } from './styles/theme';
+import { SubscriptionCard, DemoModal, PremiumModal } from './components';
+import { DecorativeBackground } from '../shared/components/DecorativeBackground';
+import { theme } from '../shared/styles/theme';
 
 interface SubscriptionViewProps {
   onBackToLogin: () => void;

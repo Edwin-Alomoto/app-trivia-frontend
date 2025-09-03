@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, TextInputProps } from 'react-native';
-import { authStyles } from '../../styles/auth.styles';
+import { authStyles } from '../../shared/styles/auth.styles';
 
 interface FormInputProps extends TextInputProps {
   label: string;

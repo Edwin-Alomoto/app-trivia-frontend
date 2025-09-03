@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { authStyles } from '../../styles/auth.styles';
+import { authStyles } from '../../shared/styles/auth.styles';
 
 interface DateInputProps {
   label: string;

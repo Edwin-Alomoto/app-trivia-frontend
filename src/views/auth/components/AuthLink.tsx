@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, TouchableOpacityProps } from 'react-native';
-import { authStyles } from '../../styles/auth.styles';
+import { authStyles } from '../../shared/styles/auth.styles';
 
 interface AuthLinkProps extends TouchableOpacityProps {
   text: string;

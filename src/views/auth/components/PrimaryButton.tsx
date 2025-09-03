@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, Text, TouchableOpacityProps, Animated } from 'react-native';
-import { authStyles } from '../../styles/auth.styles';
+import { authStyles } from '../../shared/styles/auth.styles';
 
 interface PrimaryButtonProps extends TouchableOpacityProps {
   title: string;

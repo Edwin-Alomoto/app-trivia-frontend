@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Image, ImageStyle } from 'react-native';
-import { authStyles } from '../../styles/auth.styles';
+import { authStyles } from '../../shared/styles/auth.styles';
 
 interface LogoProps {
   size?: number;

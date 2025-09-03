@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { commonStyles } from '../../styles/common.styles';
-import { authStyles } from '../../styles/auth.styles';
+import { commonStyles } from '../../shared/styles/common.styles';
+import { authStyles } from '../../shared/styles/auth.styles';
 import { Logo } from './Logo';
 
 interface AuthHeaderProps {

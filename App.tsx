@@ -1,11 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import { useState } from 'react';
-import LoginView from './src/views/LoginView';
-import ResetPasswordView from './src/views/ResetPasswordView';
-import RegisterView from './src/views/RegisterView';
-import SubscriptionView from './src/views/SubscriptionView';
-import { theme } from './src/views/styles/theme';
+import LoginView from './src/views/auth/LoginView';
+import ResetPasswordView from './src/views/auth/ResetPasswordView';
+import RegisterView from './src/views/auth/RegisterView';
+import SubscriptionView from './src/views/subscription/SubscriptionView';
+import { theme } from './src/views/shared/styles/theme';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<'login' | 'resetPassword' | 'register' | 'subscription'>('login');

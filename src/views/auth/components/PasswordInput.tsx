@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, TextInputProps } from 'react-native';
-import { authStyles } from '../../styles/auth.styles';
+import { authStyles } from '../../shared/styles/auth.styles';
 
 interface PasswordInputProps extends Omit<TextInputProps, 'secureTextEntry'> {
   label: string;

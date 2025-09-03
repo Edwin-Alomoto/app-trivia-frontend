@@ -6,10 +6,10 @@ import {
   FormInput, 
   PrimaryButton, 
   AuthLink 
-} from './components/auth';
-import { DecorativeBackground } from './components/DecorativeBackground';
-import { commonStyles } from './styles/common.styles';
-import { authStyles } from './styles/auth.styles';
+} from './components';
+import { DecorativeBackground } from '../shared/components/DecorativeBackground';
+import { commonStyles } from '../shared/styles/common.styles';
+import { authStyles } from '../shared/styles/auth.styles';
 
 interface ResetPasswordViewProps {
   onBackToLogin: () => void;

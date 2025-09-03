@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../../styles/theme';
+import { theme } from '../../shared/styles/theme';
 
 interface FeatureItemProps {
   text: string;
