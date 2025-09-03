@@ -12,7 +12,12 @@ import { DecorativeBackground } from './components/DecorativeBackground';
 import { commonStyles } from './styles/common.styles';
 import { authStyles } from './styles/auth.styles';
 
-export default function LoginView(): React.JSX.Element {
+interface LoginViewProps {
+  onForgotPassword: () => void;
+  onSignUp: () => void;
+}
+
+export default function LoginView({ onForgotPassword, onSignUp }: LoginViewProps): React.JSX.Element {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -28,13 +33,11 @@ export default function LoginView(): React.JSX.Element {
   };
 
   const handleForgotPassword = () => {
-    // Navegar a pantalla de recuperar contraseña
-    console.log('Navegar a recuperar contraseña');
+    onForgotPassword();
   };
 
   const handleSignUp = () => {
-    // Navegar a pantalla de registro
-    console.log('Navegar a registro');
+    onSignUp();
   };
 
   return (

@@ -160,4 +160,128 @@ export const authStyles = StyleSheet.create({
     fontWeight: '600',
     letterSpacing: 0.1,
   },
+
+  // Estilos para el dropdown de género
+  dropdownButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 2,
+    borderRadius: 12,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: 13,
+    backgroundColor: '#ffffff',
+    borderColor: '#e2e8f0',
+    shadowColor: 'rgba(0, 0, 0, 0.08)',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
+    minHeight: 50,
+  },
+  dropdownButtonText: {
+    fontSize: 15,
+    color: '#2d3748',
+    flex: 1,
+  },
+  placeholderText: {
+    color: '#a0aec0',
+  },
+  dropdownArrow: {
+    fontSize: 12,
+    color: '#4a5568',
+    marginLeft: theme.spacing.sm,
+  },
+
+  // Estilos para el modal del dropdown
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: theme.spacing.lg,
+    width: '80%',
+    maxWidth: 300,
+    shadowColor: 'rgba(0, 0, 0, 0.25)',
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#2d3748',
+    textAlign: 'center',
+    marginBottom: theme.spacing.lg,
+  },
+  modalOption: {
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: 8,
+    marginBottom: theme.spacing.sm,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  modalOptionSelected: {
+    backgroundColor: '#553c9a',
+    borderColor: '#553c9a',
+  },
+  modalOptionText: {
+    fontSize: 16,
+    color: '#2d3748',
+    textAlign: 'center',
+  },
+  modalOptionTextSelected: {
+    color: '#ffffff',
+    fontWeight: '600',
+  },
+
+  // Estilos para el DateInput
+  dateInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderRadius: 12,
+    backgroundColor: '#ffffff',
+    borderColor: '#e2e8f0',
+    shadowColor: 'rgba(0, 0, 0, 0.08)',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
+    minHeight: 50,
+  },
+  dateInput: {
+    flex: 1,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: 13,
+    fontSize: 15,
+    color: '#2d3748',
+  },
+  calendarButton: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: 13,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderLeftWidth: 1,
+    borderLeftColor: '#e2e8f0',
+  },
+  calendarIcon: {
+    fontSize: 20,
+    color: '#553c9a',
+  },
 });
