@@ -6,9 +6,10 @@ import { theme } from '../shared/styles/theme';
 
 interface SubscriptionViewProps {
   onBackToLogin: () => void;
+  onNavigateToHome: () => void;
 }
 
-export default function SubscriptionView({ onBackToLogin }: SubscriptionViewProps) {
+export default function SubscriptionView({ onBackToLogin, onNavigateToHome }: SubscriptionViewProps) {
   const [isDemoModalVisible, setIsDemoModalVisible] = useState(false);
   const [isPremiumModalVisible, setIsPremiumModalVisible] = useState(false);
 
@@ -32,8 +33,23 @@ export default function SubscriptionView({ onBackToLogin }: SubscriptionViewProp
 
   const handleSubscribe = () => {
     setIsPremiumModalVisible(false);
-    // Aquí puedes agregar la lógica para procesar el pago
+    // TODO: Aquí puedes agregar la lógica para procesar el pago
     console.log('Suscripción premium seleccionada');
+    
+    // Navegar a HomeView después de la suscripción
+    Alert.alert(
+      '¡Suscripción Exitosa!',
+      'Tu suscripción premium ha sido activada. Redirigiendo a la pantalla principal...',
+      [
+        {
+          text: 'OK',
+          onPress: () => {
+            // Navegar a HomeView
+            onNavigateToHome();
+          }
+        }
+      ]
+    );
   };
 
   const handleClosePremiumModal = () => {

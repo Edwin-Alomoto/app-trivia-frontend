@@ -1,97 +1,42 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 export default function HomeView(): React.JSX.Element {
-  const handlePlayTrivia = () => {
-    // TODO: Navegar a la pantalla de trivia
-    console.log('Jugar Trivia');
+  const handleNotifications = () => {
+    // TODO: Abrir notificaciones
+    console.log('Abrir notificaciones');
   };
 
-  const handleLeaderboard = () => {
-    // TODO: Navegar al leaderboard
-    console.log('Ver Leaderboard');
-  };
-
-  const handleProfile = () => {
-    // TODO: Navegar al perfil
-    console.log('Ver Perfil');
-  };
-
-  const handleSettings = () => {
-    // TODO: Navegar a configuraciones
-    console.log('Configuraciones');
+  const handleAvatar = () => {
+    // TODO: Abrir perfil de usuario
+    console.log('Abrir perfil');
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={['#667eea', '#764ba2']}
-        style={styles.gradient}
-      >
+      <View style={styles.mainContainer}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.logo}>🎯</Text>
-            <Text style={styles.title}>Trivia Challenge</Text>
-            <Text style={styles.subtitle}>¡Pon a prueba tu conocimiento!</Text>
-          </View>
-
-          {/* Stats Cards */}
-          <View style={styles.statsContainer}>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>0</Text>
-              <Text style={styles.statLabel}>Partidas</Text>
+          {/* Header con saludo y notificaciones */}
+          <View style={styles.headerCard}>
+            <View style={styles.greetingContainer}>
+              <Text style={styles.greeting}>¡Hola, Edwin!</Text>
+              <Text style={styles.greetingSubtitle}>¿Listo para jugar?</Text>
             </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>0</Text>
-              <Text style={styles.statLabel}>Puntos</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>0</Text>
-              <Text style={styles.statLabel}>Racha</Text>
-            </View>
-          </View>
-
-          {/* Main Actions */}
-          <View style={styles.actionsContainer}>
-            <Pressable style={styles.primaryButton} onPress={handlePlayTrivia}>
-              <Text style={styles.primaryButtonText}>🎮 Jugar Trivia</Text>
-              <Text style={styles.primaryButtonSubtext}>¡Comienza una nueva partida!</Text>
-            </Pressable>
-
-            <Pressable style={styles.secondaryButton} onPress={handleLeaderboard}>
-              <Text style={styles.secondaryButtonText}>🏆 Leaderboard</Text>
-              <Text style={styles.secondaryButtonSubtext}>Ver los mejores jugadores</Text>
-            </Pressable>
-
-            <Pressable style={styles.secondaryButton} onPress={handleProfile}>
-              <Text style={styles.secondaryButtonText}>👤 Mi Perfil</Text>
-              <Text style={styles.secondaryButtonSubtext}>Gestiona tu cuenta</Text>
-            </Pressable>
-
-            <Pressable style={styles.secondaryButton} onPress={handleSettings}>
-              <Text style={styles.secondaryButtonText}>⚙️ Configuración</Text>
-              <Text style={styles.secondaryButtonSubtext}>Personaliza tu experiencia</Text>
-            </Pressable>
-          </View>
-
-          {/* Quick Stats */}
-          <View style={styles.quickStats}>
-            <Text style={styles.quickStatsTitle}>Estadísticas Rápidas</Text>
-            <View style={styles.quickStatsRow}>
-              <View style={styles.quickStat}>
-                <Text style={styles.quickStatLabel}>Mejor Puntuación</Text>
-                <Text style={styles.quickStatValue}>0 pts</Text>
-              </View>
-              <View style={styles.quickStat}>
-                <Text style={styles.quickStatLabel}>Tiempo Promedio</Text>
-                <Text style={styles.quickStatValue}>0s</Text>
-              </View>
+            <View style={styles.headerActions}>
+              <Pressable style={styles.notificationButton} onPress={handleNotifications}>
+                <MaterialIcons name="notifications" size={24} color="white" />
+                <View style={styles.notificationBadge}>
+                  <Text style={styles.notificationCount}>2</Text>
+                </View>
+              </Pressable>
+              <Pressable style={styles.avatarButton} onPress={handleAvatar}>
+                <MaterialIcons name="account-circle" size={28} color="white" />
+              </Pressable>
             </View>
           </View>
         </ScrollView>
-      </LinearGradient>
+      </View>
     </SafeAreaView>
   );
 }
@@ -99,139 +44,101 @@ export default function HomeView(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
-  gradient: {
+  mainContainer: {
     flex: 1,
+    backgroundColor: 'white',
   },
   scrollContent: {
     flexGrow: 1,
     padding: 20,
   },
-  header: {
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 40,
-  },
-  logo: {
-    fontSize: 60,
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.8)',
-    textAlign: 'center',
-  },
-  statsContainer: {
+  headerCard: {
+    backgroundColor: '#667eea',
+    borderRadius: 20,
+    paddingHorizontal: 24,
+    marginTop: 25,
+    paddingVertical: 24,
+    marginBottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 40,
-  },
-  statCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 16,
-    padding: 20,
     alignItems: 'center',
-    flex: 1,
-    marginHorizontal: 4,
+    shadowColor: '#667eea',
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
   },
-  statNumber: {
-    fontSize: 24,
+  greetingContainer: {
+    flex: 1,
+  },
+  greeting: {
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
     marginBottom: 4,
   },
-  statLabel: {
-    fontSize: 12,
+  greetingSubtitle: {
+    fontSize: 14,
     color: 'rgba(255, 255, 255, 0.8)',
-    textAlign: 'center',
+    fontWeight: '500',
   },
-  actionsContainer: {
-    marginBottom: 40,
-  },
-  primaryButton: {
-    backgroundColor: '#FFD700',
-    borderRadius: 20,
-    padding: 24,
-    marginBottom: 16,
+  headerActions: {
+    flexDirection: 'row',
     alignItems: 'center',
+  },
+  notificationButton: {
+    position: 'relative',
+    marginRight: 0,
+    padding: 10,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 44,
+    height: 44,
+  },
+  notificationBadge: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
+    backgroundColor: '#E53E3E',
+    borderRadius: 14,
+    width: 28,
+    height: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: 'white',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: 2,
     },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
-  primaryButtonText: {
-    fontSize: 20,
+  notificationCount: {
+    color: 'white',
+    fontSize: 12,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
-  },
-  primaryButtonSubtext: {
-    fontSize: 14,
-    color: '#666',
     textAlign: 'center',
+    lineHeight: 22,
   },
-  secondaryButton: {
+  avatarButton: {
+    marginLeft: 16,
+    padding: 8,
+    borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 12,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  secondaryButtonText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: 'white',
-    marginBottom: 4,
-  },
-  secondaryButtonSubtext: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.7)',
-    textAlign: 'center',
-  },
-  quickStats: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
-  },
-  quickStatsTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: 'white',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  quickStatsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  quickStat: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  quickStatLabel: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.7)',
-    marginBottom: 4,
-    textAlign: 'center',
-  },
-  quickStatValue: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'white',
+    justifyContent: 'center',
+    width: 44,
+    height: 44,
   },
 });
 
