@@ -9,8 +9,8 @@ import {
   TextStyle,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { getVariantStyle } from '../../theme/typography';
-import { colors } from '../../theme/colors';
+import { getVariantStyle } from '@theme/typography';
+import { colors } from '@theme/colors';
 
 interface InputProps {
   label?: string;
@@ -225,3 +225,6 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
 });
+
+
+

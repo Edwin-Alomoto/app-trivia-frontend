@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 import * as SecureStore from 'expo-secure-store';
 
-import { AuthState, User, LoginCredentials, RegisterData } from '../../types';
+import { AuthState, LoginCredentials } from '../types';
+import { User } from '../../../../shared/domain/types';
 
 const initialState: AuthState = {
   user: null, // Usuario no logueado inicialmente
@@ -26,12 +27,12 @@ export const loginUser = createAsyncThunk<
     try {
       // Simulación de API call
       await new Promise(resolve => setTimeout(resolve, 700));
-      
+
       // Simular credenciales incorrectas
       if (credentials.password !== '12345678') {
         throw new Error('credenciales_invalidas');
       }
-      
+
       // Mock response exitoso - usuario no suscrito por defecto
       const mockUser: User = {
         id: '1',
@@ -48,20 +49,20 @@ export const loginUser = createAsyncThunk<
         },
         subscriptionStatus: 'not_subscribed',
       };
-      
+
       const token = 'mock_jwt_token_' + Date.now();
-      
+
       // Guardar token en SecureStore
       await SecureStore.setItemAsync('auth_token', token);
       await SecureStore.setItemAsync('user_data', JSON.stringify(mockUser));
-      
+
       return { user: mockUser, token };
     } catch (error: any) {
       // Manejar diferentes tipos de error
       if (error.message === 'credenciales_invalidas') {
         return rejectWithValue('Email o contraseña incorrectos.');
       }
-      
+
       return rejectWithValue('Error al iniciar sesión. Inténtalo de nuevo.');
     }
   }
@@ -77,7 +78,7 @@ export const registerUser = createAsyncThunk<
     try {
       // Simulación de API call
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       // Mock response - usuario en estado pendiente de verificación
       const mockUser: User = {
         id: '1',
@@ -94,10 +95,10 @@ export const registerUser = createAsyncThunk<
         },
         subscriptionStatus: 'not_subscribed',
       };
-      
+
       // En el prototipo, no guardamos el token hasta que se verifique el email
       // Simulamos que el usuario está en estado "pendiente de verificación"
-      
+
       return { user: mockUser, requiresVerification: true };
     } catch (error) {
       return rejectWithValue('Error al registrar usuario');
@@ -115,7 +116,7 @@ export const verifyEmail = createAsyncThunk<
     try {
       // Simulación de verificación de email
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock response - usuario verificado pero no suscrito
       const mockUser: User = {
         id: '1',
@@ -132,13 +133,13 @@ export const verifyEmail = createAsyncThunk<
         },
         subscriptionStatus: 'not_subscribed',
       };
-      
+
       const token = 'mock_jwt_token_' + Date.now();
-      
+
       // Guardar token en SecureStore después de verificación
       await SecureStore.setItemAsync('auth_token', token);
       await SecureStore.setItemAsync('user_data', JSON.stringify(mockUser));
-      
+
       return { user: mockUser, token };
     } catch (error) {
       return rejectWithValue('Error al verificar email');
@@ -174,12 +175,12 @@ export const checkAuthStatus = createAsyncThunk<
     try {
       const token = await SecureStore.getItemAsync('auth_token');
       const userData = await SecureStore.getItemAsync('user_data');
-      
+
       if (token && userData) {
         const user = JSON.parse(userData);
         return { user, token };
       }
-      
+
       return null;
     } catch (error) {
       return rejectWithValue('Error al verificar autenticación');
@@ -197,12 +198,12 @@ export const updateUserProfile = createAsyncThunk<
     try {
       const { auth } = getState() as { auth: AuthState };
       if (!auth.user) throw new Error('Usuario no autenticado');
-      
+
       const updatedUser = { ...auth.user, ...updates };
-      
+
       // Guardar en SecureStore
       await SecureStore.setItemAsync('user_data', JSON.stringify(updatedUser));
-      
+
       return updatedUser;
     } catch (error) {
       return rejectWithValue('Error al actualizar perfil');
@@ -220,23 +221,23 @@ export const activateDemoMode = createAsyncThunk<
     try {
       const { auth } = getState() as { auth: AuthState };
       if (!auth.user) throw new Error('Usuario no autenticado');
-      
+
       // Simular activación de modo demo
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       const demoExpiresAt = new Date();
       demoExpiresAt.setDate(demoExpiresAt.getDate() + 7); // 7 días de prueba
-      
+
       const updatedUser: User = {
         ...auth.user,
         subscriptionStatus: 'demo',
         demoExpiresAt: demoExpiresAt.toISOString(),
         points: 100, // Puntos iniciales de demo
       };
-      
+
       // Guardar en SecureStore
       await SecureStore.setItemAsync('user_data', JSON.stringify(updatedUser));
-      
+
       return updatedUser;
     } catch (error) {
       return rejectWithValue('Error al activar modo demo');
@@ -254,23 +255,23 @@ export const activateSubscription = createAsyncThunk<
     try {
       const { auth } = getState() as { auth: AuthState };
       if (!auth.user) throw new Error('Usuario no autenticado');
-      
+
       // Simular proceso de suscripción
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       const subscriptionExpiresAt = new Date();
       subscriptionExpiresAt.setMonth(subscriptionExpiresAt.getMonth() + 1); // 1 mes de suscripción
-      
+
       const updatedUser: User = {
         ...auth.user,
         subscriptionStatus: 'subscribed',
         subscriptionExpiresAt: subscriptionExpiresAt.toISOString(),
         points: auth.user.subscriptionStatus === 'demo' ? auth.user.points : 500, // Mantener puntos demo o dar inicial
       };
-      
+
       // Guardar en SecureStore
       await SecureStore.setItemAsync('user_data', JSON.stringify(updatedUser));
-      
+
       return updatedUser;
     } catch (error) {
       return rejectWithValue('Error al activar suscripción');
@@ -358,7 +359,7 @@ export const migrateDemoPoints = createAsyncThunk<
 
       // Migrar puntos demo a reales
       const demoPoints = auth.user.points || 0;
-      
+
       const updatedUser: User = {
         ...auth.user,
         subscriptionStatus: 'subscribed',
@@ -486,7 +487,7 @@ const authSlice = createSlice({
         state.error = action.payload as string;
       })
       // Check Demo Expiration
-      .addCase(checkDemoExpiration.fulfilled, (state, action) => {
+      .addCase(checkDemoExpiration.fulfilled, (_state, _action) => {
         // No cambiar el estado, solo retornar la acción
       })
       // Handle Demo Expiration
@@ -522,8 +523,7 @@ export const { clearError, updateUserPoints } = authSlice.actions;
 export default authSlice.reducer;
 
 // Selectores memoizados
-import type { RootState } from '../../store';
-
+import type { RootState } from '../../../../store';
 export const selectAuth = (state: RootState) => state.auth;
 export const selectAuthLoading = createSelector(selectAuth, (auth) => auth.isLoading);
 export const selectAuthError = createSelector(selectAuth, (auth) => auth.error);

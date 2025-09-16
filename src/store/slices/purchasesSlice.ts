@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@r
 
 import { featureFlags } from '../../config/featureFlags';
 import { getServices } from '../../services/container';
-import { PointPackage, PurchaseState } from '../../types';
+import { PointPackage, PurchaseState } from '../../shared/domain/types';
 
 const initialState: PurchaseState = {
   packages: [],
@@ -163,7 +163,7 @@ export const { clearError, addToPurchaseHistory } = purchasesSlice.actions;
 export default purchasesSlice.reducer;
 
 // Selectores memoizados
-export const selectPurchasesState = (state: any) => state.purchases as import('../../types').PurchaseState;
+export const selectPurchasesState = (state: any) => state.purchases as import('../../shared/domain/types').PurchaseState;
 export const selectPointPackages = createSelector(selectPurchasesState, (p) => p.packages);
 export const selectPurchasesLoading = createSelector(selectPurchasesState, (p) => p.isLoading);
 export const selectPurchasesError = createSelector(selectPurchasesState, (p) => p.error);

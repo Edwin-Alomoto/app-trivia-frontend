@@ -13,16 +13,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { getVariantStyle } from '@theme/typography';
 
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card } from '@shared/presentation/components/ui/Card';
+import { Button } from '@shared/presentation/components/ui/Button';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { logoutUser } from '../../store/slices/authSlice';
+import { logoutUser } from '../../features/auth/domain/store/authSlice';
 import { fetchPointBalance } from '../../store/slices/pointsSlice';
 import { featureFlags } from '../../config/featureFlags';
 import { useProfileViewModel } from '../../viewmodels/profile/useProfileViewModel';
-import { getVariantStyle } from '../../theme/typography';
 
 const { width, height } = Dimensions.get('window');
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Animated, Dimensions } from 'react-native';
+import { View, Animated, Dimensions, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
@@ -18,10 +18,7 @@ interface PointsParticlesProps {
   onComplete?: () => void;
 }
 
-export const PointsParticles: React.FC<PointsParticlesProps> = ({
-  trigger,
-  onComplete,
-}) => {
+export const PointsParticles: React.FC<PointsParticlesProps> = ({ trigger, onComplete }) => {
   const particles = useRef<Particle[]>([]);
   const [particleComponents, setParticleComponents] = React.useState<React.ReactNode[]>([]);
 
@@ -51,44 +48,17 @@ export const PointsParticles: React.FC<PointsParticlesProps> = ({
       const randomY = (Math.random() - 0.5) * screenHeight * 0.6;
       const randomRotation = Math.random() * 360;
 
-      // Animaciones paralelas para cada partícula
       Animated.parallel([
-        Animated.timing(particle.x, {
-          toValue: screenWidth / 2 + randomX,
-          duration: 1500,
-          useNativeDriver: false,
-        }),
-        Animated.timing(particle.y, {
-          toValue: screenHeight / 2 + randomY,
-          duration: 1500,
-          useNativeDriver: false,
-        }),
+        Animated.timing(particle.x, { toValue: screenWidth / 2 + randomX, duration: 1500, useNativeDriver: false }),
+        Animated.timing(particle.y, { toValue: screenHeight / 2 + randomY, duration: 1500, useNativeDriver: false }),
         Animated.sequence([
-          Animated.timing(particle.scale, {
-            toValue: 1,
-            duration: 200,
-            useNativeDriver: false,
-          }),
-          Animated.timing(particle.scale, {
-            toValue: 0,
-            duration: 1300,
-            useNativeDriver: false,
-          }),
+          Animated.timing(particle.scale, { toValue: 1, duration: 200, useNativeDriver: false }),
+          Animated.timing(particle.scale, { toValue: 0, duration: 1300, useNativeDriver: false }),
         ]),
-        Animated.timing(particle.opacity, {
-          toValue: 0,
-          duration: 1500,
-          useNativeDriver: false,
-        }),
-        Animated.timing(particle.rotation, {
-          toValue: randomRotation,
-          duration: 1500,
-          useNativeDriver: false,
-        }),
+        Animated.timing(particle.opacity, { toValue: 0, duration: 1500, useNativeDriver: false }),
+        Animated.timing(particle.rotation, { toValue: randomRotation, duration: 1500, useNativeDriver: false }),
       ]).start(() => {
-        if (i === newParticles.length - 1 && onComplete) {
-          onComplete();
-        }
+        if (i === newParticles.length - 1 && onComplete) onComplete();
       });
 
       const component = (
@@ -101,20 +71,13 @@ export const PointsParticles: React.FC<PointsParticlesProps> = ({
             transform: [
               { scale: particle.scale },
               {
-                rotate: particle.rotation.interpolate({
-                  inputRange: [0, 360],
-                  outputRange: ['0deg', '360deg'],
-                }),
+                rotate: particle.rotation.interpolate({ inputRange: [0, 360], outputRange: ['0deg', '360deg'] }),
               },
             ],
             opacity: particle.opacity,
           }}
         >
-          <Ionicons 
-            name={Math.random() > 0.5 ? 'star' : 'diamond'} 
-            size={20} 
-            color="#FFD700" 
-          />
+          <Ionicons name={Math.random() > 0.5 ? 'star' : 'diamond'} size={20} color="#FFD700" />
         </Animated.View>
       );
 
@@ -124,15 +87,21 @@ export const PointsParticles: React.FC<PointsParticlesProps> = ({
     particles.current = newParticles;
     setParticleComponents(newComponents);
 
-    // Limpiar después de la animación
-    setTimeout(() => {
-      setParticleComponents([]);
-    }, 1600);
+    setTimeout(() => setParticleComponents([]), 1600);
   };
 
-  return (
-    <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none' }}>
-      {particleComponents}
-    </View>
-  );
+  return <View style={styles.container}>{particleComponents}</View>;
 };
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    pointerEvents: 'none',
+  },
+});
+
+

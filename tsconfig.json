@@ -17,7 +17,9 @@
       "@navigation/*": ["src/navigation/*"],
       "@validators/*": ["src/validators/*"],
       "@config/*": ["src/config/*"],
-      "@assets/*": ["assets/*"]
+      "@assets/*": ["assets/*"],
+      "@shared/*": ["src/shared/*"],
+      "@theme/*": ["src/shared/presentation/theme/*"]
     }
   },
   "exclude": ["node_modules"],

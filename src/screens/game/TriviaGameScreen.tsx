@@ -16,20 +16,20 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { getVariantStyle } from '@theme/typography';
+import { gradients } from '@theme/gradients';
+import { colors } from '@theme/colors';
 
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card } from '@shared/presentation/components/ui/Card';
+import { Button } from '@shared/presentation/components/ui/Button';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { startTriviaSession, answerQuestion, resetSession, advanceQuestion, useHint } from '../../store/slices/triviaSlice';
 import { earnPoints } from '../../store/slices/pointsSlice';
 import { RootStackParamList } from '../../types';
-import { getVariantStyle } from '../../theme/typography';
-import { gradients } from '../../theme/gradients';
-import { colors } from '../../theme/colors';
 import { featureFlags } from '../../config/featureFlags';
 import { useTriviaGameViewModel } from '../../viewmodels/trivia/useTriviaGameViewModel';
-import { PointsParticles } from '../../components/animations/PointsParticles';
+import { PointsParticles } from '@shared/presentation/animations/PointsParticles';
 
 type TriviaGameRouteProp = RouteProp<RootStackParamList, 'TriviaGame'>;
 

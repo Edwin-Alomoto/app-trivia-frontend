@@ -14,15 +14,15 @@ import {
   Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { colors } from '@theme/colors';
+import { getVariantStyle } from '@theme/typography';
+import { RootStackParamList } from '@shared/domain/types';
 
-import { RootStackParamList } from '../../types';
-import { colors } from '../../theme/colors';
-import { getVariantStyle } from '../../theme/typography';
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
 type ForgotPasswordScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ForgotPassword'>;
 type ForgotPasswordScreenRouteProp = RouteProp<RootStackParamList, 'ForgotPassword'>;
@@ -63,7 +63,7 @@ export const ForgotPasswordScreen: React.FC = () => {
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  }, [fadeAnim, slideAnim, scaleAnim]);
 
   const animateFocusIn = (scaleRef: Animated.Value) => {
     Animated.spring(scaleRef, {
@@ -102,9 +102,9 @@ export const ForgotPasswordScreen: React.FC = () => {
     }).start();
   };
 
-  const validateEmail = (email: string) => {
+  const validateEmail = (emailToValidate: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    return emailRegex.test(emailToValidate);
   };
 
   const handleSendResetEmail = async () => {
@@ -169,7 +169,7 @@ export const ForgotPasswordScreen: React.FC = () => {
           >
             <View style={styles.logoContainer}>
               <Image 
-                source={require('../../../assets/adaptive-icon.png')}
+                source={require('../../../../../assets/adaptive-icon.png')}
                 style={styles.logoImage}
                 resizeMode="contain"
               />
@@ -226,7 +226,7 @@ export const ForgotPasswordScreen: React.FC = () => {
                     disabled={isLoading}
                   >
                     <View style={styles.loginButtonContent}>
-                      <Text style={[getVariantStyle('body'), styles.loginButtonText, { fontWeight: '600' }]}>
+                      <Text style={[getVariantStyle('body'), styles.loginButtonText, styles.boldText]}>
                         {isLoading ? 'Enviando correo...' : 'Enviar correo de recuperación'}
                       </Text>
                     </View>
@@ -259,7 +259,7 @@ export const ForgotPasswordScreen: React.FC = () => {
                     onPressOut={handleButtonPressOut}
                   >
                     <View style={styles.loginButtonContent}>
-                      <Text style={[getVariantStyle('body'), styles.loginButtonText, { fontWeight: '600' }]}>Volver al inicio de sesión</Text>
+                      <Text style={[getVariantStyle('body'), styles.loginButtonText, styles.boldText]}>Volver al inicio de sesión</Text>
                     </View>
                   </AnimatedTouchableOpacity>
                 </>
@@ -410,5 +410,8 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     textAlign: 'center',
     lineHeight: 20,
+  },
+  boldText: {
+    fontWeight: '600',
   },
 });

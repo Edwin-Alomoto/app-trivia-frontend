@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { registerUser, verifyEmail } from '../../store/slices/authSlice';
-import { registerSchema, RegisterForm } from '../../validators/auth';
+import { useAppDispatch, useAppSelector } from '../../../../hooks';
+import { registerSchema, RegisterForm } from '../validators/auth';
+import { registerUser, verifyEmail } from '../store/authSlice';
 
 type RegisterErrors = Partial<Record<keyof RegisterForm, string>>;
 

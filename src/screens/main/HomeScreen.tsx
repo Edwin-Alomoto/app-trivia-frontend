@@ -17,22 +17,22 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
-import { gradients } from "../../theme/gradients";
-import { getVariantStyle } from "../../theme/typography";
+import { gradients } from "@theme/gradients";
+import { getVariantStyle } from "@theme/typography";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useAppNavigation } from "../../navigation/types";
 import { featureFlags } from "../../config/featureFlags";
 import { useHomeViewModel } from "../../viewmodels/main/useHomeViewModel";
-import { Card } from "../../components/ui/Card";
+import { Card } from "@shared/presentation/components/ui/Card";
 import { DemoRestrictionBanner } from "../../components/ui/DemoRestrictionBanner";
 import { DemoExpirationBanner } from "../../components/ui/DemoExpirationBanner";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { useAppSelector } from "../../hooks/useAppSelector";
 import { useDemoStatus } from "../../hooks/useDemoStatus";
-import { PointsCounter } from "../../components/animations/PointsCounter";
-import { PointsParticles } from "../../components/animations/PointsParticles";
+import { PointsCounter } from "@shared/presentation/animations/PointsCounter";
+import { PointsParticles } from "@shared/presentation/animations/PointsParticles";
 import { fetchPointBalance, fetchTransactions } from "../../store/slices/pointsSlice";
 import { fetchPackages, purchasePoints as purchasePointsFromPurchases } from "../../store/slices/purchasesSlice";
 import { selectPointPackages } from "../../store/slices/purchasesSlice";

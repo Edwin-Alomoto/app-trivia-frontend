@@ -15,14 +15,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '../../theme/colors';
-import { getVariantStyle } from '../../theme/typography';
 import * as Haptics from 'expo-haptics';
+import { colors } from '@theme/colors';
+import { getVariantStyle } from '@theme/typography';
+import { RootStackParamList } from '@shared/domain/types';
 
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { useAppSelector } from '../../hooks/useAppSelector';
-import { activateDemoMode, activateSubscription } from '../../store/slices/authSlice';
-import { RootStackParamList } from '../../types';
+import { useAppDispatch } from '../../../../hooks/useAppDispatch';
+import { useAppSelector } from '../../../../hooks/useAppSelector';
+import { activateDemoMode, activateSubscription } from '../../domain/store/authSlice';
+
+
 
 type ModeSelectionScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ModeSelection'>;
 
@@ -66,7 +68,7 @@ export const ModeSelectionScreen: React.FC = () => {
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  }, [ fadeAnim, slideAnim, scaleAnim]);
 
   const animateCard = (mode: 'demo' | 'subscription') => {
     const anim = mode === 'demo' ? cardAnimDemo : cardAnimSub;
@@ -190,7 +192,7 @@ export const ModeSelectionScreen: React.FC = () => {
           ]}
         >
           <View style={styles.logoContainer}>
-            <Text style={[getVariantStyle('h1'), { color: colors.textPrimary, marginBottom: 8 }]}>¡Hola, {user?.name}!</Text>
+            <Text style={[getVariantStyle('h1'), { color: colors.textPrimary }, styles.marginBottom8]}>¡Hola, {user?.name}!</Text>
             <Text style={[getVariantStyle('subtitle'), { color: colors.textSecondary }]}>Elige cómo quieres empezar</Text>
           </View>
         </Animated.View>
@@ -227,8 +229,8 @@ export const ModeSelectionScreen: React.FC = () => {
                   <Ionicons name="play-circle" size={40} color="#6366f1" />
                 </View>
                 
-                <Text style={[getVariantStyle('h2'), { color: colors.textPrimary, textAlign: 'center', marginBottom: 4 }]}>Modo Demo</Text>
-                <Text style={[getVariantStyle('subtitle'), { color: colors.textSecondary, textAlign: 'center', marginBottom: 20 }]}>Prueba gratis por 7 días</Text>
+                <Text style={[getVariantStyle('h2'), { color: colors.textPrimary }, styles.centerText4]}>Modo Demo</Text>
+                <Text style={[getVariantStyle('subtitle'), { color: colors.textSecondary }, styles.centerText20]}>Prueba gratis por 7 días</Text>
                 
                 <View style={styles.featuresContainer}>
                   <View style={styles.featureItem}>
@@ -275,8 +277,8 @@ export const ModeSelectionScreen: React.FC = () => {
                   <Ionicons name="diamond" size={40} color="#10b981" />
                 </View>
                 
-                <Text style={[getVariantStyle('h2'), { color: colors.textPrimary, textAlign: 'center', marginBottom: 4 }]}>Suscripción Premium</Text>
-                <Text style={[getVariantStyle('subtitle'), { color: colors.textSecondary, textAlign: 'center', marginBottom: 20 }]}>Acceso completo mensual</Text>
+                <Text style={[getVariantStyle('h2'), { color: colors.textPrimary }, styles.centerText4]}>Suscripción Premium</Text>
+                <Text style={[getVariantStyle('subtitle'), { color: colors.textSecondary }, styles.centerText20]}>Acceso completo mensual</Text>
                 
                 <View style={styles.featuresContainer}>
                   <View style={styles.featureItem}>
@@ -319,9 +321,9 @@ export const ModeSelectionScreen: React.FC = () => {
           <View style={styles.infoCard}>
             <View style={styles.infoHeader}>
               <Ionicons name="information-circle" size={20} color="#6366f1" />
-              <Text style={[getVariantStyle('h2'), { color: colors.textPrimary, marginLeft: 10 }]}>¿Por qué suscribirte?</Text>
+              <Text style={[getVariantStyle('h2'), { color: colors.textPrimary }, styles.marginLeft10]}>¿Por qué suscribirte?</Text>
             </View>
-            <Text style={[getVariantStyle('body'), { color: colors.textSecondary, lineHeight: 20 }]}>
+            <Text style={[getVariantStyle('body'), { color: colors.textSecondary }, styles.lineHeight20]}>
               Con la suscripción Premium obtienes acceso completo a todas las funciones, 
               puntos canjeables por premios reales y participación en sorteos exclusivos. 
               La suscripción se renueva automáticamente cada mes por $9.99 USD.
@@ -926,5 +928,22 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
     marginLeft: 6,
+  },
+  marginBottom8: {
+    marginBottom: 8,
+  },
+  centerText4: {
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  centerText20: {
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  marginLeft10: {
+    marginLeft: 10,
+  },
+  lineHeight20: {
+    lineHeight: 20,
   },
 });

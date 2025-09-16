@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { TypographyScale, typography } from '../../theme/typography';
+import { TypographyScale, typography } from '@theme/typography';
 
 interface TypographyContextValue {
   scale: TypographyScale;
@@ -20,5 +20,6 @@ export const TypographyProvider: React.FC<TypographyProviderProps> = ({ children
 };
 
 export const useTypography = () => useContext(TypographyContext);
+
 
 

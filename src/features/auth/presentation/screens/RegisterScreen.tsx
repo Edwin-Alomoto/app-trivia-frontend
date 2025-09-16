@@ -13,24 +13,26 @@ import {
   Modal,
   TextInput,
   StatusBar,
-  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { useAppSelector } from '../../hooks/useAppSelector';
-import { registerUser, verifyEmail, clearError } from '../../store/slices/authSlice';
-import { featureFlags } from '../../config/featureFlags';
-import { useRegisterViewModel } from '../../viewmodels/auth/useRegisterViewModel';
-import { RootStackParamList } from '../../types';
-import { colors } from '../../theme/colors';
-import { getVariantStyle } from '../../theme/typography';
-// @ts-ignore - tipos del datepicker no requeridos en tiempo de compilación
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { colors } from '@theme/colors';
+import { getVariantStyle } from '@theme/typography';
+import { RootStackParamList } from '@shared/domain/types';
+
+import { useAppDispatch } from '../../../../hooks/useAppDispatch';
+import { useAppSelector } from '../../../../hooks/useAppSelector';
+import { registerUser, verifyEmail } from '../../domain/store/authSlice';
+import { featureFlags } from '../../../../config/featureFlags';
+import { useRegisterViewModel } from '../../domain/hooks/useRegisterViewModel';
+
+
+
+// @ts-ignore - tipos del datepicker no requeridos en tiempo de compilación
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
 type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
@@ -40,8 +42,9 @@ const { width, height } = Dimensions.get('window');
 export const RegisterScreen: React.FC = () => {
   const navigation = useNavigation<RegisterScreenNavigationProp>();
   const dispatch = useAppDispatch();
-  const { isLoading, error } = useAppSelector((state) => state.auth);
-  const vm = featureFlags.useMVVMRegister ? useRegisterViewModel() : null;
+  const { isLoading } = useAppSelector((state) => state.auth);
+  const vm = useRegisterViewModel();
+  const shouldUseVM = featureFlags.useMVVMRegister;
 
   // Estados del formulario
   const [formData, setFormData] = useState({
@@ -65,7 +68,7 @@ export const RegisterScreen: React.FC = () => {
   // Estados de validación
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, _setShowPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
@@ -83,7 +86,7 @@ export const RegisterScreen: React.FC = () => {
   const firstNameInputRef = useRef<TextInput>(null);
   const lastNameInputRef = useRef<TextInput>(null);
   const emailInputRef = useRef<TextInput>(null);
-  const birthdateInputRef = useRef<TextInput>(null);
+  const _birthdateInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
 
   // Animaciones
@@ -119,7 +122,7 @@ export const RegisterScreen: React.FC = () => {
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  }, [fadeAnim, slideAnim, scaleAnim]);
 
   const animateFocusIn = (scaleRef: Animated.Value) => {
     Animated.spring(scaleRef, {
@@ -219,7 +222,7 @@ export const RegisterScreen: React.FC = () => {
         useNativeDriver: true,
       }).start();
     }
-  }, [formData.password.length]);
+  }, [formData.password.length, strengthAnim]);
 
   // Timer para reenvío de verificación
   useEffect(() => {
@@ -333,7 +336,7 @@ export const RegisterScreen: React.FC = () => {
 
     try {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      if (vm) {
+      if (shouldUseVM && vm) {
         vm.setField('email', formData.email);
         vm.setField('password', formData.password);
         vm.setField('acceptedTerms', acceptedTerms);
@@ -350,7 +353,7 @@ export const RegisterScreen: React.FC = () => {
       setShowVerificationModal(true);
       setResendTimer(60);
       
-    } catch (error) {
+    } catch (registerError) {
       Alert.alert(
         'Error',
         'No pudimos crear tu cuenta. Inténtalo nuevamente.'
@@ -362,7 +365,7 @@ export const RegisterScreen: React.FC = () => {
   // Manejar verificación
   const handleVerification = async () => {
     try {
-      if (vm) {
+      if (shouldUseVM && vm) {
         const res = await vm.verify();
         if (!res.ok) throw new Error('No verificado');
       } else {
@@ -379,7 +382,7 @@ export const RegisterScreen: React.FC = () => {
           }
         ]
       );
-    } catch (error) {
+    } catch (verificationError) {
       Alert.alert(
         'Error de verificación',
         'No se pudo verificar tu cuenta. Inténtalo de nuevo.'
@@ -389,7 +392,7 @@ export const RegisterScreen: React.FC = () => {
 
   // Reenviar verificación
   const handleResendVerification = () => {
-    if (vm) {
+    if (shouldUseVM && vm) {
       vm.resendVerification();
     } else {
       setResendTimer(60);
@@ -751,9 +754,9 @@ export const RegisterScreen: React.FC = () => {
               >
                 <View style={styles.registerButtonContent}>
                   {isLoading ? (
-                    <Text style={[getVariantStyle('body'), styles.registerButtonText, { fontWeight: '600' }]}>Creando cuenta...</Text>
+                    <Text style={[getVariantStyle('body'), styles.registerButtonText, styles.boldText]}>Creando cuenta...</Text>
                   ) : (
-                    <Text style={[getVariantStyle('body'), styles.registerButtonText, { fontWeight: '600' }]}>Crear cuenta</Text>
+                    <Text style={[getVariantStyle('body'), styles.registerButtonText, styles.boldText]}>Crear cuenta</Text>
                   )}
                 </View>
               </AnimatedTouchableOpacity>
@@ -762,7 +765,7 @@ export const RegisterScreen: React.FC = () => {
               <View style={styles.footer}>
                 <Text style={[getVariantStyle('body'), styles.footerText]}>¿Ya tienes cuenta? </Text>
                 <TouchableOpacity onPress={() => navigation.navigate('Login' as never)}>
-                  <Text style={[getVariantStyle('body'), styles.linkText, { fontWeight: '600' }]}>Iniciar sesión</Text>
+                  <Text style={[getVariantStyle('body'), styles.linkText, styles.boldText]}>Iniciar sesión</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -799,7 +802,7 @@ export const RegisterScreen: React.FC = () => {
                   </View>
                   <View style={styles.stepItem}>
                     <View style={styles.stepNumber}>3</View>
-                    <Text style={styles.stepText}>Haz clic en "Verificar cuenta"</Text>
+                    <Text style={styles.stepText}>Haz clic en Verificar cuenta</Text>
                   </View>
                 </View>
 
@@ -1213,5 +1216,83 @@ const styles = StyleSheet.create({
   dropdownOption: {
     paddingHorizontal: 16,
     paddingVertical: 14,
+  },
+  boldText: {
+    fontWeight: '600',
+  },
+  marginBottom8: {
+    marginBottom: 8,
+  },
+  centerText4: {
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  centerText20: {
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  marginLeft10: {
+    marginLeft: 10,
+  },
+  lineHeight20: {
+    lineHeight: 20,
+  },
+  padding12: {
+    padding: 12,
+  },
+  fontSize24: {
+    fontSize: 24,
+  },
+  fontSize14: {
+    fontSize: 14,
+  },
+  maxHeight60: {
+    maxHeight: '60%',
+  },
+  marginBottom12: {
+    marginBottom: 12,
+  },
+  icon72: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+  },
+  marginBottom20: {
+    marginBottom: 20,
+  },
+  icon80: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#ef4444',
+  },
+  fontSize24Red: {
+    fontSize: 24,
+    color: '#ef4444',
+  },
+  fontSize12Red: {
+    fontSize: 12,
+    color: '#ef4444',
+  },
+  warningContainer: {
+    padding: 12,
+    backgroundColor: '#FFFBEB',
+    borderColor: '#FCD34D',
+  },
+  fontSize13: {
+    fontSize: 13,
+    color: '#1F2937',
+  },
+  marginBottom4: {
+    marginBottom: 4,
+  },
+  textDark: {
+    color: '#1F2937',
+  },
+  warningContainerHorizontal: {
+    padding: 12,
+    backgroundColor: '#FFFBEB',
+    borderColor: '#FCD34D',
+    paddingHorizontal: 24,
   },
 });

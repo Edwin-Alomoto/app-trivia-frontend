@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 
 import { useAppSelector } from './useAppSelector';
 import { useAppDispatch } from './useAppDispatch';
-import { checkDemoExpiration, handleDemoExpiration, migrateDemoPoints } from '../store/slices/authSlice';
+import { checkDemoExpiration, handleDemoExpiration, migrateDemoPoints } from '../features/auth/domain/store/authSlice';
 
 
 export const useDemoStatus = () => {

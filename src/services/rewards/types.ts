@@ -1,4 +1,4 @@
-import { Reward, UserReward } from '../../types';
+import { Reward, UserReward } from '../../shared/domain/types';
 
 export interface IRewardsService {
   getRewards(): Promise<Reward[]>;

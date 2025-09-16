@@ -1,4 +1,5 @@
-// Tipos de usuario
+// Tipos comunes compartidos entre features
+
 export interface User {
   id: string;
   email: string;
@@ -18,26 +19,6 @@ export interface UserPreferences {
   language: 'es' | 'en';
   sound: boolean;
   haptics: boolean;
-}
-
-// Tipos de autenticación
-export interface AuthState {
-  user: User | null;
-  token: string | null;
-  isLoading: boolean;
-  error: string | null;
-}
-
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-export interface RegisterData {
-  email: string;
-  password: string;
-  name: string;
-  alias: string;
 }
 
 // Tipos de categorías y trivia
@@ -173,24 +154,6 @@ export interface RaffleWinner {
   prize: string;
 }
 
-// Tipos de estado para sorteos
-export interface RafflesState {
-  active: Raffle[];
-  userParticipations: UserRaffleParticipation[];
-  isLoading: boolean;
-  error: string | null;
-  winners: RaffleWinner[];
-}
-
-// Tipos de estado para premios
-export interface RewardsState {
-  available: Reward[];
-  userRewards: UserReward[];
-  isLoading: boolean;
-  error: string | null;
-  redemptionHistory: any[];
-}
-
 // Tipos de notificaciones
 export interface Notification {
   id: string;
@@ -214,16 +177,6 @@ export interface PointPackage {
   discount?: number;
 }
 
-// Tipos de estado global
-export interface AppState {
-  auth: AuthState;
-  trivia: TriviaState;
-  points: PointsState;
-  rewards: RewardsState;
-  raffles: RafflesState;
-  notifications: NotificationsState;
-}
-
 export interface OfflineAnswer {
   sessionId: string;
   questionIndex: number;
@@ -231,75 +184,3 @@ export interface OfflineAnswer {
   points: number;
   timestamp: string;
 }
-
-export interface TriviaState {
-  categories: Category[];
-  currentSession: TriviaSession | null;
-  isLoading: boolean;
-  error: string | null;
-  offlineAnswers: OfflineAnswer[]; // Para sincronización offline según UC-05
-}
-
-export interface PointsState {
-  balance: PointBalance;
-  transactions: PointTransaction[];
-  isLoading: boolean;
-  error: string | null;
-}
-
-export interface NotificationsState {
-  items: Notification[];
-  unreadCount: number;
-  isLoading: boolean;
-  error: string | null;
-}
-
-export interface PurchaseState {
-  packages: PointPackage[];
-  isLoading: boolean;
-  error: string | null;
-  purchaseHistory: {
-    packageId: string;
-    points: number;
-    amount: number;
-    transactionId: string;
-    timestamp: string;
-  }[];
-}
-
-// Tipos de navegación
-export type RootStackParamList = {
-  Auth: undefined;
-  Main: undefined;
-  Login: undefined;
-  Register: undefined;
-  ForgotPassword: { email?: string };
-  ModeSelection: undefined;
-  MainTabs: undefined;
-  TriviaGame: { categoryId: string };
-  TriviaResults: { sessionId: string };
-  RewardDetail: { rewardId: string };
-  RaffleDetail: { raffleId: string };
-  Profile: undefined;
-  Settings: undefined;
-  Notifications: undefined;
-  PointHistory: undefined;
-  PointsHistory: undefined;
-  MyRewards: undefined;
-  MyRaffles: undefined;
-  BuyPoints: undefined;
-  Surveys: undefined;
-  Testimonials: undefined;
-  Roulette: undefined;
-  Help: undefined;
-
-};
-
-export type MainTabParamList = {
-  Home: undefined;
-  Categories: undefined;
-  Rewards: undefined;
-  Raffles: undefined;
-  Profile: undefined;
-};
-

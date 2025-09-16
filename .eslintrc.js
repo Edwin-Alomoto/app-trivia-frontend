@@ -36,6 +36,8 @@ module.exports = {
           ['@validators', './src/validators'],
           ['@config', './src/config'],
           ['@assets', './assets'],
+          ['@shared', './src/shared'],
+          ['@theme', './src/shared/presentation/theme'],
         ],
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
       },

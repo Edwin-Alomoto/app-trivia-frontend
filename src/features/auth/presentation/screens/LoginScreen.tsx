@@ -10,27 +10,26 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
-  Modal,
   TextInput,
   StatusBar,
   Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
-const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 import * as Haptics from 'expo-haptics';
+import { colors } from '@theme/colors';
+import { getVariantStyle } from '@theme/typography';
+import { RootStackParamList } from '@shared/domain/types';
 
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { useAppSelector } from '../../hooks/useAppSelector';
-import { loginUser, clearError } from '../../store/slices/authSlice';
-import { RootStackParamList } from '../../types';
-import { featureFlags } from '../../config/featureFlags';
-import { useLoginViewModel } from '../../viewmodels/auth/useLoginViewModel';
-import { colors } from '../../theme/colors';
-import { getVariantStyle } from '../../theme/typography';
+import { loginUser } from '../../domain/store/authSlice';
+import { useAppDispatch } from '../../../../hooks/useAppDispatch';
+import { useAppSelector } from '../../../../hooks/useAppSelector';
+import { featureFlags } from '../../../../config/featureFlags';
+import { useLoginViewModel } from '../../domain/hooks/useLoginViewModel';
+
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -39,10 +38,11 @@ const { width, height } = Dimensions.get('window');
 export const LoginScreen: React.FC = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const dispatch = useAppDispatch();
-  const { isLoading, error } = useAppSelector((state) => state.auth);
+  const { isLoading } = useAppSelector((state) => state.auth);
 
   // MVVM (desactivado por defecto)
-  const vm = featureFlags.useMVVMLogin ? useLoginViewModel() : null;
+  const vm = useLoginViewModel();
+  const shouldUseVM = featureFlags.useMVVMLogin;
 
   // Estados del formulario
   const [formData, setFormData] = useState({
@@ -95,7 +95,7 @@ export const LoginScreen: React.FC = () => {
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  }, [fadeAnim, slideAnim, scaleAnim]);
 
   const animateFocusIn = (scaleAnimRef: Animated.Value) => {
     Animated.parallel([
@@ -177,7 +177,7 @@ export const LoginScreen: React.FC = () => {
     try {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-      if (vm) {
+      if (shouldUseVM && vm) {
         vm.setField('email', formData.email);
         vm.setField('password', formData.password);
         const res = await vm.submit();
@@ -202,8 +202,8 @@ export const LoginScreen: React.FC = () => {
         navigation.navigate('MainTabs' as never);
       }
       
-    } catch (error: any) {
-      Alert.alert('Error', error?.message || 'Credenciales incorrectas');
+    } catch (loginError: any) {
+      Alert.alert('Error', loginError?.message || 'Credenciales incorrectas');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
   };
@@ -229,7 +229,7 @@ export const LoginScreen: React.FC = () => {
   };
 
   // Actualizar datos del formulario
-  const updateFormData = (field: string, value: string) => {
+  const _updateFormData = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     
     if (errors[field as keyof typeof errors]) {
@@ -270,7 +270,7 @@ export const LoginScreen: React.FC = () => {
             >
             <View style={styles.logoContainer}>
                 <Image 
-                  source={require('../../../assets/adaptive-icon.png')}
+                  source={require('../../../../../assets/adaptive-icon.png')}
                   style={styles.logoImage}
                   resizeMode="contain"
                 />
@@ -409,9 +409,9 @@ export const LoginScreen: React.FC = () => {
               >
                 <View style={styles.loginButtonContent}>
                   {isLoading ? (
-                    <Text style={[getVariantStyle('body'), styles.loginButtonText, { fontWeight: '600' }]}>Iniciando sesión...</Text>
+                    <Text style={[getVariantStyle('body'), styles.loginButtonText, styles.boldText]}>Iniciando sesión...</Text>
                   ) : (
-                    <Text style={[getVariantStyle('body'), styles.loginButtonText, { fontWeight: '600' }] }>
+                    <Text style={[getVariantStyle('body'), styles.loginButtonText, styles.boldText]}>
                       Iniciar sesión
                     </Text>
                   )}
@@ -430,7 +430,7 @@ export const LoginScreen: React.FC = () => {
               <View style={styles.footer}>
                 <Text style={[getVariantStyle('body'), styles.footerText]}>¿No tienes cuenta? </Text>
                 <TouchableOpacity onPress={handleRegister}>
-                  <Text style={[getVariantStyle('body'), styles.linkText, { fontWeight: '600' }]}>Regístrate</Text>
+                  <Text style={[getVariantStyle('body'), styles.linkText, styles.boldText]}>Regístrate</Text>
                 </TouchableOpacity>
               </View>
               </View>
@@ -664,6 +664,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.textPrimary,
   },
-
-
+  boldText: {
+    fontWeight: '600',
+  },
 });

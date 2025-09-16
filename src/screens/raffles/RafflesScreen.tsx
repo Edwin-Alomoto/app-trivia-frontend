@@ -15,12 +15,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { gradients } from '../../theme/gradients';
+import { gradients } from '@theme/gradients';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { getVariantStyle } from '@theme/typography';
 
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card } from '@shared/presentation/components/ui/Card';
+import { Button } from '@shared/presentation/components/ui/Button';
 import { DemoRestrictionBanner } from '../../components/ui/DemoRestrictionBanner';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
@@ -28,7 +29,6 @@ import { fetchRaffles, fetchUserParticipations, participateInRaffle, getRaffleWi
 import { Raffle, UserRaffleParticipation } from '../../types';
 import { featureFlags } from '../../config/featureFlags';
 import { useRafflesViewModel } from '../../viewmodels/raffles/useRafflesViewModel';
-import { getVariantStyle } from '../../theme/typography';
 
 const { width, height } = Dimensions.get('window');
 

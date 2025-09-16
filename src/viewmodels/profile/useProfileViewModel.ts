@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { fetchPointBalance, selectPointBalance } from '../../store/slices/pointsSlice';
-import { logoutUser } from '../../store/slices/authSlice';
+import { logoutUser } from '../../features/auth/domain/store/authSlice';
 
 export function useProfileViewModel() {
   const dispatch = useAppDispatch();

@@ -14,10 +14,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { getVariantStyle } from '../../theme/typography';
+import { getVariantStyle } from '@theme/typography';
 
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card } from '@shared/presentation/components/ui/Card';
+import { Button } from '@shared/presentation/components/ui/Button';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { fetchTransactions, fetchPointBalance } from '../../store/slices/pointsSlice';

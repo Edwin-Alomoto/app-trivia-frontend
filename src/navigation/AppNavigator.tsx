@@ -3,19 +3,20 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '../theme/colors';
-import { getVariantStyle } from '../theme/typography';
 import { useColorScheme, TouchableOpacity } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 
+import { getVariantStyle } from '../theme/typography';
+import { colors } from '../theme/colors';
+
 
 
 // Auth Screens
-import { LoginScreen } from '../screens/auth/LoginScreen';
-import { RegisterScreen } from '../screens/auth/RegisterScreen';
-import { ForgotPasswordScreen } from '../screens/auth/ForgotPasswordScreen';
-import { ModeSelectionScreen } from '../screens/auth/ModeSelectionScreen';
+import { LoginScreen } from '../features/auth/presentation/screens/LoginScreen';
+import { RegisterScreen } from '../features/auth/presentation/screens/RegisterScreen';
+import { ForgotPasswordScreen } from '../features/auth/presentation/screens/ForgotPasswordScreen';
+import { ModeSelectionScreen } from '../features/auth/presentation/screens/ModeSelectionScreen';
 
 // Purchase Screens
 import { BuyPointsScreen } from '../screens/purchases/BuyPointsScreen';
@@ -37,7 +38,7 @@ import { SurveysScreen } from '../screens/surveys/SurveysScreen';
 import { TestimonialsScreen } from '../screens/testimonials/TestimonialsScreen';
 
 // Types
-import { RootStackParamList, MainTabParamList } from '../types';
+import { RootStackParamList, MainTabParamList } from '@shared/domain/types';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();

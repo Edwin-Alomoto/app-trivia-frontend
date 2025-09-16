@@ -16,8 +16,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { featureFlags } from '../../config/featureFlags';
 import { useProfileViewModel } from '../../viewmodels/profile/useProfileViewModel';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card } from '@shared/presentation/components/ui/Card';
+import { Button } from '@shared/presentation/components/ui/Button';
 
 interface HelpSection {
   id: string;

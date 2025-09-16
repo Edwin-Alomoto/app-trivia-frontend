@@ -1,4 +1,4 @@
-import { Notification } from '../../types';
+import { Notification } from '../../shared/domain/types';
 
 export interface INotificationsService {
   getNotifications(): Promise<Notification[]>;

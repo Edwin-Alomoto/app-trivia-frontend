@@ -15,14 +15,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { getVariantStyle } from '@theme/typography';
 
-import { Card } from '../../components/ui/Card';
+import { Card } from '@shared/presentation/components/ui/Card';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { Survey, fetchSurveys, submitSurvey } from '../../store/slices/surveysSlice';
 import { featureFlags } from '../../config/featureFlags';
 import { useSurveysViewModel } from '../../viewmodels/surveys/useSurveysViewModel';
-import { getVariantStyle } from '../../theme/typography';
 
 const { width } = Dimensions.get('window');
 

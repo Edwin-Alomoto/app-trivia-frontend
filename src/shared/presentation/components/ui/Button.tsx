@@ -8,10 +8,10 @@ import {
   TextStyle,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors } from '../../theme/colors';
+import { colors } from '@theme/colors';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { getVariantStyle } from '../../theme/typography';
+import { getVariantStyle } from '@theme/typography';
 
 interface ButtonProps {
   title: string;
@@ -107,7 +107,7 @@ export const Button: React.FC<ButtonProps> = ({
             <>
               {leftIcon && <Ionicons name={leftIcon} size={18} color="#fff" style={styles.iconLeft} />}
               <Text style={textStyleCombined}>{title}</Text>
-              {rightIcon && <Ionicons name={rightIcon} size={18} color="#fff" style={styles.iconRight} />}
+              {rightIcon && <Ionicons name={rightIcon} size={18} color="#fff" style={styles.iconRight} />} 
             </>
           )}
         </LinearGradient>
@@ -248,3 +248,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
+
+
+

@@ -1,4 +1,4 @@
-import { PointBalance, PointTransaction } from '../../types';
+import { PointBalance, PointTransaction } from '../../shared/domain/types';
 
 export interface IPointsService {
   getBalance(): Promise<PointBalance>;

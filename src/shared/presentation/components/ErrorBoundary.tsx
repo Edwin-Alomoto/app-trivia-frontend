@@ -15,7 +15,6 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error) {
-    // Aquí podrías enviar a un servicio de logging
     console.warn('UI ErrorBoundary:', error.message);
   }
 
@@ -40,5 +39,6 @@ const styles = StyleSheet.create({
   title: { fontSize: 18, fontWeight: '600', marginBottom: 8 },
   message: { fontSize: 14, color: '#64748b', marginBottom: 16, textAlign: 'center' },
 });
+
 
 

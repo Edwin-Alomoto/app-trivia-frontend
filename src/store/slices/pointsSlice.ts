@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@r
 
 import { featureFlags } from '../../config/featureFlags';
 import { getServices } from '../../services/container';
-import { PointsState, PointTransaction, PointBalance, PointPackage } from '../../types';
+import { PointsState, PointTransaction, PointBalance, PointPackage } from '../../shared/domain/types';
 
 const initialState: PointsState = {
   balance: {
@@ -480,7 +480,7 @@ export { mockPointPackages };
 export default pointsSlice.reducer;
 
 // Selectores memoizados
-export const selectPointsState = (state: any) => state.points as import('../../types').PointsState;
+export const selectPointsState = (state: any) => state.points as import('../../shared/domain/types').PointsState;
 export const selectPointBalance = createSelector(selectPointsState, (p) => p.balance);
 export const selectPointTransactions = createSelector(selectPointsState, (p) => p.transactions);
 export const selectPointsLoading = createSelector(selectPointsState, (p) => p.isLoading);

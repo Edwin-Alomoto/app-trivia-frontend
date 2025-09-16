@@ -16,7 +16,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { Card } from '../../components/ui/Card';
+import { Card } from '@shared/presentation/components/ui/Card';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { fetchUserRewards, markRewardAsUsed } from '../../store/slices/rewardsSlice';

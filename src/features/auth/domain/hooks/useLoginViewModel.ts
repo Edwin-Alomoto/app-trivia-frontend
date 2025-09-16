@@ -1,10 +1,10 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { useAppSelector } from '../../hooks/useAppSelector';
-import { loginUser } from '../../store/slices/authSlice';
-import { User } from '../../types';
-import { loginSchema, LoginForm } from '../../validators/auth';
+import { useAppDispatch } from '../../../../hooks/useAppDispatch';
+import { useAppSelector } from '../../../../hooks/useAppSelector';
+import { User } from '../../../../shared/domain/types';
+import { loginUser } from '../store/authSlice';
+import { loginSchema, LoginForm } from '../validators/auth';
 
 export type LoginFormState = LoginForm;
 

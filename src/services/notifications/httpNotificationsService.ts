@@ -1,5 +1,5 @@
 import { INotificationsService } from './types';
-import { Notification } from '../../types';
+import { Notification } from '../../shared/domain/types';
 
 export class HttpNotificationsService implements INotificationsService {
   async getNotifications(): Promise<Notification[]> {

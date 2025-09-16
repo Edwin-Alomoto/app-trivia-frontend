@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useAppSelector } from '../hooks/useAppSelector';
-import { checkDemoExpiration } from '../store/slices/authSlice';
+import { checkDemoExpiration } from '../features/auth/domain/store/authSlice';
 
 interface AppInitializerProps {
   children: React.ReactNode;

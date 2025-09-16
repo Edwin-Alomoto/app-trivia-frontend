@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@r
 
 import { featureFlags } from '../../config/featureFlags';
 import { getServices } from '../../services/container';
-import { RafflesState, Raffle, UserRaffleParticipation } from '../../types';
+import { RafflesState, Raffle, UserRaffleParticipation } from '../../shared/domain/types';
 import { updateBalanceFromRaffle } from './pointsSlice';
 import { createWinnerNotification } from './notificationsSlice';
 
@@ -613,7 +613,7 @@ export const { clearError, updateRaffleParticipants, addUserParticipation, markP
 export default rafflesSlice.reducer;
 
 // Selectores memoizados
-export const selectRafflesState = (state: any) => state.raffles as import('../../types').RafflesState;
+export const selectRafflesState = (state: any) => state.raffles as import('../../shared/domain/types').RafflesState;
 export const selectActiveRaffles = createSelector(selectRafflesState, (r) => r.active);
 export const selectUserParticipations = createSelector(selectRafflesState, (r) => r.userParticipations);
 export const selectRafflesLoading = createSelector(selectRafflesState, (r) => r.isLoading);
