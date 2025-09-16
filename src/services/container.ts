@@ -1,5 +1,3 @@
-import { IAuthService } from './auth/types';
-import { HttpAuthService } from './auth/httpAuthService';
 import { IPointsService } from './points/types';
 import { HttpPointsService } from './points/httpPointsService';
 import { IRafflesService } from './raffles/types';
@@ -18,7 +16,6 @@ import { IPurchasesService } from './purchases/types';
 import { HttpPurchasesService } from './purchases/httpPurchasesService';
 
 type Services = {
-  authService: IAuthService;
   pointsService: IPointsService;
   rafflesService: IRafflesService;
   rewardsService: IRewardsService;
@@ -34,7 +31,6 @@ let services: Services | null = null;
 export function getServices(): Services {
   if (!services) {
     services = {
-      authService: new HttpAuthService(),
       pointsService: new HttpPointsService(),
       rafflesService: new HttpRafflesService(),
       rewardsService: new HttpRewardsService(),

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { ActivityIndicator, Text, TextInput } from 'react-native';
+import { ActivityIndicator, Text, TextInput, StyleSheet } from 'react-native';
 import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { Provider } from 'react-redux';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -22,22 +22,24 @@ export default function App() {
 
   if (!fontsLoaded) {
     return (
-      <GestureHandlerRootView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <GestureHandlerRootView style={styles.centered}>
         <StatusBar style="auto" />
         <ActivityIndicator size="large" />
       </GestureHandlerRootView>
     );
   }
 
-  if (Text.defaultProps == null) Text.defaultProps = {};
-  if (TextInput.defaultProps == null) TextInput.defaultProps = {};
-  Text.defaultProps.style = [Text.defaultProps.style, { fontFamily: 'Inter_400Regular' }];
-  TextInput.defaultProps.style = [TextInput.defaultProps.style, { fontFamily: 'Inter_400Regular' }];
+  const RNText = Text as any;
+  const RNTextInput = TextInput as any;
+  if (RNText.defaultProps == null) RNText.defaultProps = {};
+  if (RNTextInput.defaultProps == null) RNTextInput.defaultProps = {};
+  RNText.defaultProps.style = [RNText.defaultProps.style, { fontFamily: 'Inter_400Regular' }];
+  RNTextInput.defaultProps.style = [RNTextInput.defaultProps.style, { fontFamily: 'Inter_400Regular' }];
 
   return (
     <Provider store={store}>
       <SafeAreaProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
+        <GestureHandlerRootView style={styles.root}>
           <AppInitializer>
             <TypographyProvider>
               <ErrorBoundary>
@@ -51,3 +53,8 @@ export default function App() {
     </Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  root: { flex: 1 },
+});

@@ -3,7 +3,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { loginUser } from '../../store/slices/authSlice';
-import { getServices } from '../../services/container';
 import { User } from '../../types';
 import { loginSchema, LoginForm } from '../../validators/auth';
 
@@ -12,7 +11,6 @@ export type LoginFormState = LoginForm;
 export function useLoginViewModel() {
   const dispatch = useAppDispatch();
   const { isLoading, error, user } = useAppSelector((s) => s.auth);
-  const { authService } = useMemo(() => getServices(), []);
 
   const [form, setForm] = useState<LoginFormState>({ email: '', password: '' });
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof LoginFormState, string>>>({});
