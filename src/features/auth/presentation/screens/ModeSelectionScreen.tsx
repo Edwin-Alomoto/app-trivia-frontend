@@ -23,8 +23,8 @@ import { RootStackParamList } from '@shared/domain/types';
 import { useAppDispatch } from '../../../../hooks/useAppDispatch';
 import { useAppSelector } from '../../../../hooks/useAppSelector';
 import { activateDemoMode, activateSubscription } from '../../domain/store/authSlice';
-
-
+import DecorativeBlobs from '../components/DecorativeBlobs';
+import EntryAnimator from '../../../../shared/presentation/animations/EntryAnimator';
 
 type ModeSelectionScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ModeSelection'>;
 
@@ -170,11 +170,7 @@ export const ModeSelectionScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       {/* Fondo con blobs orgánicos tenues */}
-      <View pointerEvents="none" style={styles.backgroundLayer}>
-        <View style={styles.blobTop} />
-        <View style={styles.blobCenter} />
-        <View style={styles.blobBottom} />
-      </View>
+      <DecorativeBlobs variant="surface" style={styles.backgroundLayer} />
       <StatusBar barStyle="dark-content" backgroundColor={colors.surface} />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -182,31 +178,15 @@ export const ModeSelectionScreen: React.FC = () => {
         bounces={false}
       >
         {/* Header minimalista */}
-        <Animated.View
-          style={[
-            styles.header,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }],
-            },
-          ]}
-        >
+        <EntryAnimator style={styles.header}>
           <View style={styles.logoContainer}>
             <Text style={[getVariantStyle('h1'), { color: colors.textPrimary }, styles.marginBottom8]}>¡Hola, {user?.name}!</Text>
             <Text style={[getVariantStyle('subtitle'), { color: colors.textSecondary }]}>Elige cómo quieres empezar</Text>
           </View>
-        </Animated.View>
+        </EntryAnimator>
 
         {/* Tarjetas de selección */}
-        <Animated.View
-          style={[
-            styles.cardsContainer,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }, { scale: scaleAnim }],
-            },
-          ]}
-        >
+        <EntryAnimator style={styles.cardsContainer}>
           {/* Tarjeta Modo Demo */}
           <Animated.View
             style={[
@@ -253,6 +233,7 @@ export const ModeSelectionScreen: React.FC = () => {
               </View>
             </TouchableOpacity>
           </Animated.View>
+          {/* fin tarjeta demo */}
 
           {/* Tarjeta Suscripción */}
           <Animated.View
@@ -306,18 +287,62 @@ export const ModeSelectionScreen: React.FC = () => {
               </View>
             </TouchableOpacity>
           </Animated.View>
-        </Animated.View>
+          {/* Tarjeta Suscripción */}
+          <Animated.View
+            style={[
+              styles.cardWrapper,
+              {
+                transform: [{ scale: cardAnimSub }],
+              },
+            ]}
+          >
+            <TouchableOpacity
+              style={[
+                styles.modeCard,
+                styles.premiumCard,
+                selectedMode === 'subscription' && styles.modeCardSelected,
+              ]}
+              onPress={() => handleModeSelection('subscription')}
+              activeOpacity={0.9}
+            >
+              <View style={styles.modeCardContent}>
+                <View style={styles.modeIconContainer}>
+                  <Ionicons name="diamond" size={40} color="#10b981" />
+                </View>
+                
+                <Text style={[getVariantStyle('h2'), { color: colors.textPrimary }, styles.centerText4]}>Suscripción Premium</Text>
+                <Text style={[getVariantStyle('subtitle'), { color: colors.textSecondary }, styles.centerText20]}>Acceso completo mensual</Text>
+                
+                <View style={styles.featuresContainer}>
+                  <View style={styles.featureItem}>
+                    <Ionicons name="checkmark-circle" size={18} color="#10b981" />
+                    <Text style={styles.featureText}>Trivia ilimitada</Text>
+                  </View>
+                  <View style={styles.featureItem}>
+                    <Ionicons name="checkmark-circle" size={18} color="#10b981" />
+                    <Text style={styles.featureText}>Puntos canjeables</Text>
+                  </View>
+                  <View style={styles.featureItem}>
+                    <Ionicons name="checkmark-circle" size={18} color="#10b981" />
+                    <Text style={styles.featureText}>Premios y sorteos</Text>
+                  </View>
+                  <View style={styles.featureItem}>
+                    <Ionicons name="checkmark-circle" size={18} color="#10b981" />
+                    <Text style={styles.featureText}>Encuestas exclusivas</Text>
+                  </View>
+                </View>
+                
+                <View style={styles.priceBadge}>
+                  <Text style={[getVariantStyle('body'), styles.priceBadgeText]}>$9.99/mes</Text>
+                  <Text style={[getVariantStyle('caption'), styles.priceBadgeSubtext]}>Renovable mensualmente</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </Animated.View>
+        </EntryAnimator>
 
         {/* Información adicional */}
-        <Animated.View
-          style={[
-            styles.infoContainer,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }],
-            },
-          ]}
-        >
+        <EntryAnimator style={styles.infoContainer}>
           <View style={styles.infoCard}>
             <View style={styles.infoHeader}>
               <Ionicons name="information-circle" size={20} color="#6366f1" />
@@ -329,7 +354,7 @@ export const ModeSelectionScreen: React.FC = () => {
               La suscripción se renueva automáticamente cada mes por $9.99 USD.
             </Text>
           </View>
-        </Animated.View>
+        </EntryAnimator>
       </ScrollView>
 
       {/* Modal de confirmación Modo Demo */}

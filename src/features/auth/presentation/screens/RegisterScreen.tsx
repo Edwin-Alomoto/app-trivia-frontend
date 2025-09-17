@@ -2,14 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   Alert,
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
   Animated,
-  Dimensions,
   Modal,
   TextInput,
   StatusBar,
@@ -19,7 +17,6 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { colors } from '@theme/colors';
 import { getVariantStyle } from '@theme/typography';
 import { RootStackParamList } from '@shared/domain/types';
@@ -29,6 +26,17 @@ import { useAppSelector } from '../../../../hooks/useAppSelector';
 import { registerUser, verifyEmail } from '../../domain/store/authSlice';
 import { featureFlags } from '../../../../config/featureFlags';
 import { useRegisterViewModel } from '../../domain/hooks/useRegisterViewModel';
+import { registerScreenStyles } from './styles/RegisterScreen.styles';
+import FormTextInput from '../components/FormTextInput';
+import PasswordInput from '../components/PasswordInput';
+import InlineDropdown from '../components/InlineDropdown';
+import DatePickerField from '../components/DatePickerField';
+import StrengthMeter from '../components/StrengthMeter';
+import AuthFooter from '../components/AuthFooter';
+import LoginHeader from '../components/LoginHeader';
+import DecorativeBlobs from '../components/DecorativeBlobs';
+import EntryAnimator from '../../../../shared/presentation/animations/EntryAnimator';
+import FocusScaleView from '../../../../shared/presentation/animations/FocusScaleView';
 
 
 
@@ -36,8 +44,6 @@ import { useRegisterViewModel } from '../../domain/hooks/useRegisterViewModel';
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
 type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
-
-const { width, height } = Dimensions.get('window');
 
 export const RegisterScreen: React.FC = () => {
   const navigation = useNavigation<RegisterScreenNavigationProp>();
@@ -53,6 +59,8 @@ export const RegisterScreen: React.FC = () => {
     email: '',
     birthdate: '',
     gender: '',
+    address: '',
+    phone: '',
     password: '',
   });
 
@@ -62,31 +70,33 @@ export const RegisterScreen: React.FC = () => {
     email: '',
     birthdate: '',
     gender: '',
+    address: '',
+    phone: '',
     password: '',
   });
 
   // Estados de validación
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
-  const [showPassword, _setShowPassword] = useState(false);
+  // Visibilidad de password manejada dentro de PasswordInput
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
-  const [isFirstNameFocused, setIsFirstNameFocused] = useState(false);
-  const [isLastNameFocused, setIsLastNameFocused] = useState(false);
-  const [isEmailFocused, setIsEmailFocused] = useState(false);
-  const [isBirthdateFocused, setIsBirthdateFocused] = useState(false);
-  const [showBirthdatePicker, setShowBirthdatePicker] = useState(false);
-  const [birthdateValue, setBirthdateValue] = useState<Date | undefined>(undefined);
-  const [isGenderFocused, setIsGenderFocused] = useState(false);
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
-  const [isGenderPickerOpen, setIsGenderPickerOpen] = useState(false);
+  const [_isFirstNameFocused, _setIsFirstNameFocused] = useState(false);
+  const [_isLastNameFocused, _setIsLastNameFocused] = useState(false);
+  const [_isEmailFocused, _setIsEmailFocused] = useState(false);
+  // Estado del DatePicker manejado dentro de DatePickerField
+  const [_isGenderFocused, _setIsGenderFocused] = useState(false);
+  const [_isPasswordFocused, _setIsPasswordFocused] = useState(false);
+  const [_isGenderPickerOpen, _setIsGenderPickerOpen] = useState(false);
 
   // Referencias para animaciones
   const firstNameInputRef = useRef<TextInput>(null);
   const lastNameInputRef = useRef<TextInput>(null);
   const emailInputRef = useRef<TextInput>(null);
   const _birthdateInputRef = useRef<TextInput>(null);
+  const addressInputRef = useRef<TextInput>(null);
+  const phoneInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
 
   // Animaciones
@@ -97,8 +107,10 @@ export const RegisterScreen: React.FC = () => {
   const firstNameScaleAnim = useRef(new Animated.Value(1)).current;
   const lastNameScaleAnim = useRef(new Animated.Value(1)).current;
   const emailScaleAnim = useRef(new Animated.Value(1)).current;
-  const birthdateScaleAnim = useRef(new Animated.Value(1)).current;
+  const _birthdateScaleAnim = useRef(new Animated.Value(1)).current; // focus visual (no requerido ahora)
   const genderScaleAnim = useRef(new Animated.Value(1)).current;
+  const addressScaleAnim = useRef(new Animated.Value(1)).current;
+  const phoneScaleAnim = useRef(new Animated.Value(1)).current;
   const passwordScaleAnim = useRef(new Animated.Value(1)).current;
   const registerButtonScaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -142,12 +154,7 @@ export const RegisterScreen: React.FC = () => {
     }).start();
   };
 
-  const formatDateDDMMYYYY = (date: Date) => {
-    const day = `${date.getDate()}`.padStart(2, '0');
-    const month = `${date.getMonth() + 1}`.padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
+  // formato de fecha manejado por DatePickerField
 
   const getBirthdateMinMax = () => {
     const today = new Date();
@@ -156,37 +163,7 @@ export const RegisterScreen: React.FC = () => {
     return { minDate, maxDate };
   };
 
-  const handleOpenBirthdatePicker = () => {
-    const { maxDate } = getBirthdateMinMax();
-    if (!birthdateValue) {
-      setBirthdateValue(maxDate);
-    }
-    setShowBirthdatePicker(true);
-    setIsBirthdateFocused(true);
-    animateFocusIn(birthdateScaleAnim);
-  };
-
-  const handleBirthdateChange = (
-    event: any,
-    selectedDate?: Date,
-  ) => {
-    if (event.type === 'dismissed') {
-      setShowBirthdatePicker(false);
-      setIsBirthdateFocused(false);
-      animateFocusOut(birthdateScaleAnim);
-      return;
-    }
-    if (selectedDate) {
-      setBirthdateValue(selectedDate);
-      const formatted = formatDateDDMMYYYY(selectedDate);
-      updateFormData('birthdate', formatted);
-    }
-    if (Platform.OS === 'android') {
-      setShowBirthdatePicker(false);
-      setIsBirthdateFocused(false);
-      animateFocusOut(birthdateScaleAnim);
-    }
-  };
+  // apertura del datepicker manejada por DatePickerField
 
   const handleRegisterPressIn = () => {
     if (isLoading || !acceptedTerms || !acceptedPrivacy) return;
@@ -281,6 +258,8 @@ export const RegisterScreen: React.FC = () => {
       email: '',
       birthdate: '',
       gender: '',
+      address: '',
+      phone: '',
       password: '',
     };
 
@@ -312,6 +291,16 @@ export const RegisterScreen: React.FC = () => {
 
     if (!formData.gender) {
       newErrors.gender = 'Selecciona tu género.';
+    }
+
+    if (!formData.address) {
+      newErrors.address = 'Ingresa tu dirección.';
+    }
+
+    if (!formData.phone) {
+      newErrors.phone = 'Ingresa tu número de teléfono.';
+    } else if (!/^\d{8,15}$/.test(formData.phone.replace(/\s/g, ''))) {
+      newErrors.phone = 'El teléfono debe tener entre 8 y 15 dígitos.';
     }
 
     setErrors(newErrors);
@@ -417,325 +406,265 @@ export const RegisterScreen: React.FC = () => {
     }
   };
 
-  // Obtener color de fortaleza de contraseña
-  const getStrengthColor = () => {
-    if (passwordStrength >= 80) return '#10B981';
-    if (passwordStrength >= 60) return '#F59E0B';
-    if (passwordStrength >= 40) return '#F97316';
-    return '#EF4444';
-  };
-
-  // Obtener texto de fortaleza
-  const getStrengthText = () => {
-    if (passwordStrength >= 80) return 'Muy fuerte';
-    if (passwordStrength >= 60) return 'Fuerte';
-    if (passwordStrength >= 40) return 'Media';
-    if (passwordStrength >= 20) return 'Débil';
-    return 'Muy débil';
-  };
+  // StrengthMeter se encarga de color y texto
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={registerScreenStyles.container}>
       {/* Fondo con blobs orgánicos tenues */}
-      <View pointerEvents="none" style={styles.backgroundLayer}>
-        <View style={styles.blobTop} />
-        <View style={styles.blobCenter} />
-        <View style={styles.blobBottom} />
-      </View>
+      <DecorativeBlobs variant="auth" style={registerScreenStyles.backgroundLayer} />
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardAvoidingView}
+        style={registerScreenStyles.keyboardAvoidingView}
       >
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={registerScreenStyles.scrollContent}
           showsVerticalScrollIndicator={false}
           bounces={false}
           keyboardShouldPersistTaps="handled"
         >
           {/* Header muy sutil */}
-          <Animated.View
+          <EntryAnimator
             style={[
-              styles.header,
-              {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }],
-              },
+              registerScreenStyles.header,
             ]}
           >
-            <View style={styles.logoContainer}>
-              <Text style={[getVariantStyle('h1'), { color: colors.textPrimary }]}>¡Únete a WinUp!</Text>
-              <Text style={[getVariantStyle('subtitle'), { color: colors.textSecondary }]}>Regístrate y empieza a ganar</Text>
-            </View>
-          </Animated.View>
+            <LoginHeader
+              title="¡Únete a WinUp!"
+              subtitle="Regístrate y empieza a ganar"
+              containerStyle={registerScreenStyles.logoContainer}
+            />
+          </EntryAnimator>
 
           {/* Formulario muy sutil */}
-          <Animated.View
+          <EntryAnimator
             style={[
-              styles.formContainer,
-              {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }, { scale: scaleAnim }],
-              },
+              registerScreenStyles.formContainer,
             ]}
           >
-            <View style={styles.formCard}>
+            <View style={registerScreenStyles.formCard}>
               {/* Campo Nombre */}
-              <View style={styles.inputContainer}>
-                <Animated.View style={[styles.animatedInputWrapper, { transform: [{ scale: firstNameScaleAnim }] }]}>
-                  <TextInput
+              <View style={registerScreenStyles.inputContainer}>
+                <FocusScaleView style={[registerScreenStyles.animatedInputWrapper] as any}> 
+                  <FormTextInput
                     ref={firstNameInputRef}
-                    style={[getVariantStyle('body'), styles.simpleInput, isFirstNameFocused && styles.inputFocused]}
                     placeholder="Nombre"
-                    placeholderTextColor={colors.muted}
                     value={formData.firstName}
                     onChangeText={(value) => updateFormData('firstName', value)}
                     autoCapitalize="words"
                     returnKeyType="next"
-                    onFocus={() => { setIsFirstNameFocused(true); animateFocusIn(firstNameScaleAnim); }}
-                    onBlur={() => { setIsFirstNameFocused(false); animateFocusOut(firstNameScaleAnim); }}
+                    onFocus={() => { animateFocusIn(firstNameScaleAnim); }}
+                    onBlur={() => { animateFocusOut(firstNameScaleAnim); }}
                     onSubmitEditing={() => lastNameInputRef.current?.focus()}
+                    error={errors.firstName}
                   />
-                </Animated.View>
-                {errors.firstName && (
-                  <Text style={[getVariantStyle('caption'), styles.errorText]}>{errors.firstName}</Text>
-                )}
+                </FocusScaleView>
               </View>
 
               {/* Campo Apellido */}
-              <View style={styles.inputContainer}>
-                <Animated.View style={[styles.animatedInputWrapper, { transform: [{ scale: lastNameScaleAnim }] }]}>
-                  <TextInput
+              <View style={registerScreenStyles.inputContainer}>
+                <FocusScaleView style={[registerScreenStyles.animatedInputWrapper] as any}> 
+                  <FormTextInput
                     ref={lastNameInputRef}
-                    style={[getVariantStyle('body'), styles.simpleInput, isLastNameFocused && styles.inputFocused]}
                     placeholder="Apellido"
-                    placeholderTextColor={colors.muted}
                     value={formData.lastName}
                     onChangeText={(value) => updateFormData('lastName', value)}
                     autoCapitalize="words"
                     returnKeyType="next"
-                    onFocus={() => { setIsLastNameFocused(true); animateFocusIn(lastNameScaleAnim); }}
-                    onBlur={() => { setIsLastNameFocused(false); animateFocusOut(lastNameScaleAnim); }}
+                    onFocus={() => { animateFocusIn(lastNameScaleAnim); }}
+                    onBlur={() => { animateFocusOut(lastNameScaleAnim); }}
                     onSubmitEditing={() => emailInputRef.current?.focus()}
+                    error={errors.lastName}
                   />
-                </Animated.View>
-                {errors.lastName && (
-                  <Text style={[getVariantStyle('caption'), styles.errorText]}>{errors.lastName}</Text>
-                )}
+                </FocusScaleView>
               </View>
 
               {/* Campo Email */}
-              <View style={styles.inputContainer}>
-                <Animated.View style={[styles.animatedInputWrapper, { transform: [{ scale: emailScaleAnim }] }]}>
-                <TextInput
+              <View style={registerScreenStyles.inputContainer}>
+                <FocusScaleView style={[registerScreenStyles.animatedInputWrapper] as any}> 
+                <FormTextInput
                   ref={emailInputRef}
-                  style={[getVariantStyle('body'), styles.simpleInput, isEmailFocused && styles.inputFocused]}
-                  placeholder=" C
-                  orreo electrónico"
-                  placeholderTextColor={colors.muted}
+                  placeholder="Correo electrónico"
                   value={formData.email}
-                  onChangeText={(value) => setFormData(prev => ({ ...prev, email: value }))}
+                  onChangeText={(value) => updateFormData('email', value)}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
-                  onFocus={() => { setIsEmailFocused(true); animateFocusIn(emailScaleAnim); }}
-                  onBlur={() => { setIsEmailFocused(false); animateFocusOut(emailScaleAnim); }}
+                  onFocus={() => { animateFocusIn(emailScaleAnim); }}
+                  onBlur={() => { animateFocusOut(emailScaleAnim); }}
                   blurOnSubmit={false}
                   returnKeyType="next"
-                  onSubmitEditing={handleOpenBirthdatePicker}
+                  onSubmitEditing={() => passwordInputRef.current?.focus()}
+                  error={errors.email}
                 />
-                </Animated.View>
-                {errors.email && (
-                  <Text style={[getVariantStyle('caption'), styles.errorText]}>{errors.email}</Text>
-                )}
+                </FocusScaleView>
               </View>
 
               {/* Campo Fecha de nacimiento (DatePicker nativo) */}
-              <View style={styles.inputContainer}>
-                <Animated.View style={[styles.animatedInputWrapper, { transform: [{ scale: birthdateScaleAnim }] }]}> 
-                  <TouchableOpacity
-                    activeOpacity={0.85}
-                    style={[styles.pickerContainer, isBirthdateFocused && styles.inputFocused]}
-                    onPress={handleOpenBirthdatePicker}
-                  >
-                    <Text style={[getVariantStyle('body'), styles.pickerText, !formData.birthdate && styles.pickerPlaceholder]}>
-                      {formData.birthdate || 'Fecha de nacimiento (DD/MM/AAAA)'}
-                    </Text>
-                    <Ionicons name="calendar" size={18} color={colors.muted} />
-                  </TouchableOpacity>
-                </Animated.View>
-                {showBirthdatePicker && (
-                  <DateTimePicker
-                    value={birthdateValue || getBirthdateMinMax().maxDate}
-                    mode="date"
-                    display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                    onChange={handleBirthdateChange}
-                    maximumDate={getBirthdateMinMax().maxDate}
-                    minimumDate={getBirthdateMinMax().minDate}
-                    locale="es-ES"
+              <View style={registerScreenStyles.inputContainer}>
+                <FocusScaleView style={[registerScreenStyles.animatedInputWrapper] as any}> 
+                  <DatePickerField
+                    value={formData.birthdate}
+                    onChange={(formatted, _date) => {
+                      updateFormData('birthdate', formatted);
+                    }}
+                    placeholder="Fecha de nacimiento (DD/MM/AAAA)"
+                    minDate={getBirthdateMinMax().minDate}
+                    maxDate={getBirthdateMinMax().maxDate}
+                    containerStyle={[registerScreenStyles.pickerContainer] as any}
                   />
-                )}
+                </FocusScaleView>
                 {errors.birthdate && (
-                  <Text style={[getVariantStyle('caption'), styles.errorText]}>{errors.birthdate}</Text>
+                  <Text style={[getVariantStyle('caption'), registerScreenStyles.errorText]}>{errors.birthdate}</Text>
                 )}
               </View>
 
               {/* Campo Género (Dropdown inline) */}
-              <View style={styles.inputContainer}>
-                <Animated.View style={[styles.animatedInputWrapper, { transform: [{ scale: genderScaleAnim }] }]}>
-                  <TouchableOpacity
-                    activeOpacity={0.85}
-                    style={[styles.pickerContainer, isGenderFocused && styles.inputFocused]}
-                    onPress={() => {
-                      setIsGenderPickerOpen(prev => !prev);
-                      setIsGenderFocused(true);
-                      animateFocusIn(genderScaleAnim);
+              <View style={registerScreenStyles.inputContainer}>
+                <FocusScaleView style={[registerScreenStyles.animatedInputWrapper] as any}> 
+                  <InlineDropdown
+                    value={formData.gender}
+                    onSelect={(option) => {
+                      updateFormData('gender', option);
+                      animateFocusOut(genderScaleAnim);
                     }}
-                  >
-                    <Text style={[getVariantStyle('body'), styles.pickerText, !formData.gender && styles.pickerPlaceholder]}>
-                      {formData.gender || 'Selecciona tu género'}
-                    </Text>
-                    <Ionicons name="chevron-down" size={18} color={colors.muted} />
-                  </TouchableOpacity>
-                </Animated.View>
-                {isGenderPickerOpen && (
-                  <View style={styles.dropdownPanel}>
-                    {['Femenino', 'Masculino', 'Otro', 'Prefiero no decirlo'].map(option => (
-                      <TouchableOpacity
-                        key={option}
-                        style={styles.dropdownOption}
-                        onPress={() => {
-                          updateFormData('gender', option);
-                          setIsGenderPickerOpen(false);
-                          setIsGenderFocused(false);
-                          animateFocusOut(genderScaleAnim);
-                        }}
-                      >
-                        <Text style={[getVariantStyle('body'), { color: colors.textPrimary }]}>{option}</Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                )}
+                    options={['Femenino', 'Masculino', 'Otro', 'Prefiero no decirlo']}
+                    placeholder="Selecciona tu género"
+                    containerStyle={[registerScreenStyles.pickerContainer] as any}
+                  />
+                </FocusScaleView>
                 {errors.gender && (
-                  <Text style={[getVariantStyle('caption'), styles.errorText]}>{errors.gender}</Text>
+                  <Text style={[getVariantStyle('caption'), registerScreenStyles.errorText]}>{errors.gender}</Text>
                 )}
               </View>
 
+              {/* Campo Dirección */}
+              <View style={registerScreenStyles.inputContainer}>
+                <FocusScaleView style={[registerScreenStyles.animatedInputWrapper] as any}> 
+                  <FormTextInput
+                    ref={addressInputRef}
+                    placeholder="Dirección"
+                    value={formData.address}
+                    onChangeText={(value) => updateFormData('address', value)}
+                    autoCapitalize="words"
+                    returnKeyType="next"
+                    onFocus={() => { animateFocusIn(addressScaleAnim); }}
+                    onBlur={() => { animateFocusOut(addressScaleAnim); }}
+                    onSubmitEditing={() => phoneInputRef.current?.focus()}
+                    error={errors.address}
+                  />
+                </FocusScaleView>
+              </View>
+
+              {/* Campo Teléfono */}
+              <View style={registerScreenStyles.inputContainer}>
+                <FocusScaleView style={[registerScreenStyles.animatedInputWrapper] as any}> 
+                  <FormTextInput
+                    ref={phoneInputRef}
+                    placeholder="Teléfono"
+                    value={formData.phone}
+                    onChangeText={(value) => updateFormData('phone', value)}
+                    keyboardType="phone-pad"
+                    returnKeyType="next"
+                    onFocus={() => { animateFocusIn(phoneScaleAnim); }}
+                    onBlur={() => { animateFocusOut(phoneScaleAnim); }}
+                    onSubmitEditing={() => passwordInputRef.current?.focus()}
+                    error={errors.phone}
+                  />
+                </FocusScaleView>
+              </View>
+
               {/* Campo Contraseña */}
-              <View style={styles.inputContainer}>
-                <Animated.View style={[styles.animatedInputWrapper, { transform: [{ scale: passwordScaleAnim }] }]}>
-                  <TextInput
+              <View style={registerScreenStyles.inputContainer}>
+                <FocusScaleView style={[registerScreenStyles.animatedInputWrapper] as any}> 
+                  <PasswordInput
                     ref={passwordInputRef}
-                    style={[getVariantStyle('body'), styles.simpleInput, isPasswordFocused && styles.inputFocused]}
                     placeholder="Contraseña"
-                    placeholderTextColor={colors.muted}
                     value={formData.password}
-                    onChangeText={(value) => setFormData(prev => ({ ...prev, password: value }))}
-                    secureTextEntry={!showPassword}
+                    onChangeText={(value) => updateFormData('password', value)}
                     autoCapitalize="none"
                     autoCorrect={false}
-                    onFocus={() => { setIsPasswordFocused(true); animateFocusIn(passwordScaleAnim); }}
-                    onBlur={() => { setIsPasswordFocused(false); animateFocusOut(passwordScaleAnim); }}
+                    onFocus={() => { animateFocusIn(passwordScaleAnim); }}
+                    onBlur={() => { animateFocusOut(passwordScaleAnim); }}
                     returnKeyType="done"
                     onSubmitEditing={handleRegister}
+                    error={errors.password}
+                    style={getVariantStyle('body')}
                   />
-                </Animated.View>
-                {errors.password && (
-                  <Text style={[getVariantStyle('caption'), styles.errorText]}>{errors.password}</Text>
-                )}
+                </FocusScaleView>
 
                 {/* Indicador de fortaleza de contraseña */}
                 {formData.password.length > 0 && (
-                  <Animated.View
-                    style={[
-                      styles.strengthContainer,
-                      {
-                        opacity: strengthAnim,
-                      },
-                    ]}
-                  >
-                    <View style={styles.strengthBar}>
-                      <View
-                        style={[
-                          styles.strengthFill,
-                          {
-                            width: `${passwordStrength}%`,
-                            backgroundColor: getStrengthColor(),
-                          },
-                        ]}
-                      />
-                    </View>
-                    <Text style={[styles.strengthText, { color: getStrengthColor() }]}>
-                      {getStrengthText()}
-                    </Text>
+                  <Animated.View style={[registerScreenStyles.strengthContainer, { opacity: strengthAnim }]}>
+                    <StrengthMeter strength={passwordStrength} />
                   </Animated.View>
                 )}
 
                 {/* Requisitos de contraseña */}
                 {formData.password.length > 0 && (
-                  <View style={styles.requirementsContainer}>
-                    <Text style={[getVariantStyle('body'), styles.requirementsTitle]}>Tu contraseña debe incluir:</Text>
-                    <View style={styles.requirementItem}>
+                  <View style={registerScreenStyles.requirementsContainer}>
+                    <Text style={[getVariantStyle('body'), registerScreenStyles.requirementsTitle]}>Tu contraseña debe incluir:</Text>
+                    <View style={registerScreenStyles.requirementItem}>
                       <Ionicons
                         name={formData.password.length >= 8 ? "checkmark-circle" : "ellipse-outline"}
                         size={14}
                         color={formData.password.length >= 8 ? "#10B981" : "#94a3b8"}
                       />
-                      <Text style={[getVariantStyle('body'), styles.requirementText]}>Al menos 8 caracteres</Text>
+                      <Text style={[getVariantStyle('body'), registerScreenStyles.requirementText]}>Al menos 8 caracteres</Text>
                     </View>
-                    <View style={styles.requirementItem}>
+                    <View style={registerScreenStyles.requirementItem}>
                       <Ionicons
                         name={/[a-z]/.test(formData.password) ? "checkmark-circle" : "ellipse-outline"}
                         size={14}
                         color={/[a-z]/.test(formData.password) ? "#10B981" : "#94a3b8"}
                       />
-                      <Text style={[getVariantStyle('body'), styles.requirementText]}>Al menos una letra minúscula</Text>
+                      <Text style={[getVariantStyle('body'), registerScreenStyles.requirementText]}>Al menos una letra minúscula</Text>
                     </View>
-                    <View style={styles.requirementItem}>
+                    <View style={registerScreenStyles.requirementItem}>
                       <Ionicons
                         name={/[A-Z]/.test(formData.password) ? "checkmark-circle" : "ellipse-outline"}
                         size={14}
                         color={/[A-Z]/.test(formData.password) ? "#10B981" : "#94a3b8"}
                       />
-                      <Text style={[getVariantStyle('body'), styles.requirementText]}>Al menos una letra mayúscula</Text>
+                      <Text style={[getVariantStyle('body'), registerScreenStyles.requirementText]}>Al menos una letra mayúscula</Text>
                     </View>
-                    <View style={styles.requirementItem}>
+                    <View style={registerScreenStyles.requirementItem}>
                       <Ionicons
                         name={/\d/.test(formData.password) ? "checkmark-circle" : "ellipse-outline"}
                         size={14}
                         color={/\d/.test(formData.password) ? "#10B981" : "#94a3b8"}
                       />
-                      <Text style={[getVariantStyle('body'), styles.requirementText]}>Al menos un número</Text>
+                      <Text style={[getVariantStyle('body'), registerScreenStyles.requirementText]}>Al menos un número</Text>
                     </View>
                   </View>
                 )}
               </View>
 
               {/* Términos y Privacidad */}
-              <View style={styles.termsContainer}>
+              <View style={registerScreenStyles.termsContainer}>
                 <TouchableOpacity
-                  style={styles.checkboxContainer}
+                  style={registerScreenStyles.checkboxContainer}
                   onPress={() => setAcceptedTerms(!acceptedTerms)}
                 >
-                  <View style={[styles.checkbox, acceptedTerms && styles.checkboxChecked]}>
+                  <View style={[registerScreenStyles.checkbox, acceptedTerms && registerScreenStyles.checkboxChecked]}>
                     {acceptedTerms && <Ionicons name="checkmark" size={12} color="#fff" />}
                   </View>
-                  <Text style={[getVariantStyle('body'), styles.termsText]}>
+                  <Text style={[getVariantStyle('body'), registerScreenStyles.termsText]}>
                     Acepto los{' '}
-                    <Text style={[getVariantStyle('body'), styles.termsLink]}>Términos y Condiciones</Text>
+                    <Text style={[getVariantStyle('body'), registerScreenStyles.termsLink]}>Términos y Condiciones</Text>
                   </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={styles.checkboxContainer}
+                  style={registerScreenStyles.checkboxContainer}
                   onPress={() => setAcceptedPrivacy(!acceptedPrivacy)}
                 >
-                  <View style={[styles.checkbox, acceptedPrivacy && styles.checkboxChecked]}>
+                  <View style={[registerScreenStyles.checkbox, acceptedPrivacy && registerScreenStyles.checkboxChecked]}>
                     {acceptedPrivacy && <Ionicons name="checkmark" size={12} color="#fff" />}
                   </View>
-                  <Text style={[getVariantStyle('body'), styles.termsText]}>
+                  <Text style={[getVariantStyle('body'), registerScreenStyles.termsText]}>
                     Acepto la{' '}
-                    <Text style={[getVariantStyle('body'), styles.termsLink]}>Política de Privacidad</Text>
+                    <Text style={[getVariantStyle('body'), registerScreenStyles.termsLink]}>Política de Privacidad</Text>
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -743,8 +672,8 @@ export const RegisterScreen: React.FC = () => {
               {/* Botón de registro */}
               <AnimatedTouchableOpacity
                 style={[
-                  styles.registerButton,
-                  (!acceptedTerms || !acceptedPrivacy) && styles.registerButtonDisabled,
+                  registerScreenStyles.registerButton,
+                  (!acceptedTerms || !acceptedPrivacy) && registerScreenStyles.registerButtonDisabled,
                   { transform: [{ scale: registerButtonScaleAnim }] }
                 ]}
                 onPress={handleRegister}
@@ -752,24 +681,24 @@ export const RegisterScreen: React.FC = () => {
                 onPressOut={handleRegisterPressOut}
                 disabled={!acceptedTerms || !acceptedPrivacy || isLoading}
               >
-                <View style={styles.registerButtonContent}>
+                <View style={registerScreenStyles.registerButtonContent}>
                   {isLoading ? (
-                    <Text style={[getVariantStyle('body'), styles.registerButtonText, styles.boldText]}>Creando cuenta...</Text>
+                    <Text style={[getVariantStyle('body'), registerScreenStyles.registerButtonText, registerScreenStyles.boldText]}>Creando cuenta...</Text>
                   ) : (
-                    <Text style={[getVariantStyle('body'), styles.registerButtonText, styles.boldText]}>Crear cuenta</Text>
+                    <Text style={[getVariantStyle('body'), registerScreenStyles.registerButtonText, registerScreenStyles.boldText]}>Crear cuenta</Text>
                   )}
                 </View>
               </AnimatedTouchableOpacity>
 
               {/* Footer */}
-              <View style={styles.footer}>
-                <Text style={[getVariantStyle('body'), styles.footerText]}>¿Ya tienes cuenta? </Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Login' as never)}>
-                  <Text style={[getVariantStyle('body'), styles.linkText, styles.boldText]}>Iniciar sesión</Text>
-                </TouchableOpacity>
-              </View>
+              <AuthFooter
+                questionText="¿Ya tienes cuenta?"
+                actionText="Iniciar sesión"
+                onPress={() => navigation.navigate('Login' as never)}
+                style={registerScreenStyles.footer}
+              />
             </View>
-          </Animated.View>
+          </EntryAnimator>
         </ScrollView>
 
         {/* Modal de Verificación de Email */}
@@ -779,51 +708,51 @@ export const RegisterScreen: React.FC = () => {
           animationType="fade"
           onRequestClose={() => setShowVerificationModal(false)}
         >
-          <View style={styles.modalOverlay}>
-            <View style={styles.verificationModal}>
-              <View style={styles.verificationHeader}>
+          <View style={registerScreenStyles.modalOverlay}>
+            <View style={registerScreenStyles.verificationModal}>
+              <View style={registerScreenStyles.verificationHeader}>
                 <Ionicons name="mail" size={32} color="#10B981" />
-                <Text style={styles.verificationTitle}>¡Revisa tu correo!</Text>
-                <Text style={styles.verificationSubtitle}>
+                <Text style={registerScreenStyles.verificationTitle}>¡Revisa tu correo!</Text>
+                <Text style={registerScreenStyles.verificationSubtitle}>
                   Hemos enviado un enlace de verificación a:
                 </Text>
-                <Text style={styles.verificationEmail}>{formData.email}</Text>
+                <Text style={registerScreenStyles.verificationEmail}>{formData.email}</Text>
               </View>
 
-              <View style={styles.verificationContent}>
-                <View style={styles.verificationSteps}>
-                  <View style={styles.stepItem}>
-                    <View style={styles.stepNumber}>1</View>
-                    <Text style={styles.stepText}>Abre tu aplicación de correo</Text>
+              <View style={registerScreenStyles.verificationContent}>
+                <View style={registerScreenStyles.verificationSteps}>
+                  <View style={registerScreenStyles.stepItem}>
+                    <View style={registerScreenStyles.stepNumber}>1</View>
+                    <Text style={registerScreenStyles.stepText}>Abre tu aplicación de correo</Text>
                   </View>
-                  <View style={styles.stepItem}>
-                    <View style={styles.stepNumber}>2</View>
-                    <Text style={styles.stepText}>Busca el correo de WinUp</Text>
+                  <View style={registerScreenStyles.stepItem}>
+                    <View style={registerScreenStyles.stepNumber}>2</View>
+                    <Text style={registerScreenStyles.stepText}>Busca el correo de WinUp</Text>
                   </View>
-                  <View style={styles.stepItem}>
-                    <View style={styles.stepNumber}>3</View>
-                    <Text style={styles.stepText}>Haz clic en Verificar cuenta</Text>
+                  <View style={registerScreenStyles.stepItem}>
+                    <View style={registerScreenStyles.stepNumber}>3</View>
+                    <Text style={registerScreenStyles.stepText}>Haz clic en Verificar cuenta</Text>
                   </View>
                 </View>
 
-                <View style={styles.verificationActions}>
+                <View style={registerScreenStyles.verificationActions}>
                   <TouchableOpacity
-                    style={styles.verificationButton}
+                    style={registerScreenStyles.verificationButton}
                     onPress={handleVerification}
                   >
-                    <Text style={styles.verificationButtonText}>Ya verifiqué mi cuenta</Text>
+                    <Text style={registerScreenStyles.verificationButtonText}>Ya verifiqué mi cuenta</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={[
-                      styles.resendButton,
-                      resendTimer > 0 && styles.resendButtonDisabled
+                      registerScreenStyles.resendButton,
+                      resendTimer > 0 && registerScreenStyles.resendButtonDisabled
                     ]}
                     onPress={handleResendVerification}
                     disabled={resendTimer > 0}
                   >
                     <Ionicons name="refresh" size={16} color="#6366f1" />
-                    <Text style={styles.resendButtonText}>
+                    <Text style={registerScreenStyles.resendButtonText}>
                       {resendTimer > 0 
                         ? `Reenviar en ${resendTimer}s` 
                         : 'Reenviar verificación'
@@ -841,458 +770,3 @@ export const RegisterScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  backgroundLayer: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  blobTop: {
-    position: 'absolute',
-    width: width * 1.2,
-    height: width * 1.2,
-    borderRadius: (width * 1.2) / 2,
-    top: -width * 0.4,
-    left: -width * 0.3,
-    backgroundColor: 'rgba(210, 180, 254, 0.08)',
-  },
-  blobCenter: {
-    position: 'absolute',
-    width: width * 0.9,
-    height: width * 0.9,
-    borderRadius: (width * 0.9) / 2,
-    top: height * 0.18,
-    alignSelf: 'center',
-    backgroundColor: 'rgba(230, 213, 255, 0.06)',
-  },
-  blobBottom: {
-    position: 'absolute',
-    width: width * 1.4,
-    height: width * 1.4,
-    borderRadius: (width * 1.4) / 2,
-    bottom: -width * 0.6,
-    right: -width * 0.4,
-    backgroundColor: 'rgba(230, 213, 255, 0.06)',
-  },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: 24,
-  },
-  header: {
-    alignItems: 'center',
-    paddingTop: 60,
-    paddingBottom: 5,
-  },
-  logoContainer: {
-    alignItems: 'center',
-  },
-  logoWrapper: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: colors.primary100,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  logo: {
-    fontSize: 40,
-  },
-  logoImage: {
-    width: 56,
-    height: 56,
-    marginBottom: 24,
-  },
-  appName: {
-    marginBottom: 8,
-  },
-  tagline: {
-    textAlign: 'center',
-  },
-  formContainer: {
-    flex: 1,
-  },
-  formCard: {
-    paddingVertical: 20,
-  },
-  inputContainer: {
-    marginBottom: 16,
-  },
-  animatedInputWrapper: {
-    borderRadius: 12,
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    minHeight: 56,
-  },
-  inputFocused: {
-    borderColor: colors.primary600,
-    backgroundColor: '#ffffff',
-    shadowColor: colors.primary600,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  inputError: {
-    borderColor: colors.error,
-    backgroundColor: '#fef2f2',
-  },
-  textInput: {
-    flex: 1,
-    color: colors.textPrimary,
-    marginLeft: 12,
-    paddingVertical: 0,
-  },
-  eyeButton: {
-    padding: 6,
-  },
-  errorText: {
-    color: colors.error,
-    marginTop: 8,
-    marginLeft: 4,
-  },
-  strengthContainer: {
-    marginTop: 16,
-    marginBottom: 20,
-  },
-  strengthBar: {
-    height: 6,
-    backgroundColor: colors.border,
-    borderRadius: 3,
-    overflow: 'hidden',
-    marginBottom: 10,
-  },
-  strengthFill: {
-    height: '100%',
-    borderRadius: 3,
-  },
-  strengthText: {
-    fontSize: 13,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  requirementsContainer: {
-    marginTop: 16,
-  },
-  requirementsTitle: {
-    fontWeight: '600',
-    color: colors.textSecondary,
-    marginBottom: 12,
-  },
-  requirementItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  requirementText: {
-    color: colors.textSecondary,
-    marginLeft: 10,
-  },
-  termsContainer: {
-    marginTop: 8,
-    marginBottom: 32,
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 16,
-  },
-  checkbox: {
-    width: 18,
-    height: 18,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: '#cbd5e1',
-    marginRight: 12,
-    marginTop: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkboxChecked: {
-    backgroundColor: '#6366f1',
-    borderColor: '#6366f1',
-  },
-  termsText: {
-    flex: 1,
-    color: colors.textSecondary,
-    lineHeight: 20,
-  },
-  termsLink: {
-    color: colors.primary600,
-    fontWeight: '500',
-  },
-  registerButton: {
-    borderRadius: 12,
-    overflow: 'hidden',
-    marginBottom: 24,
-    backgroundColor: colors.primary600,
-  },
-  registerButtonDisabled: {
-    opacity: 0.5,
-    backgroundColor: colors.muted,
-  },
-  registerButtonContent: {
-    paddingVertical: 18,
-    alignItems: 'center',
-  },
-  registerButtonText: {
-    color: colors.onPrimary,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  footerText: {
-    color: colors.textSecondary,
-  },
-  linkText: {
-    color: colors.primary600,
-    fontWeight: '600',
-  },
-  // Estilos del Modal de Verificación
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  verificationModal: {
-    width: '85%',
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  genderModal: {
-    width: '85%',
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  genderOption: {
-    paddingVertical: 12,
-  },
-  verificationHeader: {
-    padding: 28,
-    alignItems: 'center',
-    backgroundColor: '#f0fdf4',
-  },
-  verificationTitle: {
-    fontWeight: '600',
-    color: colors.textPrimary,
-    marginTop: 12,
-    marginBottom: 8,
-  },
-  verificationSubtitle: {
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  verificationEmail: {
-    fontWeight: '600',
-    color: colors.primary600,
-    backgroundColor: '#f1f5f9',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 10,
-  },
-  verificationContent: {
-    padding: 28,
-  },
-  verificationSteps: {
-    marginBottom: 28,
-  },
-  stepItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  stepNumber: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: colors.primary600,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  stepText: {
-    color: colors.textPrimary,
-    flex: 1,
-  },
-  verificationActions: {
-    gap: 16,
-  },
-  verificationButton: {
-    backgroundColor: colors.primary600,
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  verificationButtonText: {
-    color: colors.onPrimary,
-    fontWeight: '600',
-  },
-  resendButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.primary600,
-    backgroundColor: '#ffffff',
-  },
-  resendButtonDisabled: {
-    opacity: 0.6,
-    borderColor: '#cbd5e1',
-  },
-  resendButtonText: {
-    color: colors.primary600,
-    marginLeft: 8,
-  },
-  simpleInput: {
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    color: colors.textPrimary,
-    minHeight: 56,
-  },
-  pickerContainer: {
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    minHeight: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  pickerText: {
-    color: colors.textPrimary,
-  },
-  pickerPlaceholder: {
-    color: colors.muted,
-  },
-  dropdownPanel: {
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    marginTop: 8,
-    overflow: 'hidden',
-  },
-  dropdownOption: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-  },
-  boldText: {
-    fontWeight: '600',
-  },
-  marginBottom8: {
-    marginBottom: 8,
-  },
-  centerText4: {
-    textAlign: 'center',
-    marginBottom: 4,
-  },
-  centerText20: {
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  marginLeft10: {
-    marginLeft: 10,
-  },
-  lineHeight20: {
-    lineHeight: 20,
-  },
-  padding12: {
-    padding: 12,
-  },
-  fontSize24: {
-    fontSize: 24,
-  },
-  fontSize14: {
-    fontSize: 14,
-  },
-  maxHeight60: {
-    maxHeight: '60%',
-  },
-  marginBottom12: {
-    marginBottom: 12,
-  },
-  icon72: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-  },
-  marginBottom20: {
-    marginBottom: 20,
-  },
-  icon80: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#ef4444',
-  },
-  fontSize24Red: {
-    fontSize: 24,
-    color: '#ef4444',
-  },
-  fontSize12Red: {
-    fontSize: 12,
-    color: '#ef4444',
-  },
-  warningContainer: {
-    padding: 12,
-    backgroundColor: '#FFFBEB',
-    borderColor: '#FCD34D',
-  },
-  fontSize13: {
-    fontSize: 13,
-    color: '#1F2937',
-  },
-  marginBottom4: {
-    marginBottom: 4,
-  },
-  textDark: {
-    color: '#1F2937',
-  },
-  warningContainerHorizontal: {
-    padding: 12,
-    backgroundColor: '#FFFBEB',
-    borderColor: '#FCD34D',
-    paddingHorizontal: 24,
-  },
-});

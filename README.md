@@ -125,65 +125,292 @@ Una aplicación móvil completa de trivia desarrollada con React Native y Expo, 
 
 ## 🏗️ Estructura del Proyecto
 
+
+```
+
+## 📁 Organización de carpetas (detalle actual)
+
+Esta sección describe cómo está organizada la base de código hoy, alineada al enfoque por features y MVVM adaptado.
+
 ```
 src/
 ├── components/
-│   ├── animations/          # Componentes de animación
-│   │   ├── PointsCounter.tsx
-│   │   └── PointsParticles.tsx
-│   └── ui/                  # Componentes de UI reutilizables
-│       ├── Button.tsx
-│       ├── Input.tsx
-│       ├── Card.tsx
-│       └── DemoRestrictionBanner.tsx
-├── hooks/                   # Hooks personalizados
+│   ├── AppInitializer.tsx             # Inicialización global (providers, cargas iniciales)
+│   ├── WinnerPaymentModal.tsx         # Modal compartido (legacy)
+│   ├── animations/                    # Animaciones compartidas (legacy)
+│   └── ui/                            # UI compartida (banners, etc.) (legacy)
+│
+├── config/
+│   └── featureFlags.ts                # Flags para activar gradualmente MVVM/features
+│
+├── features/                          # Código por dominio (feature-first)
+│   └── auth/
+│       ├── data/                      # Data sources (API, mappers) [reservado]
+│       ├── domain/
+│       │   ├── hooks/                 # ViewModels/Hooks de dominio
+│       │   │   ├── useLoginViewModel.ts
+│       │   │   └── useRegisterViewModel.ts
+│       │   ├── store/                 # Slice/Thunks/selectores de dominio
+│       │   │   └── authSlice.ts
+│       │   ├── types/                 # Tipos del dominio
+│       │   │   ├── auth.ts
+│       │   │   └── index.ts
+│       │   └── validators/            # Validaciones (p. ej. Zod)
+│       │       └── auth.ts
+│       └── presentation/
+│           ├── components/            # Componentes UI específicos de auth
+│           │   ├── AnimatedButton.tsx
+│           │   ├── AuthFooter.tsx
+│           │   ├── DatePickerField.tsx
+│           │   ├── DecorativeBlobs.tsx
+│           │   ├── FormTextInput.tsx
+│           │   ├── InlineDropdown.tsx
+│           │   ├── LoginHeader.tsx
+│           │   ├── PasswordInput.tsx
+│           │   ├── RememberMeCheckbox.tsx
+│           │   └── StrengthMeter.tsx
+│           ├── screens/               # Pantallas de autenticación
+│           │   ├── ForgotPasswordScreen.tsx
+│           │   ├── LoginScreen.tsx
+│           │   ├── ModeSelectionScreen.tsx
+│           │   ├── RegisterScreen.tsx
+│           │   └── styles/            # Estilos desacoplados por pantalla
+│           │       ├── ForgotPasswordScreen.styles.ts
+│           │       ├── LoginScreen.styles.ts
+│           │       └── RegisterScreen.styles.ts
+│
+├── hooks/                             # Hooks compartidos (infra y utilitarios)
 │   ├── useAppDispatch.ts
 │   ├── useAppSelector.ts
-│   └── useDemoStatus.ts
-├── navigation/              # Configuración de navegación
-│   └── AppNavigator.tsx
-├── screens/                 # Pantallas de la aplicación
-│   ├── auth/               # Pantallas de autenticación
-│   │   ├── LoginScreen.tsx
-│   │   ├── RegisterScreen.tsx
-│   │   ├── ForgotPasswordScreen.tsx
-│   │   └── ModeSelectionScreen.tsx
-│   ├── main/               # Pantallas principales
-│   │   ├── HomeScreen.tsx
-│   │   └── CategoriesScreen.tsx
-│   ├── game/               # Pantallas del juego
+│   ├── useDemoStatus.ts
+│   ├── useSafeStateUpdate.ts
+│   └── index.ts
+│
+├── navigation/                        # Navegación y tipos
+│   ├── AppNavigator.tsx
+│   └── types.ts
+│
+├── screens/                           # Pantallas legacy agrupadas por área
+│   ├── game/                          # Juego de trivia
 │   │   └── TriviaGameScreen.tsx
-│   ├── points/             # Pantallas de puntos
+│   ├── main/                          # Home y categorías
+│   │   ├── CategoriesScreen.tsx
+│   │   └── HomeScreen.tsx
+│   ├── notifications/
+│   │   └── NotificationsScreen.tsx
+│   ├── points/
 │   │   └── PointsHistoryScreen.tsx
-│   ├── purchases/          # Pantallas de compras
+│   ├── profile/
+│   │   ├── HelpScreen.tsx
+│   │   ├── ProfileScreen.tsx
+│   │   └── SettingsScreen.tsx
+│   ├── purchases/
 │   │   └── BuyPointsScreen.tsx
-│   ├── surveys/            # Pantallas de encuestas
-│   │   └── SurveysScreen.tsx
-│   ├── raffles/            # Pantallas de sorteos
+│   ├── raffles/
+│   │   ├── MyRafflesScreen.tsx
 │   │   ├── RafflesScreen.tsx
-│   │   └── MyRafflesScreen.tsx
-│   ├── rewards/            # Pantallas de premios
-│   │   ├── RewardsScreen.tsx
-│   │   └── MyRewardsScreen.tsx
-│   ├── profile/            # Pantallas de perfil
-│   │   └── ProfileScreen.tsx
-│   └── notifications/      # Pantallas de notificaciones
-│       └── NotificationsScreen.tsx
-├── store/                  # Configuración de Redux
+│   │   └── RouletteScreen.tsx
+│   ├── rewards/
+│   │   ├── MyRewardsScreen.tsx
+│   │   └── RewardsScreen.tsx
+│   ├── surveys/
+│   │   └── SurveysScreen.tsx
+│   └── testimonials/
+│       └── TestimonialsScreen.tsx
+│
+├── services/                          # Acceso a datos e integración
+│   ├── container.ts                   # Registro/obtención de servicios (DI simple)
+│   ├── auth/                          # Servicio de auth (reservado)
+│   ├── notifications/
+│   │   ├── httpNotificationsService.ts
+│   │   └── types.ts
+│   ├── points/
+│   │   ├── httpPointsService.ts
+│   │   └── types.ts
+│   ├── purchases/
+│   │   ├── httpPurchasesService.ts
+│   │   └── types.ts
+│   ├── raffles/
+│   │   ├── httpRafflesService.ts
+│   │   └── types.ts
+│   ├── rewards/
+│   │   ├── httpRewardsService.ts
+│   │   └── types.ts
+│   ├── surveys/
+│   │   ├── httpSurveysService.ts
+│   │   └── types.ts
+│   └── trivia/
+│       ├── httpTriviaService.ts
+│       └── types.ts
+│
+├── shared/                            # UI/temas/Tipos compartidos multi-feature
+│   ├── domain/
+│   │   └── types/
+│   │       ├── common.ts
+│   │       ├── index.ts
+│   │       ├── navigation.ts
+│   │       └── state.ts
+│   └── presentation/
+│       ├── animations/
+│       │   ├── EntryAnimator.tsx
+│       │   ├── FocusScaleView.tsx
+│       │   ├── PointsCounter.tsx
+│       │   └── PointsParticles.tsx
+│       ├── components/
+│       │   ├── ErrorBoundary.tsx
+│       │   └── ui/
+│       │       ├── Button.tsx
+│       │       ├── Card.tsx
+│       │       └── Input.tsx
+│       └── theme/
+│           ├── colors.ts
+│           ├── gradients.ts
+│           └── typography.ts
+│
+├── store/                             # Estado global (Redux Toolkit)
 │   ├── index.ts
-│   └── slices/             # Slices de Redux
-│       ├── authSlice.ts
-│       ├── triviaSlice.ts
+│   └── slices/
+│       ├── notificationsSlice.ts
 │       ├── pointsSlice.ts
 │       ├── purchasesSlice.ts
-│       ├── surveysSlice.ts
 │       ├── rafflesSlice.ts
 │       ├── rewardsSlice.ts
-│       ├── profileSlice.ts
-│       └── notificationsSlice.ts
-└── types/                  # Definiciones de tipos TypeScript
-    └── index.ts
+│       ├── surveysSlice.ts
+│       ├── testimonialsSlice.ts
+│       └── triviaSlice.ts
+│
+├── theme/                             # Theming (legacy; en transición a shared/presentation/theme)
+│   ├── colors.ts
+│   ├── gradients.ts
+│   └── typography.ts
+│
+└── viewmodels/                        # ViewModels compartidos por área (gradual)
+    ├── main/
+    │   └── useHomeViewModel.ts
+    ├── notifications/
+    │   └── useNotificationsViewModel.ts
+    ├── points/
+    │   └── usePointsViewModel.ts
+    ├── profile/
+    │   └── useProfileViewModel.ts
+    ├── purchases/
+    │   └── usePurchasesViewModel.ts
+    ├── raffles/
+    │   └── useRafflesViewModel.ts
+    ├── rewards/
+    │   └── useRewardsViewModel.ts
+    ├── surveys/
+    │   └── useSurveysViewModel.ts
+    └── trivia/
+        ├── useCategoriesViewModel.ts
+        └── useTriviaGameViewModel.ts
 ```
+
+Notas:
+- La carpeta `features/*` es el destino preferido para nuevo código por dominio (presentación, dominio, data).
+- Las carpetas `screens/*`, `components/*` y `theme/*` se mantienen por compatibilidad y migrarán gradualmente a `features/*` y `shared/*`.
+- Los servicios HTTP por dominio viven en `services/<dominio>` y exponen contratos en `types.ts`.
+- Los estilos de pantallas de autenticación están desacoplados en `src/features/auth/presentation/screens/styles`.
+
+## 📘 Consumo (formato guía rápida)
+
+### 1) Orden por carpetas (dónde crear/ubicar cada cosa)
+- Dominio/feature: `src/features/<dominio>/`
+  - Dominios y lógica: `domain/`
+    - Contratos: `types/`
+    - Validaciones: `validators/`
+    - Estado y efectos: `store/`
+    - Orquestación (ViewModels): `hooks/`
+  - Presentación: `presentation/`
+    - Componentes UI específicos: `components/`
+    - Pantallas: `screens/`
+    - Estilos de pantalla: `screens/styles/`
+  - Data (adapters/datasources): `data/` (cuando aplique)
+- Servicios HTTP por dominio: `src/services/<dominio>/`
+  - Contratos del servicio: `types.ts`
+  - Implementación HTTP: `http<Domain>Service.ts`
+- Compartidos transversales: `src/shared/`
+- Navegación: `src/navigation/`
+- Estado global: `src/store/`
+- Config/flags: `src/config/`
+- Hooks infra: `src/hooks/`
+
+### 2) Orden por archivos (secuencia para implementar/consumir)
+1. Definir tipos del dominio
+   - `src/features/<dominio>/domain/types/*.ts`
+2. Definir validaciones (si aplica)
+   - `src/features/<dominio>/domain/validators/*.ts`
+3. Definir interfaz del servicio
+   - `src/services/<dominio>/types.ts`
+4. Implementar servicio HTTP
+   - `src/services/<dominio>/http<Domain>Service.ts`
+5. Crear/actualizar slice y thunks
+   - `src/features/<dominio>/domain/store/<dominio>Slice.ts`
+6. Crear ViewModel (hook)
+   - `src/features/<dominio>/domain/hooks/use<Case>ViewModel.ts`
+7. Construir componentes UI específicos
+   - `src/features/<dominio>/presentation/components/*`
+8. Implementar pantalla
+   - `src/features/<dominio>/presentation/screens/<Screen>.tsx`
+9. Agregar estilos
+   - `src/features/<dominio>/presentation/screens/styles/<Screen>.styles.ts`
+10. Registrar en navegación
+   - `src/navigation/types.ts` y `src/navigation/AppNavigator.tsx`
+11. Activar con feature flag (opcional)
+   - `src/config/featureFlags.ts`
+
+### Ejemplo ultra–resumido: Login
+- Carpeta: `features/auth/*`
+- Servicio: `services/auth` (contratos + `HttpAuthService`)
+- Slice: `features/auth/domain/store/authSlice.ts`
+- ViewModel: `features/auth/domain/hooks/useLoginViewModel.ts`
+- Pantalla: `features/auth/presentation/screens/LoginScreen.tsx`
+- Estilos: `features/auth/presentation/screens/styles/LoginScreen.styles.ts`
+
+### 🔗 Flujo de consumo: Registro (feature-based layered)
+
+- Backend
+  - Endpoint: `POST https://backend-trivia-nest.onrender.com/auth/register`
+  - Body: `first_name, last_name, address, username, email, password, phone, birth_date, gender, status`
+  - Respuesta: `{ status, message, data{ user, accessToken, refreshToken, ... }, timestamp }`
+
+- ApiClient (+Auth Interceptor)
+  - `src/shared/config/env.ts` → baseURL y timeout
+  - `src/shared/config/endpoints.ts` → `endpoints.auth.register = '/auth/register'`
+  - `src/shared/infrastructure/http/ApiClient.ts` → cliente axios
+  - `src/shared/infrastructure/http/interceptors/auth.interceptor.ts` → agrega `Authorization: Bearer <token>` si existe
+
+- DataSource (HTTP)
+  - `src/features/auth/data/datasources/AuthRemoteDataSource.ts`
+  - `register(payload)` → `apiClient.post(endpoints.auth.register, payload)`
+
+- DTOs
+  - `src/features/auth/data/dtos/RegisterDTO.ts`
+  - `RegisterRequest` (body enviado) y `RegisterResponse` con `data: Record<string, any>` (flexible)
+
+- Mapper (DTO → Dominio)
+  - `src/features/auth/data/mappers/auth.mapper.ts`
+  - `mapRegisterResponseToUser(res)` → construye `User` de dominio y extrae tokens
+
+- Repositorio
+  - `src/features/auth/data/repositories/impl/AuthRepositoryHttp.ts`
+  - `register(payload)` → orquesta datasource + mapper → `{ user, token, refreshToken }`
+
+- Caso de Uso
+  - `src/features/auth/domain/useCases/RegisterUseCase.ts`
+  - `execute(payload)` → retorna `{ user, token, refreshToken }`
+
+- Storage de tokens
+  - `src/shared/storage/token.storage.ts` → `setAccessToken`, `setRefreshToken`, `getAccessToken`
+
+- Hook (Presentación)
+  - `src/features/auth/domain/hooks/useRegisterViewModel.ts`
+  - `submit()` → valida form → arma `RegisterRequest` → `RegisterUseCase.execute` → guarda tokens → actualiza UI
+
+- UI
+  - `src/features/auth/presentation/screens/RegisterScreen.tsx` → usa el hook y maneja estados de carga/errores
+
+Nota: si cambian campos del backend, ajusta `RegisterRequest` y el mapper; `RegisterResponse.data` es flexible.
 
 ## 🔧 Configuración
 
