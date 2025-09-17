@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { fetchCategories, selectCategories, selectTriviaError, selectTriviaLoading } from '../../store/slices/triviaSlice';
+import { useAppDispatch, useAppSelector } from '../../../../hooks';
+import { fetchCategories, selectCategories, selectTriviaError, selectTriviaLoading } from '../../../../store/slices/triviaSlice';
+import { Category, DifficultyFilter } from '../types/trivia';
 
 export function useCategoriesViewModel() {
   const dispatch = useAppDispatch();
   const categories = useAppSelector(selectCategories);
   const isLoading = useAppSelector(selectTriviaLoading);
   const error = useAppSelector(selectTriviaError);
-  const [selectedDifficulty, setSelectedDifficulty] = useState<'all' | 'easy' | 'medium' | 'hard'>('all');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyFilter>('all');
 
   const refresh = useCallback(async () => {
     await dispatch(fetchCategories());
@@ -20,7 +21,7 @@ export function useCategoriesViewModel() {
 
   const filteredCategories = selectedDifficulty === 'all'
     ? categories
-    : categories.filter((c: any) => c.difficulty === selectedDifficulty);
+    : categories.filter((c: Category) => c.difficulty === selectedDifficulty);
 
   return {
     categories,
@@ -32,5 +33,3 @@ export function useCategoriesViewModel() {
     refresh,
   };
 }
-
-

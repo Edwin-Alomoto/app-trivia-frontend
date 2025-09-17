@@ -23,8 +23,8 @@ import { BuyPointsScreen } from '../screens/purchases/BuyPointsScreen';
 
 // Main Screens
 import { HomeScreen } from '../screens/main/HomeScreen';
-import { CategoriesScreen } from '../screens/main/CategoriesScreen';
-import { TriviaGameScreen } from '../screens/game/TriviaGameScreen';
+import { CategoriesScreen } from '../features/trivia/presentation/screens/CategoriesScreen';
+import { TriviaGameScreen } from '../features/game/presentation/screens/TriviaGameScreen';
 import { PointsHistoryScreen } from '../screens/points/PointsHistoryScreen';
 import { RewardsScreen } from '../screens/rewards/RewardsScreen';
 import { RafflesScreen } from '../screens/raffles/RafflesScreen';
