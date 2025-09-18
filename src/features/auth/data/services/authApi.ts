@@ -29,6 +29,16 @@ export const authApi = {
       },
     };
   },
+  async refresh(refreshToken: string): Promise<Tokens> {
+    const res = await apiClient.post<LoginSuccess>('/auth/refresh', { refreshToken }, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return {
+      accessToken: res.data.accessToken,
+      refreshToken: res.data.refreshToken,
+      expiresIn: res.data.expiresIn,
+    };
+  },
 };
 
 
