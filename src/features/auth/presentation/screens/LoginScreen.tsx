@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import {View,Text,ScrollView,KeyboardAvoidingView,Platform,TouchableOpacity,TextInput,StatusBar,Image,Alert} from 'react-native';
+import {View,Text,ScrollView,KeyboardAvoidingView,Platform,TouchableOpacity,TextInput,StatusBar,Image} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -46,6 +46,7 @@ export const LoginScreen: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [errorModal, setErrorModal] = useState<{ visible: boolean; message: string }>({ visible: false, message: '' });
+  const [forgotPasswordModal, setForgotPasswordModal] = useState<{ visible: boolean; message: string }>({ visible: false, message: '' });
 
   // Referencias para inputs
   const passwordInputRef = useRef<TextInput>(null);
@@ -122,12 +123,18 @@ export const LoginScreen: React.FC = () => {
   // Manejar recuperación de contraseña
   const handleForgotPassword = () => {
     if (!formData.email) {
-      Alert.alert('Email requerido', 'Ingresa tu email para recuperar tu contraseña.');
+      setForgotPasswordModal({ 
+        visible: true, 
+        message: 'Ingresa tu email para recuperar tu contraseña.' 
+      });
       return;
     }
     
     if (!validateEmail(formData.email)) {
-      Alert.alert('Email inválido', 'Ingresa un email válido.');
+      setForgotPasswordModal({ 
+        visible: true, 
+        message: 'Ingresa un email válido para continuar.' 
+      });
       return;
     }
     
@@ -288,6 +295,13 @@ export const LoginScreen: React.FC = () => {
       title="No pudimos iniciar sesión"
       message={errorModal.message}
       onClose={() => setErrorModal({ visible: false, message: '' })}
+      primaryActionLabel="Entendido"
+    />
+    <ErrorModal
+      visible={forgotPasswordModal.visible}
+      title="Email requerido"
+      message={forgotPasswordModal.message}
+      onClose={() => setForgotPasswordModal({ visible: false, message: '' })}
       primaryActionLabel="Entendido"
     />
     </>

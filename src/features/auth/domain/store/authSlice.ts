@@ -5,6 +5,7 @@ import { AuthRepository } from '../../data/repositories/AuthRepository';
 import { User } from '../../../../shared/domain/types';
 import { handleApiError } from '../../../../shared/data/utils/handleApiError';
 import { AuthState, LoginCredentials } from '../types';
+import { RegisterPayload } from '../models/Register';
 
 const initialState: AuthState = {
   user: null, // Usuario no logueado inicialmente
@@ -60,22 +61,21 @@ export const loginUser = createAsyncThunk<
 );
 
 export const registerUser = createAsyncThunk<
-  { user: User; requiresVerification: boolean },
-  { email: string; password: string },
+  { user: User; token: string },
+  RegisterPayload,
   AuthThunkConfig
 >(
   'auth/register',
-  async (userData: { email: string; password: string }, { rejectWithValue }) => {
+  async (payload: RegisterPayload, { rejectWithValue }) => {
     try {
-      // Simulación de API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Mock response - usuario en estado pendiente de verificación
-      const mockUser: User = {
-        id: '1',
-        email: userData.email,
-        name: userData.email.split('@')[0], // Usar parte del email como nombre temporal
-        alias: userData.email.split('@')[0], // Usar parte del email como alias temporal
+      console.log('🟠 [registerUser thunk] Iniciando registro con payload:', JSON.stringify(payload, null, 2));
+      const { user: userDto, tokens } = await AuthRepository.register(payload);
+      console.log('🟠 [registerUser thunk] AuthRepository respondió, mapeando usuario...');
+      const mappedUser: User = {
+        id: userDto.id,
+        email: userDto.email,
+        name: (userDto as any).first_name ?? userDto.username,
+        alias: userDto.username,
         points: 0,
         createdAt: new Date().toISOString(),
         preferences: {
@@ -85,14 +85,18 @@ export const registerUser = createAsyncThunk<
           haptics: true,
         },
         subscriptionStatus: 'not_subscribed',
-      };
-
-      // En el prototipo, no guardamos el token hasta que se verifique el email
-      // Simulamos que el usuario está en estado "pendiente de verificación"
-
-      return { user: mockUser, requiresVerification: true };
-    } catch (error) {
-      return rejectWithValue('Error al registrar usuario');
+        role: (userDto as any).role,
+      } as User;
+      console.log('🟠 [registerUser thunk] Usuario mapeado:', JSON.stringify(mappedUser, null, 2));
+      await SecureStore.setItemAsync('auth_token', tokens.accessToken);
+      await SecureStore.setItemAsync('user_data', JSON.stringify(mappedUser));
+      console.log('🟢 [registerUser thunk] Registro completado exitosamente');
+      return { user: mappedUser, token: tokens.accessToken };
+    } catch (e: any) {
+      console.log('🔴 [registerUser thunk] Error en registro:', e);
+      const err = handleApiError(e);
+      console.log('🔴 [registerUser thunk] Error procesado:', err.message);
+      return rejectWithValue(err.message);
     }
   }
 );
@@ -146,12 +150,51 @@ export const logoutUser = createAsyncThunk<
   'auth/logout',
   async (_, { rejectWithValue }) => {
     try {
-      // Limpiar SecureStore
-      await SecureStore.deleteItemAsync('auth_token');
-      await SecureStore.deleteItemAsync('user_data');
+      console.log('🔴 [authSlice.logoutUser] Iniciando logout...');
+      await AuthRepository.logout();
+      console.log('🔴 [authSlice.logoutUser] Logout exitoso');
       return null;
     } catch (error) {
+      console.log('🔴 [authSlice.logoutUser] Error en logout:', error);
       return rejectWithValue('Error al cerrar sesión');
+    }
+  }
+);
+
+export const forgotPassword = createAsyncThunk<
+  void,
+  string,
+  AuthThunkConfig
+>(
+  'auth/forgotPassword',
+  async (email: string, { rejectWithValue }) => {
+    try {
+      console.log('🟠 [authSlice.forgotPassword] Iniciando solicitud para:', email);
+      await AuthRepository.forgotPassword(email);
+      console.log('🟢 [authSlice.forgotPassword] Solicitud exitosa');
+    } catch (error) {
+      console.log('🔴 [authSlice.forgotPassword] Error:', error);
+      const err = handleApiError(error as any);
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const resetPassword = createAsyncThunk<
+  void,
+  { token: string; newPassword: string; confirmPassword: string },
+  AuthThunkConfig
+>(
+  'auth/resetPassword',
+  async ({ token, newPassword, confirmPassword }, { rejectWithValue }) => {
+    try {
+      console.log('🟣 [authSlice.resetPassword] Iniciando restablecimiento con token');
+      await AuthRepository.resetPassword(token, newPassword, confirmPassword);
+      console.log('🟢 [authSlice.resetPassword] Restablecimiento exitoso');
+    } catch (error) {
+      console.log('🔴 [authSlice.resetPassword] Error:', error);
+      const err = handleApiError(error as any);
+      return rejectWithValue(err.message);
     }
   }
 );
@@ -405,10 +448,7 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload.user;
-        // No establecemos el token hasta que se verifique el email
-        if (!action.payload.requiresVerification && 'token' in action.payload) {
-          state.token = action.payload.token as string;
-        }
+        state.token = action.payload.token;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -425,6 +465,32 @@ const authSlice = createSlice({
         state.token = action.payload.token;
       })
       .addCase(verifyEmail.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      // Forgot Password
+      .addCase(forgotPassword.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(forgotPassword.fulfilled, (state) => {
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      // Reset Password
+      .addCase(resetPassword.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(resetPassword.fulfilled, (state) => {
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       })

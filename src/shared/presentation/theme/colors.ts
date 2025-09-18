@@ -18,7 +18,11 @@ export const colors = {
   textSecondary: '#64748b',
   muted: '#94a3b8',
   error: '#ef4444',
+  success: '#10b981',
+  onSuccess: '#ffffff',
   onPrimary: '#ffffff',
+  onSurface: '#1e293b',
+  onSurfaceVariant: '#64748b',
 };
 
 export type AppColors = typeof colors;

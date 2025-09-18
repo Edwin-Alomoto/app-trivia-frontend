@@ -21,9 +21,9 @@ import { RootStackParamList } from '@shared/domain/types';
 
 import { useAppDispatch } from '../../../../hooks/useAppDispatch';
 import { useAppSelector } from '../../../../hooks/useAppSelector';
-import { forgotPassword } from '../../domain/store/authSlice';
+import { resetPassword } from '../../domain/store/authSlice';
 import LoginHeader from '../components/LoginHeader';
-import FormTextInput from '../components/FormTextInput';
+import PasswordInput from '../components/PasswordInput';
 import AuthFooter from '../components/AuthFooter';
 import DecorativeBlobs from '../components/DecorativeBlobs';
 import EntryAnimator from '../../../../shared/presentation/animations/EntryAnimator';
@@ -31,25 +31,28 @@ import { forgotPasswordScreenStyles } from './styles/ForgotPasswordScreen.styles
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
-type ForgotPasswordScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ForgotPassword'>;
-type ForgotPasswordScreenRouteProp = RouteProp<RootStackParamList, 'ForgotPassword'>;
+type ResetPasswordScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ResetPassword'>;
+type ResetPasswordScreenRouteProp = RouteProp<RootStackParamList, 'ResetPassword'>;
 
-export const ForgotPasswordScreen: React.FC = () => {
-  const navigation = useNavigation<ForgotPasswordScreenNavigationProp>();
-  const route = useRoute<ForgotPasswordScreenRouteProp>();
+export const ResetPasswordScreen: React.FC = () => {
+  const navigation = useNavigation<ResetPasswordScreenNavigationProp>();
+  const route = useRoute<ResetPasswordScreenRouteProp>();
   const dispatch = useAppDispatch();
   const { isLoading, error } = useAppSelector((state) => state.auth);
   
-  const [email, setEmail] = useState(route.params?.email || '');
-  const [emailError, setEmailError] = useState('');
-  const [isEmailSent, setIsEmailSent] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  const [isPasswordReset, setIsPasswordReset] = useState(false);
 
   // Animaciones
   const fadeAnim = useState(new Animated.Value(0))[0];
   const slideAnim = useState(new Animated.Value(20))[0];
   const scaleAnim = useState(new Animated.Value(0.98))[0];
-  const emailScaleAnim = useRef(new Animated.Value(1)).current;
-  const sendButtonScaleAnim = useRef(new Animated.Value(1)).current;
+  const newPasswordScaleAnim = useRef(new Animated.Value(1)).current;
+  const confirmPasswordScaleAnim = useRef(new Animated.Value(1)).current;
+  const resetButtonScaleAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     // Animaciones de entrada
@@ -93,7 +96,7 @@ export const ForgotPasswordScreen: React.FC = () => {
 
   const handleButtonPressIn = () => {
     if (isLoading) return;
-    Animated.spring(sendButtonScaleAnim, {
+    Animated.spring(resetButtonScaleAnim, {
       toValue: 0.98,
       tension: 120,
       friction: 10,
@@ -102,7 +105,7 @@ export const ForgotPasswordScreen: React.FC = () => {
   };
 
   const handleButtonPressOut = () => {
-    Animated.spring(sendButtonScaleAnim, {
+    Animated.spring(resetButtonScaleAnim, {
       toValue: 1,
       tension: 120,
       friction: 10,
@@ -110,41 +113,61 @@ export const ForgotPasswordScreen: React.FC = () => {
     }).start();
   };
 
-  const validateEmail = (emailToValidate: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(emailToValidate);
+  const validatePassword = (password: string) => {
+    if (password.length < 8) {
+      return 'La contraseña debe tener al menos 8 caracteres';
+    }
+    if (!/[a-z]/.test(password)) {
+      return 'La contraseña debe contener al menos una letra minúscula';
+    }
+    if (!/[A-Z]/.test(password)) {
+      return 'La contraseña debe contener al menos una letra mayúscula';
+    }
+    if (!/\d/.test(password)) {
+      return 'La contraseña debe contener al menos un número';
+    }
+    return '';
   };
 
-  const handleSendResetEmail = async () => {
-    if (!email) {
-      setEmailError('Ingresa tu correo electrónico.');
+  const handleResetPassword = async () => {
+    // Validar nueva contraseña
+    const passwordValidation = validatePassword(newPassword);
+    if (passwordValidation) {
+      setPasswordError(passwordValidation);
       return;
     }
 
-    if (!validateEmail(email)) {
-      setEmailError('El correo electrónico no es válido.');
+    // Validar confirmación
+    if (newPassword !== confirmPassword) {
+      setConfirmPasswordError('Las contraseñas no coinciden');
       return;
     }
 
-    setEmailError('');
+    // Limpiar errores
+    setPasswordError('');
+    setConfirmPasswordError('');
 
     try {
-      console.log('🟠 [ForgotPasswordScreen] Enviando solicitud de restablecimiento para:', email);
-      await dispatch(forgotPassword(email)).unwrap();
-      console.log('🟢 [ForgotPasswordScreen] Solicitud exitosa');
+      console.log('🟣 [ResetPasswordScreen] Enviando restablecimiento con token:', route.params?.token);
+      await dispatch(resetPassword({
+        token: route.params?.token || '',
+        newPassword,
+        confirmPassword,
+      })).unwrap();
+      console.log('🟢 [ResetPasswordScreen] Restablecimiento exitoso');
       
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      setIsEmailSent(true);
+      setIsPasswordReset(true);
       
     } catch (error) {
-      console.log('🔴 [ForgotPasswordScreen] Error:', error);
-      Alert.alert('Error', error as string || 'No se pudo enviar el correo de recuperación. Inténtalo de nuevo.');
+      console.log('🔴 [ResetPasswordScreen] Error:', error);
+      Alert.alert('Error', error as string || 'No se pudo restablecer la contraseña. Inténtalo de nuevo.');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
   };
 
   const handleBackToLogin = () => {
-    navigation.goBack();
+    navigation.navigate('Login' as never);
   };
 
   return (
@@ -160,55 +183,69 @@ export const ForgotPasswordScreen: React.FC = () => {
           contentContainerStyle={forgotPasswordScreenStyles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Header con animación (idéntico al Login) */}
+          {/* Header con animación */}
           <EntryAnimator style={forgotPasswordScreenStyles.header}>
             <LoginHeader
-              title="Recuperar contraseña"
-              subtitle="Te ayudamos a recuperar tu cuenta"
+              title="Nueva contraseña"
+              subtitle="Ingresa tu nueva contraseña"
               logoSource={require('../../../../../assets/adaptive-icon.png')}
               containerStyle={forgotPasswordScreenStyles.logoContainer}
               logoStyle={forgotPasswordScreenStyles.logoImage as any}
             />
           </EntryAnimator>
 
-          {/* Formulario con animación (idéntico al Login) */}
+          {/* Formulario con animación */}
           <EntryAnimator style={forgotPasswordScreenStyles.formContainer}>
             <View style={forgotPasswordScreenStyles.formCard}>
-              {!isEmailSent ? (
+              {!isPasswordReset ? (
                 <>
                   <View style={forgotPasswordScreenStyles.inputContainer}>
-                    <Animated.View style={[forgotPasswordScreenStyles.animatedInputWrapper, { transform: [{ scale: emailScaleAnim }] }]}>
-                      <FormTextInput
-                        placeholder="Correo electrónico"
-                        value={email}
+                    <Animated.View style={[forgotPasswordScreenStyles.animatedInputWrapper, { transform: [{ scale: newPasswordScaleAnim }] }]}>
+                      <PasswordInput
+                        placeholder="Nueva contraseña"
+                        value={newPassword}
                         onChangeText={(value) => {
-                          setEmail(value);
-                          if (emailError) setEmailError('');
+                          setNewPassword(value);
+                          if (passwordError) setPasswordError('');
                         }}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        autoComplete="email"
-                        textContentType="emailAddress"
-                        onFocus={() => animateFocusIn(emailScaleAnim)}
-                        onBlur={() => animateFocusOut(emailScaleAnim)}
-                        returnKeyType="send"
-                        onSubmitEditing={handleSendResetEmail}
-                        error={emailError}
+                        onFocus={() => animateFocusIn(newPasswordScaleAnim)}
+                        onBlur={() => animateFocusOut(newPasswordScaleAnim)}
+                        returnKeyType="next"
+                        error={passwordError}
+                        style={getVariantStyle('body')}
+                      />
+                    </Animated.View>
+                  </View>
+
+                  <View style={forgotPasswordScreenStyles.inputContainer}>
+                    <Animated.View style={[forgotPasswordScreenStyles.animatedInputWrapper, { transform: [{ scale: confirmPasswordScaleAnim }] }]}>
+                      <PasswordInput
+                        placeholder="Confirmar nueva contraseña"
+                        value={confirmPassword}
+                        onChangeText={(value) => {
+                          setConfirmPassword(value);
+                          if (confirmPasswordError) setConfirmPasswordError('');
+                        }}
+                        onFocus={() => animateFocusIn(confirmPasswordScaleAnim)}
+                        onBlur={() => animateFocusOut(confirmPasswordScaleAnim)}
+                        returnKeyType="done"
+                        onSubmitEditing={handleResetPassword}
+                        error={confirmPasswordError}
+                        style={getVariantStyle('body')}
                       />
                     </Animated.View>
                   </View>
 
                   <AnimatedTouchableOpacity
-                    style={[forgotPasswordScreenStyles.loginButton, isLoading && forgotPasswordScreenStyles.loginButtonDisabled, { transform: [{ scale: sendButtonScaleAnim }] }]}
-                    onPress={handleSendResetEmail}
+                    style={[forgotPasswordScreenStyles.loginButton, isLoading && forgotPasswordScreenStyles.loginButtonDisabled, { transform: [{ scale: resetButtonScaleAnim }] }]}
+                    onPress={handleResetPassword}
                     onPressIn={handleButtonPressIn}
                     onPressOut={handleButtonPressOut}
                     disabled={isLoading}
                   >
                     <View style={forgotPasswordScreenStyles.loginButtonContent}>
                       <Text style={[getVariantStyle('body'), forgotPasswordScreenStyles.loginButtonText, forgotPasswordScreenStyles.boldText]}>
-                        {isLoading ? 'Enviando correo...' : 'Enviar correo de recuperación'}
+                        {isLoading ? 'Restableciendo...' : 'Restablecer contraseña'}
                       </Text>
                     </View>
                   </AnimatedTouchableOpacity>
@@ -226,24 +263,23 @@ export const ForgotPasswordScreen: React.FC = () => {
                     <View style={forgotPasswordScreenStyles.successIcon}>
                       <Ionicons name="checkmark-circle" size={64} color="#10B981" />
                     </View>
-                    <Text style={[getVariantStyle('h2'), forgotPasswordScreenStyles.successTitle]}>¡Correo enviado!</Text>
+                    <Text style={[getVariantStyle('h2'), forgotPasswordScreenStyles.successTitle]}>¡Contraseña restablecida!</Text>
                     <Text style={[getVariantStyle('body'), forgotPasswordScreenStyles.successSubtitle]}>
-                      Hemos enviado un enlace de recuperación a:
+                      Tu contraseña ha sido restablecida exitosamente.
                     </Text>
-                    <Text style={[getVariantStyle('body'), forgotPasswordScreenStyles.successEmail]}>{email}</Text>
                     <Text style={[getVariantStyle('body'), forgotPasswordScreenStyles.successInstructions]}>
-                      Si el email existe, recibirás un enlace para restablecer tu contraseña. Revisa tu bandeja de entrada y sigue las instrucciones.
+                      Ahora puedes iniciar sesión con tu nueva contraseña.
                     </Text>
                   </View>
 
                   <AnimatedTouchableOpacity
-                    style={[forgotPasswordScreenStyles.loginButton, { transform: [{ scale: sendButtonScaleAnim }] }]}
+                    style={[forgotPasswordScreenStyles.loginButton, { transform: [{ scale: resetButtonScaleAnim }] }]}
                     onPress={handleBackToLogin}
                     onPressIn={handleButtonPressIn}
                     onPressOut={handleButtonPressOut}
                   >
                     <View style={forgotPasswordScreenStyles.loginButtonContent}>
-                      <Text style={[getVariantStyle('body'), forgotPasswordScreenStyles.loginButtonText, forgotPasswordScreenStyles.boldText]}>Volver al inicio de sesión</Text>
+                      <Text style={[getVariantStyle('body'), forgotPasswordScreenStyles.loginButtonText, forgotPasswordScreenStyles.boldText]}>Ir al inicio de sesión</Text>
                     </View>
                   </AnimatedTouchableOpacity>
                 </>
@@ -255,4 +291,3 @@ export const ForgotPasswordScreen: React.FC = () => {
     </SafeAreaView>
   );
 };
-
