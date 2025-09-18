@@ -4,6 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 import { AuthRepository } from '../../data/repositories/AuthRepository';
 import { User } from '../../../../shared/domain/types';
 import { handleApiError } from '../../../../shared/data/utils/handleApiError';
+import { tokenStorage } from '../../../../shared/data/services/tokenStorage';
 import { AuthState, LoginCredentials } from '../types';
 import { RegisterPayload } from '../models/Register';
 
@@ -207,16 +208,18 @@ export const checkAuthStatus = createAsyncThunk<
   'auth/checkStatus',
   async (_, { rejectWithValue }) => {
     try {
-      const token = await SecureStore.getItemAsync('auth_token');
-      const userData = await SecureStore.getItemAsync('user_data');
+      console.log('🔄 [authSlice.checkAuthStatus] Verificando estado de autenticación...');
+      const { accessToken, user } = await tokenStorage.load();
 
-      if (token && userData) {
-        const user = JSON.parse(userData);
-        return { user, token };
+      if (accessToken && user) {
+        console.log('🟢 [authSlice.checkAuthStatus] Usuario autenticado encontrado');
+        return { user, token: accessToken };
       }
 
+      console.log('🔴 [authSlice.checkAuthStatus] No hay sesión activa');
       return null;
     } catch (error) {
+      console.log('❌ [authSlice.checkAuthStatus] Error:', error);
       return rejectWithValue('Error al verificar autenticación');
     }
   }

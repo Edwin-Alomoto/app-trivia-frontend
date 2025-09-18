@@ -299,7 +299,7 @@ export const LoginScreen: React.FC = () => {
     />
     <ErrorModal
       visible={forgotPasswordModal.visible}
-      title="Email requerido"
+      title="Correo requerido"
       message={forgotPasswordModal.message}
       onClose={() => setForgotPasswordModal({ visible: false, message: '' })}
       primaryActionLabel="Entendido"
