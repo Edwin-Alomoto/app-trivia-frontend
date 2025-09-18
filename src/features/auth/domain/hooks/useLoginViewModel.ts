@@ -4,6 +4,7 @@ import { useAppDispatch } from '../../../../hooks/useAppDispatch';
 import { useAppSelector } from '../../../../hooks/useAppSelector';
 import { User } from '../../../../shared/domain/types';
 import { loginUser } from '../store/authSlice';
+import { handleApiError } from '../../../../shared/data/utils/handleApiError';
 import { loginSchema, LoginForm } from '../validators/auth';
 
 export type LoginFormState = LoginForm;
@@ -42,7 +43,8 @@ export function useLoginViewModel() {
       const result = await dispatch(loginUser({ email: form.email, password: form.password })).unwrap();
       return { ok: true, user: result.user as User };
     } catch (e: any) {
-      return { ok: false, error: e?.message ?? 'Error' };
+      const err = handleApiError(e);
+      return { ok: false, error: err.message };
     }
   }, [dispatch, form.email, form.password, validate]);
 

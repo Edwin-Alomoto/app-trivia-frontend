@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import {View,Text,ScrollView,Alert,KeyboardAvoidingView,Platform,TouchableOpacity,TextInput,StatusBar,Image} from 'react-native';
+import {View,Text,ScrollView,KeyboardAvoidingView,Platform,TouchableOpacity,TextInput,StatusBar,Image,Alert} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -18,6 +18,7 @@ import { useAppSelector } from '../../../../hooks/useAppSelector';
 import { featureFlags } from '../../../../config/featureFlags';
 import { useLoginViewModel } from '../../domain/hooks/useLoginViewModel';
 import { loginScreenStyles } from './styles/LoginScreen.styles';
+import ErrorModal from '../../../../shared/presentation/components/ui/ErrorModal';
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -44,6 +45,7 @@ export const LoginScreen: React.FC = () => {
   // Estados de validación y UX
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [errorModal, setErrorModal] = useState<{ visible: boolean; message: string }>({ visible: false, message: '' });
 
   // Referencias para inputs
   const passwordInputRef = useRef<TextInput>(null);
@@ -90,7 +92,7 @@ export const LoginScreen: React.FC = () => {
         vm.setField('email', formData.email);
         vm.setField('password', formData.password);
         const res = await vm.submit();
-        if (!res.ok) throw new Error(res.error || 'Error al iniciar sesión');
+        if (!res.ok) throw new Error(res.error || 'Credenciales inválidas');
         const user = res.user;
         if (user.subscriptionStatus === 'not_subscribed') {
           navigation.navigate('ModeSelection' as never);
@@ -112,7 +114,7 @@ export const LoginScreen: React.FC = () => {
       }
       
     } catch (loginError: any) {
-      Alert.alert('Error', loginError?.message || 'Credenciales incorrectas');
+      setErrorModal({ visible: true, message: loginError?.message || 'Credenciales inválidas' });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
   };
@@ -146,6 +148,7 @@ export const LoginScreen: React.FC = () => {
     }
   };
   return (
+    <>
     <SafeAreaView style={loginScreenStyles.container}>
       {/* Fondo con blobs orgánicos tenues */}
       <DecorativeBlobs variant="auth" style={loginScreenStyles.backgroundLayer} />
@@ -280,6 +283,14 @@ export const LoginScreen: React.FC = () => {
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
+    <ErrorModal
+      visible={errorModal.visible}
+      title="No pudimos iniciar sesión"
+      message={errorModal.message}
+      onClose={() => setErrorModal({ visible: false, message: '' })}
+      primaryActionLabel="Entendido"
+    />
+    </>
   );
 };
 

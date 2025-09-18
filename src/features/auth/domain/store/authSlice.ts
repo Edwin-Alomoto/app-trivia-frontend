@@ -1,8 +1,10 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 import * as SecureStore from 'expo-secure-store';
 
-import { AuthState, LoginCredentials } from '../types';
+import { AuthRepository } from '../../data/repositories/AuthRepository';
 import { User } from '../../../../shared/domain/types';
+import { handleApiError } from '../../../../shared/data/utils/handleApiError';
+import { AuthState, LoginCredentials } from '../types';
 
 const initialState: AuthState = {
   user: null, // Usuario no logueado inicialmente
@@ -25,20 +27,14 @@ export const loginUser = createAsyncThunk<
   'auth/login',
   async (credentials: LoginCredentials, { rejectWithValue }) => {
     try {
-      // Simulación de API call
-      await new Promise(resolve => setTimeout(resolve, 700));
+      const { user: userDto, tokens } = await AuthRepository.login({ email: credentials.email, password: credentials.password });
 
-      // Simular credenciales incorrectas
-      if (credentials.password !== '12345678') {
-        throw new Error('credenciales_invalidas');
-      }
-
-      // Mock response exitoso - usuario no suscrito por defecto
-      const mockUser: User = {
-        id: '1',
-        email: credentials.email,
-        name: 'Usuario Demo',
-        alias: 'trivia_master',
+      // Mapear UserDto -> User (tipo compartido de la app) con valores por defecto
+      const mappedUser: User = {
+        id: userDto.id,
+        email: userDto.email,
+        name: userDto.username,
+        alias: userDto.username,
         points: 0,
         createdAt: new Date().toISOString(),
         preferences: {
@@ -48,22 +44,17 @@ export const loginUser = createAsyncThunk<
           haptics: true,
         },
         subscriptionStatus: 'not_subscribed',
-      };
+        role: (userDto as any).role,
+      } as User;
 
-      const token = 'mock_jwt_token_' + Date.now();
+      // Guardar también en SecureStore legacy para compatibilidad con flujos existentes
+      await SecureStore.setItemAsync('auth_token', tokens.accessToken);
+      await SecureStore.setItemAsync('user_data', JSON.stringify(mappedUser));
 
-      // Guardar token en SecureStore
-      await SecureStore.setItemAsync('auth_token', token);
-      await SecureStore.setItemAsync('user_data', JSON.stringify(mockUser));
-
-      return { user: mockUser, token };
-    } catch (error: any) {
-      // Manejar diferentes tipos de error
-      if (error.message === 'credenciales_invalidas') {
-        return rejectWithValue('Email o contraseña incorrectos.');
-      }
-
-      return rejectWithValue('Error al iniciar sesión. Inténtalo de nuevo.');
+      return { user: mappedUser, token: tokens.accessToken };
+    } catch (e: any) {
+      const err = handleApiError(e);
+      return rejectWithValue(err.message);
     }
   }
 );
