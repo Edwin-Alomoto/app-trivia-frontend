@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   Alert,
   KeyboardAvoidingView,
@@ -21,6 +20,7 @@ import * as Haptics from 'expo-haptics';
 import { colors } from '@theme/colors';
 import { getVariantStyle } from '@theme/typography';
 import { RootStackParamList } from '@shared/domain/types';
+import { forgotPasswordStyles } from '../styles/forgotPasswordStyles';
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -141,36 +141,36 @@ export const ForgotPasswordScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={forgotPasswordStyles.container}>
       {/* Fondo con blobs orgánicos tenues */}
-      <View pointerEvents="none" style={styles.backgroundLayer}>
-        <View style={styles.blobTop} />
-        <View style={styles.blobCenter} />
-        <View style={styles.blobBottom} />
+      <View pointerEvents="none" style={forgotPasswordStyles.backgroundLayer}>
+        <View style={forgotPasswordStyles.blobTop} />
+        <View style={forgotPasswordStyles.blobCenter} />
+        <View style={forgotPasswordStyles.blobBottom} />
       </View>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardAvoidingView}
+        style={forgotPasswordStyles.keyboardAvoidingView}
       >
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={forgotPasswordStyles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
           {/* Header con animación (idéntico al Login) */}
           <Animated.View 
             style={[
-              styles.header,
+              forgotPasswordStyles.header,
               {
                 opacity: fadeAnim,
                 transform: [{ translateY: slideAnim }],
               },
             ]}
           >
-            <View style={styles.logoContainer}>
+            <View style={forgotPasswordStyles.logoContainer}>
               <Image 
                 source={require('../../../../assets/adaptive-icon.png')}
-                style={styles.logoImage}
+                style={forgotPasswordStyles.logoImage}
                 resizeMode="contain"
               />
               <Text style={[getVariantStyle('h1'), { color: colors.textPrimary }]}>Recuperar contraseña</Text>
@@ -181,20 +181,20 @@ export const ForgotPasswordScreen: React.FC = () => {
           {/* Formulario con animación (idéntico al Login) */}
           <Animated.View
             style={[
-              styles.formContainer,
+              forgotPasswordStyles.formContainer,
               {
                 opacity: fadeAnim,
                 transform: [{ translateY: slideAnim }, { scale: scaleAnim }],
               },
             ]}
           >
-            <View style={styles.formCard}>
+            <View style={forgotPasswordStyles.formCard}>
               {!isEmailSent ? (
                 <>
-                  <View style={styles.inputContainer}>
-                    <Animated.View style={[styles.animatedInputWrapper, { transform: [{ scale: emailScaleAnim }] }]}>
+                  <View style={forgotPasswordStyles.inputContainer}>
+                    <Animated.View style={[forgotPasswordStyles.animatedInputWrapper, { transform: [{ scale: emailScaleAnim }] }]}>
                       <TextInput
-                        style={[getVariantStyle('body'), styles.basicInput]}
+                        style={[getVariantStyle('body'), forgotPasswordStyles.basicInput]}
                         placeholder="Correo electrónico"
                         placeholderTextColor={colors.muted}
                         value={email}
@@ -214,52 +214,52 @@ export const ForgotPasswordScreen: React.FC = () => {
                       />
                     </Animated.View>
                     {!!emailError && (
-                      <Text style={[getVariantStyle('caption'), styles.errorText]}>{emailError}</Text>
+                      <Text style={[getVariantStyle('caption'), forgotPasswordStyles.errorText]}>{emailError}</Text>
                     )}
                   </View>
 
                   <AnimatedTouchableOpacity
-                    style={[styles.loginButton, isLoading && styles.loginButtonDisabled, { transform: [{ scale: sendButtonScaleAnim }] }]}
+                    style={[forgotPasswordStyles.loginButton, isLoading && forgotPasswordStyles.loginButtonDisabled, { transform: [{ scale: sendButtonScaleAnim }] }]}
                     onPress={handleSendResetEmail}
                     onPressIn={handleButtonPressIn}
                     onPressOut={handleButtonPressOut}
                     disabled={isLoading}
                   >
-                    <View style={styles.loginButtonContent}>
-                      <Text style={[getVariantStyle('body'), styles.loginButtonText, styles.boldText]}>
+                    <View style={forgotPasswordStyles.loginButtonContent}>
+                      <Text style={[getVariantStyle('body'), forgotPasswordStyles.loginButtonText, forgotPasswordStyles.boldText]}>
                         {isLoading ? 'Enviando correo...' : 'Enviar correo de recuperación'}
                       </Text>
                     </View>
                   </AnimatedTouchableOpacity>
 
-                  <TouchableOpacity style={styles.forgotPasswordContainer} onPress={handleBackToLogin}>
-                    <Text style={[getVariantStyle('body'), styles.forgotPasswordText]}>Volver al inicio de sesión</Text>
+                  <TouchableOpacity style={forgotPasswordStyles.forgotPasswordContainer} onPress={handleBackToLogin}>
+                    <Text style={[getVariantStyle('body'), forgotPasswordStyles.forgotPasswordText]}>Volver al inicio de sesión</Text>
                   </TouchableOpacity>
                 </>
               ) : (
                 <>
-                  <View style={styles.successContainer}>
-                    <View style={styles.successIcon}>
+                  <View style={forgotPasswordStyles.successContainer}>
+                    <View style={forgotPasswordStyles.successIcon}>
                       <Ionicons name="checkmark-circle" size={64} color="#10B981" />
                     </View>
-                    <Text style={[getVariantStyle('h2'), styles.successTitle]}>¡Correo enviado!</Text>
-                    <Text style={[getVariantStyle('body'), styles.successSubtitle]}>
+                    <Text style={[getVariantStyle('h2'), forgotPasswordStyles.successTitle]}>¡Correo enviado!</Text>
+                    <Text style={[getVariantStyle('body'), forgotPasswordStyles.successSubtitle]}>
                       Hemos enviado un enlace de recuperación a:
                     </Text>
-                    <Text style={[getVariantStyle('body'), styles.successEmail]}>{email}</Text>
-                    <Text style={[getVariantStyle('body'), styles.successInstructions]}>
+                    <Text style={[getVariantStyle('body'), forgotPasswordStyles.successEmail]}>{email}</Text>
+                    <Text style={[getVariantStyle('body'), forgotPasswordStyles.successInstructions]}>
                       Revisa tu bandeja de entrada y sigue las instrucciones para restablecer tu contraseña.
                     </Text>
                   </View>
 
                   <AnimatedTouchableOpacity
-                    style={[styles.loginButton, { transform: [{ scale: sendButtonScaleAnim }] }]}
+                    style={[forgotPasswordStyles.loginButton, { transform: [{ scale: sendButtonScaleAnim }] }]}
                     onPress={handleBackToLogin}
                     onPressIn={handleButtonPressIn}
                     onPressOut={handleButtonPressOut}
                   >
-                    <View style={styles.loginButtonContent}>
-                      <Text style={[getVariantStyle('body'), styles.loginButtonText, styles.boldText]}>Volver al inicio de sesión</Text>
+                    <View style={forgotPasswordStyles.loginButtonContent}>
+                      <Text style={[getVariantStyle('body'), forgotPasswordStyles.loginButtonText, forgotPasswordStyles.boldText]}>Volver al inicio de sesión</Text>
                     </View>
                   </AnimatedTouchableOpacity>
                 </>
@@ -271,147 +271,3 @@ export const ForgotPasswordScreen: React.FC = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: 24,
-  },
-  backgroundLayer: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  blobTop: {
-    position: 'absolute',
-    width: 600,
-    height: 600,
-    borderRadius: 300,
-    top: -200,
-    left: -150,
-    backgroundColor: 'rgba(210, 180, 254, 0.08)',
-  },
-  blobCenter: {
-    position: 'absolute',
-    width: 450,
-    height: 450,
-    borderRadius: 225,
-    top: 180,
-    alignSelf: 'center',
-    backgroundColor: 'rgba(230, 213, 255, 0.06)',
-  },
-  blobBottom: {
-    position: 'absolute',
-    width: 700,
-    height: 700,
-    borderRadius: 350,
-    bottom: -300,
-    right: -200,
-    backgroundColor: 'rgba(230, 213, 255, 0.06)',
-  },
-  header: {
-    alignItems: 'center',
-    paddingTop: 80,
-    paddingBottom: 40,
-  },
-  logoContainer: {
-    alignItems: 'center',
-  },
-  logoImage: {
-    width: 72,
-    height: 72,
-    marginBottom: 28,
-  },
-  formContainer: {
-    flex: 1,
-  },
-  formCard: {
-    paddingVertical: 20,
-  },
-  inputContainer: {
-    marginBottom: 16,
-    paddingHorizontal: 0,
-  },
-  basicInput: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    color: colors.textPrimary,
-    minHeight: 56,
-  },
-  animatedInputWrapper: {
-    borderRadius: 12,
-  },
-  errorText: {
-    color: colors.error,
-    marginTop: 6,
-    marginLeft: 4,
-  },
-  loginButton: {
-    borderRadius: 12,
-    overflow: 'hidden',
-    marginBottom: 20,
-    backgroundColor: colors.primary600,
-  },
-  loginButtonDisabled: {
-    opacity: 0.5,
-    backgroundColor: colors.muted,
-  },
-  loginButtonContent: {
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  loginButtonText: {
-    color: colors.onPrimary,
-  },
-  forgotPasswordContainer: {
-    alignItems: 'center',
-    marginBottom: 28,
-  },
-  forgotPasswordText: {
-    color: colors.primary600,
-    fontWeight: '500',
-  },
-  successContainer: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  successIcon: {
-    marginBottom: 24,
-  },
-  successTitle: {
-    fontWeight: 'bold',
-    color: '#10B981',
-    marginBottom: 16,
-  },
-  successSubtitle: {
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  successEmail: {
-    fontWeight: '600',
-    color: colors.textPrimary,
-    backgroundColor: '#f8f9fa',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 12,
-    marginBottom: 16,
-  },
-  successInstructions: {
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  boldText: {
-    fontWeight: '600',
-  },
-});
