@@ -21,7 +21,7 @@ import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
 import { logoutUser } from '../../features/auth/domain/store/authSlice';
 import { fetchPointBalance } from '../../store/slices/pointsSlice';
-import { featureFlags } from '../../config/featureFlags';
+import { featureFlags } from '../../../app/config/featureFlags';
 import { useProfileViewModel } from '../../features/profile/domain/hooks/useProfileViewModel';
 
 const { width, height } = Dimensions.get('window');

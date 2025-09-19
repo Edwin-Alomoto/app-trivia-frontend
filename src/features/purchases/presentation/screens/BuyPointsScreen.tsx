@@ -23,7 +23,7 @@ import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
 import { fetchPackages, purchasePoints } from '../../store/slices/purchasesSlice';
 import { PointPackage } from '../../types';
-import { featureFlags } from '../../config/featureFlags';
+import { featureFlags } from '../../../app/config/featureFlags';
 import { usePurchasesViewModel } from '../../features/purchases/domain/hooks/usePurchasesViewModel';
 
 const { width, height } = Dimensions.get('window');

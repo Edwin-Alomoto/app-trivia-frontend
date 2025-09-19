@@ -27,7 +27,7 @@ import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
 import { fetchRewards, fetchUserRewards, redeemReward, markRewardAsUsed } from '../../store/slices/rewardsSlice';
 import { Reward } from '../../types';
-import { featureFlags } from '../../config/featureFlags';
+import { featureFlags } from '../../../app/config/featureFlags';
 import { useRewardsViewModel } from '../../features/rewards/domain/hooks/useRewardsViewModel';
 
 const { width, height } = Dimensions.get('window');

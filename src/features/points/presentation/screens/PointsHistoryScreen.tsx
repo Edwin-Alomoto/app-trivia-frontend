@@ -21,7 +21,7 @@ import { Button } from '@shared/presentation/components/ui/Button';
 import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
 import { fetchTransactions, fetchPointBalance } from '../../store/slices/pointsSlice';
-import { featureFlags } from '../../config/featureFlags';
+import { featureFlags } from '../../../app/config/featureFlags';
 import { usePointsViewModel } from '../../features/points/domain/hooks/usePointsViewModel';
 import { PointTransaction } from '../../types';
 import { useDemoStatus } from '../../shared/domain/hooks/useDemoStatus';

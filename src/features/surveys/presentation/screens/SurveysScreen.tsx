@@ -21,7 +21,7 @@ import { Card } from '@shared/presentation/components/ui/Card';
 import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
 import { Survey, fetchSurveys, submitSurvey } from '../../store/slices/surveysSlice';
-import { featureFlags } from '../../config/featureFlags';
+import { featureFlags } from '../../../app/config/featureFlags';
 import { useSurveysViewModel } from '../../features/surveys/domain/hooks/useSurveysViewModel';
 
 const { width } = Dimensions.get('window');

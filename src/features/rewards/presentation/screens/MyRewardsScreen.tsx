@@ -20,7 +20,7 @@ import { Card } from '@shared/presentation/components/ui/Card';
 import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
 import { fetchUserRewards, markRewardAsUsed } from '../../store/slices/rewardsSlice';
-import { featureFlags } from '../../config/featureFlags';
+import { featureFlags } from '../../../app/config/featureFlags';
 import { useRewardsViewModel } from '../../features/rewards/domain/hooks/useRewardsViewModel';
 import { UserReward } from '../../types';
 
