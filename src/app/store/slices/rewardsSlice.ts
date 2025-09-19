@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 
-import { featureFlags } from '../config/featureFlags';
-import { getServices } from '../../services/container';
-import { RewardsState, Reward, UserReward } from '../../shared/domain/types';
+import { featureFlags } from '@config/featureFlags';
+import { getServices } from '@services/container';
+import { RewardsState, Reward, UserReward } from '@shared/domain/types';
 import { updateBalanceFromReward } from './pointsSlice';
 
 const initialState: RewardsState = {
@@ -421,7 +421,7 @@ export const {
 export default rewardsSlice.reducer;
 
 // Selectores memoizados
-export const selectRewardsState = (state: any) => state.rewards as import('../../shared/domain/types').RewardsState;
+export const selectRewardsState = (state: any) => state.rewards as import('@shared/domain/types').RewardsState;
 export const selectAvailableRewards = createSelector(selectRewardsState, (r) => r.available);
 export const selectUserRewards = createSelector(selectRewardsState, (r) => r.userRewards);
 export const selectRewardsLoading = createSelector(selectRewardsState, (r) => r.isLoading);

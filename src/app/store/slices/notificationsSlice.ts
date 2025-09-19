@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 
-import { featureFlags } from '../config/featureFlags';
-import { getServices } from '../../services/container';
-import { NotificationsState, Notification } from '../../shared/domain/types';
+import { featureFlags } from '@config/featureFlags';
+import { getServices } from '@services/container';
+import { NotificationsState, Notification } from '@shared/domain/types';
 
 const initialState: NotificationsState = {
   items: [],
@@ -184,7 +184,7 @@ export const { clearError, addNotification } = notificationsSlice.actions;
 export default notificationsSlice.reducer;
 
 // Selectores memoizados
-export const selectNotificationsState = (state: any) => state.notifications as import('../../shared/domain/types').NotificationsState;
+export const selectNotificationsState = (state: any) => state.notifications as import('@shared/domain/types').NotificationsState;
 export const selectNotifications = createSelector(selectNotificationsState, (n) => n.items);
 export const selectUnreadCount = createSelector(selectNotificationsState, (n) => n.unreadCount);
 export const selectNotificationsLoading = createSelector(selectNotificationsState, (n) => n.isLoading);

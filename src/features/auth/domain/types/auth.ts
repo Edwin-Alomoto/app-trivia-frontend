@@ -1,6 +1,6 @@
 // Tipos específicos de autenticación
 
-import { User } from '../../../../shared/domain/types';
+import { User } from '@shared/domain/types';
 
 export interface AuthState {
   user: User | null;

@@ -22,13 +22,13 @@ import { colors } from '@theme/colors';
 
 import { Card } from '@shared/presentation/components/ui/Card';
 import { Button } from '@shared/presentation/components/ui/Button';
-import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
-import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
-import { startTriviaSession, answerQuestion, resetSession, advanceQuestion, useHint } from '../../app/store/slices/triviaSlice';
-import { earnPoints } from '../../app/store/slices/pointsSlice';
-import { RootStackParamList } from '../../shared/domain/types';
-import { featureFlags } from '../../app/config/featureFlags';
-import { useTriviaGameViewModel } from '../../features/game/domain/hooks/useTriviaGameViewModel';
+import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
+import { startTriviaSession, answerQuestion, resetSession, advanceQuestion, useHint } from '@store/slices/triviaSlice';
+import { earnPoints } from '@store/slices/pointsSlice';
+import { RootStackParamList } from '@shared/domain/types';
+import { featureFlags } from '@config/featureFlags';
+import { useTriviaGameViewModel } from '../../domain/hooks/useTriviaGameViewModel';
 import { PointsParticles } from '@shared/presentation/animations/PointsParticles';
 
 type TriviaGameRouteProp = RouteProp<RootStackParamList, 'TriviaGame'>;

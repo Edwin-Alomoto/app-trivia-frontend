@@ -1,5 +1,5 @@
 import { ITriviaService } from './types';
-import { Category, TriviaSession } from '../../shared/domain/types';
+import { Category, TriviaSession } from '@shared/domain/types';
 
 export class HttpTriviaService implements ITriviaService {
   async getCategories(): Promise<Category[]> {

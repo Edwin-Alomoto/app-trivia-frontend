@@ -21,12 +21,12 @@ import { getVariantStyle } from '@theme/typography';
 import { Card } from '@shared/presentation/components/ui/Card';
 import { Button } from '@shared/presentation/components/ui/Button';
 import { WinnerPaymentModal } from '@shared/presentation/components/WinnerPaymentModal';
-import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
-import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
-import { fetchNotifications, markAsRead, markAllAsRead, createWinnerNotification, addNotification } from '../../app/store/slices/notificationsSlice';
-import { Notification } from '../../shared/domain/types';
-import { featureFlags } from '../../app/config/featureFlags';
-import { useNotificationsViewModel } from '../../features/notifications/domain/hooks/useNotificationsViewModel';
+import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
+import { fetchNotifications, markAsRead, markAllAsRead, createWinnerNotification, addNotification } from '@store/slices/notificationsSlice';
+import { Notification } from '@shared/domain/types';
+import { featureFlags } from '@config/featureFlags';
+import { useNotificationsViewModel } from '../../domain/hooks/useNotificationsViewModel';
 
 const { width, height } = Dimensions.get('window');
 

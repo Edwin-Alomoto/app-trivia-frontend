@@ -17,10 +17,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { Card } from '@shared/presentation/components/ui/Card';
 import { Button } from '@shared/presentation/components/ui/Button';
-import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
-import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
-import { featureFlags } from '../../../app/config/featureFlags';
-import { useRafflesViewModel } from '../../features/raffles/domain/hooks/useRafflesViewModel';
+import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
+import { featureFlags } from '@config/featureFlags';
+import { useRafflesViewModel } from '../../domain/hooks/useRafflesViewModel';
 
 const { width, height } = Dimensions.get('window');
 

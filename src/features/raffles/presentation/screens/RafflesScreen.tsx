@@ -22,13 +22,13 @@ import { getVariantStyle } from '@theme/typography';
 
 import { Card } from '@shared/presentation/components/ui/Card';
 import { Button } from '@shared/presentation/components/ui/Button';
-import { DemoRestrictionBanner } from '../../shared/presentation/components/ui/DemoRestrictionBanner';
-import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
-import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
-import { fetchRaffles, fetchUserParticipations, participateInRaffle, getRaffleWinners, checkRaffleResults } from '../../store/slices/rafflesSlice';
-import { Raffle, UserRaffleParticipation } from '../../types';
-import { featureFlags } from '../../../app/config/featureFlags';
-import { useRafflesViewModel } from '../../features/raffles/domain/hooks/useRafflesViewModel';
+import { DemoRestrictionBanner } from '@shared/presentation/components/ui/DemoRestrictionBanner';
+import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
+import { fetchRaffles, fetchUserParticipations, participateInRaffle, getRaffleWinners, checkRaffleResults } from '@store/slices/rafflesSlice';
+import { Raffle, UserRaffleParticipation } from '@shared/domain/types';
+import { featureFlags } from '@config/featureFlags';
+import { useRafflesViewModel } from '../../domain/hooks/useRafflesViewModel';
 
 const { width, height } = Dimensions.get('window');
 

@@ -14,10 +14,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { featureFlags } from '../../../app/config/featureFlags';
-import { useProfileViewModel } from '../../features/profile/domain/hooks/useProfileViewModel';
 import { Card } from '@shared/presentation/components/ui/Card';
 import { Button } from '@shared/presentation/components/ui/Button';
+
+import { featureFlags } from '@config/featureFlags';
+import { useProfileViewModel } from '../../domain/hooks/useProfileViewModel';
 
 interface HelpSection {
   id: string;

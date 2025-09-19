@@ -1,18 +1,18 @@
 import { useCallback, useMemo } from 'react';
 
-import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
-import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
-import { useDemoStatus } from '../../shared/domain/hooks/useDemoStatus';
+import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
+import { useDemoStatus } from '@shared/domain/hooks/useDemoStatus';
 import {
   fetchPointBalance,
   fetchTransactions,
-} from '../../app/store/slices/pointsSlice';
-import { fetchNotifications, selectUnreadCount as selectUnreadCountMemo } from '../../app/store/slices/notificationsSlice';
-import { fetchCategories, selectCategories as selectCategoriesMemo } from '../../app/store/slices/triviaSlice';
-import { fetchRewards, selectAvailableRewards } from '../../app/store/slices/rewardsSlice';
-import { fetchRaffles, selectActiveRaffles } from '../../app/store/slices/rafflesSlice';
-import { fetchSurveys } from '../../app/store/slices/surveysSlice';
-import { fetchPackages } from '../../app/store/slices/purchasesSlice';
+} from '@store/slices/pointsSlice';
+import { fetchNotifications, selectUnreadCount as selectUnreadCountMemo } from '@store/slices/notificationsSlice';
+import { fetchCategories, selectCategories as selectCategoriesMemo } from '@store/slices/triviaSlice';
+import { fetchRewards, selectAvailableRewards } from '@store/slices/rewardsSlice';
+import { fetchRaffles, selectActiveRaffles } from '@store/slices/rafflesSlice';
+import { fetchSurveys } from '@store/slices/surveysSlice';
+import { fetchPackages } from '@store/slices/purchasesSlice';
 
 export const useHomeViewModel = () => {
   const dispatch = useAppDispatch();

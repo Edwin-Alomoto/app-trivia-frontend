@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-import { useDemoStatus } from '../../shared/domain/hooks/useDemoStatus';
+import { useDemoStatus } from '@shared/domain/hooks/useDemoStatus';
 
 interface DemoExpirationBannerProps {
   onSubscribe?: () => void;

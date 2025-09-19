@@ -21,10 +21,10 @@ import * as Haptics from 'expo-haptics';
 
 import { Card } from '@shared/presentation/components/ui/Card';
 import { Button } from '@shared/presentation/components/ui/Button';
-import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
-import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
-import { simulateWinner } from '../../store/slices/rafflesSlice';
-import { createWinnerNotification } from '../../store/slices/notificationsSlice';
+import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
+import { simulateWinner } from '@store/slices/rafflesSlice';
+import { createWinnerNotification } from '@store/slices/notificationsSlice';
 
 const { width, height } = Dimensions.get('window');
 

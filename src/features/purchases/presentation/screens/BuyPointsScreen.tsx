@@ -19,12 +19,12 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { Card } from '@shared/presentation/components/ui/Card';
 import { Button } from '@shared/presentation/components/ui/Button';
-import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
-import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
-import { fetchPackages, purchasePoints } from '../../store/slices/purchasesSlice';
-import { PointPackage } from '../../types';
-import { featureFlags } from '../../../app/config/featureFlags';
-import { usePurchasesViewModel } from '../../features/purchases/domain/hooks/usePurchasesViewModel';
+import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
+import { fetchPackages, purchasePoints } from '@store/slices/purchasesSlice';
+import { PointPackage } from '@shared/domain/types';
+import { featureFlags } from '@config/featureFlags';
+import { usePurchasesViewModel } from '../../domain/hooks/usePurchasesViewModel';
 
 const { width, height } = Dimensions.get('window');
 

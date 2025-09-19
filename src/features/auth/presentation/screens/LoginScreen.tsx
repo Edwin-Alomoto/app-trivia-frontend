@@ -5,34 +5,28 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  TouchableOpacity,
   Animated,
   StatusBar,
   Dimensions,
   TextInput,
-  Text,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import * as Haptics from 'expo-haptics';
 import { colors } from '@theme/colors';
-import { getVariantStyle } from '@theme/typography';
 import { RootStackParamList } from '@shared/domain/types';
 
+import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
+import { featureFlags } from '@config/featureFlags';
+
 import { loginUser } from '../../domain/store/authSlice';
-import { useAppDispatch } from '../../../../shared/domain/hooks/useAppDispatch';
-import { useAppSelector } from '../../../../shared/domain/hooks/useAppSelector';
-import { featureFlags } from '../../../../app/config/featureFlags';
 import { useLoginViewModel } from '../../domain/hooks/useLoginViewModel';
 import { loginStyles } from '../styles/loginStyles';
 import { 
-  AuthHeader, 
-  AuthInput, 
-  PasswordInput, 
-  AuthButton, 
-  RememberMeCheckbox, 
-  AuthFooter 
+  LoginForm,
+  LoginHeader
 } from '../components';
 
 
@@ -214,7 +208,7 @@ export const LoginScreen: React.FC = () => {
           bounces={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Header con componente reutilizable */}
+          {/* Header */}
           <Animated.View 
             style={[
               {
@@ -223,14 +217,10 @@ export const LoginScreen: React.FC = () => {
               },
             ]}
           >
-            <AuthHeader
-              title="¡Bienvenido a WinUp!"
-              subtitle="Acumula puntos y gana premios."
-              showLogo={true}
-            />
+            <LoginHeader />
           </Animated.View>
 
-          {/* Formulario muy sutil */}
+          {/* Formulario */}
           <Animated.View
             style={[
               loginStyles.formContainer,
@@ -244,74 +234,26 @@ export const LoginScreen: React.FC = () => {
             ]}
           >
             <View style={loginStyles.formCard}>
-              {/* Campo Email con componente reutilizable */}
-              <AuthInput
-                placeholder="Correo electrónico"
-                value={formData.email}
-                onChangeText={(value) => setFormData(prev => ({ ...prev, email: value }))}
-                error={errors.email}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                autoComplete="email"
-                textContentType="emailAddress"
-                blurOnSubmit={false}
-                returnKeyType="next"
-                onSubmitEditing={() => passwordInputRef.current?.focus()}
-                onFocus={() => setIsEmailFocused(true)}
-                onBlur={() => setIsEmailFocused(false)}
-                inputRef={emailInputRef as React.RefObject<TextInput>}
-                isFocused={isEmailFocused}
+              <LoginForm
+                formData={formData}
+                errors={errors}
+                rememberMe={rememberMe}
+                onFormDataChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
+                onRememberMeToggle={() => setRememberMe(!rememberMe)}
+                onLogin={handleLogin}
+                onForgotPassword={handleForgotPassword}
+                onRegister={handleRegister}
+                isEmailFocused={isEmailFocused}
+                isPasswordFocused={isPasswordFocused}
+                onEmailFocus={() => setIsEmailFocused(true)}
+                onEmailBlur={() => setIsEmailFocused(false)}
+                onPasswordFocus={() => setIsPasswordFocused(true)}
+                onPasswordBlur={() => setIsPasswordFocused(false)}
+                isLoading={isLoading}
+                emailInputRef={emailInputRef as React.RefObject<TextInput>}
+                passwordInputRef={passwordInputRef as React.RefObject<TextInput>}
               />
-
-              {/* Campo Contraseña con componente reutilizable */}
-              <PasswordInput
-                placeholder="Contraseña"
-                value={formData.password}
-                onChangeText={(value) => setFormData(prev => ({ ...prev, password: value }))}
-                error={errors.password}
-                returnKeyType="go"
-                onSubmitEditing={handleLogin}
-                onFocus={() => setIsPasswordFocused(true)}
-                onBlur={() => setIsPasswordFocused(false)}
-                inputRef={passwordInputRef as React.RefObject<TextInput>}
-                isFocused={isPasswordFocused}
-                autoComplete="password"
-                textContentType="password"
-                blurOnSubmit={true}
-              />
-
-              {/* Opción Recordarme con componente reutilizable */}
-              <RememberMeCheckbox
-                checked={rememberMe}
-                onToggle={() => setRememberMe(!rememberMe)}
-                text="Mantener sesión iniciada"
-              />
-
-              {/* Botón de login con componente reutilizable */}
-              <AuthButton
-                title={isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
-                onPress={handleLogin}
-                disabled={isLoading}
-                loading={isLoading}
-                variant="primary"
-              />
-
-              {/* Enlace recuperar contraseña */}
-              <TouchableOpacity
-                style={loginStyles.forgotPasswordContainer}
-                onPress={handleForgotPassword}
-              >
-                <Text style={[getVariantStyle('body'), loginStyles.forgotPasswordText]}>¿Olvidaste tu contraseña?</Text>
-              </TouchableOpacity>
-
-              {/* Footer con componente reutilizable */}
-              <AuthFooter
-                text="¿No tienes cuenta? "
-                linkText="Regístrate"
-                onLinkPress={handleRegister}
-              />
-              </View>
+            </View>
           </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>

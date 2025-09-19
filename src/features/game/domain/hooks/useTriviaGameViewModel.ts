@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../shared/domain/hooks';
-import { startTriviaSession, answerQuestion, resetSession, selectCurrentSession, selectTriviaLoading, advanceQuestion } from '../../app/store/slices/triviaSlice';
-import { earnPoints } from '../../app/store/slices/pointsSlice';
+import { useAppDispatch, useAppSelector } from '@shared/domain/hooks';
+import { startTriviaSession, answerQuestion, resetSession, selectCurrentSession, selectTriviaLoading, advanceQuestion } from '@store/slices/triviaSlice';
+import { earnPoints } from '@store/slices/pointsSlice';
 
 export function useTriviaGameViewModel(categoryId: string) {
   const dispatch = useAppDispatch();

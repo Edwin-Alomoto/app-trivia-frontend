@@ -2,8 +2,8 @@ import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@r
 import * as SecureStore from 'expo-secure-store';
 
 import { AuthState, LoginCredentials } from '../types';
-import { User } from '../../../../shared/domain/types';
-import { RootState } from '../../../../app/store';
+import { User } from '@shared/domain/types';
+import { RootState } from '@app/store';
 
 const initialState: AuthState = {
   user: null, // Usuario no logueado inicialmente

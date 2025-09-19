@@ -6,7 +6,7 @@ import { getVariantStyle } from '@theme/typography';
 import { VerificationHeader } from './VerificationHeader';
 import { VerificationSteps } from './VerificationSteps';
 import { ResendButton } from './ResendButton';
-import { AnimatedButton } from './AnimatedButton';
+import { AuthButton } from '../AuthButton';
 
 interface VerificationModalProps {
   visible: boolean;
@@ -42,7 +42,7 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
             <VerificationSteps />
             
             <View style={styles.actions}>
-              <AnimatedButton
+              <AuthButton
                 title="Ya verifiqué mi cuenta"
                 onPress={onVerify}
                 variant="primary"

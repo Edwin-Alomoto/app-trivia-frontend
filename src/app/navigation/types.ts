@@ -3,7 +3,7 @@ import type { StackNavigationProp } from '@react-navigation/stack';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { CompositeNavigationProp } from '@react-navigation/native';
 
-import type { RootStackParamList, MainTabParamList } from '../../shared/domain/types';
+import type { RootStackParamList, MainTabParamList } from '@shared/domain/types';
 
 export type { RootStackParamList, MainTabParamList };
 

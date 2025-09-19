@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 
-import { featureFlags } from '../config/featureFlags';
-import { getServices } from '../../services/container';
+import { featureFlags } from '@config/featureFlags';
+import { getServices } from '@services/container';
 
 export interface Testimonial {
   id: string;

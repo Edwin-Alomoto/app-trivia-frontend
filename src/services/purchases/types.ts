@@ -1,4 +1,4 @@
-import { PointPackage } from '../../shared/domain/types';
+import { PointPackage } from '@shared/domain/types';
 
 export interface IPurchasesService {
   getPackages(): Promise<PointPackage[]>;

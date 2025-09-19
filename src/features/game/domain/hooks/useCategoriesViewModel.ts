@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../shared/domain/hooks';
-import { fetchCategories, selectCategories, selectTriviaError, selectTriviaLoading } from '../../app/store/slices/triviaSlice';
+import { useAppDispatch, useAppSelector } from '@shared/domain/hooks';
+import { fetchCategories, selectCategories, selectTriviaError, selectTriviaLoading } from '@store/slices/triviaSlice';
 
 export function useCategoriesViewModel() {
   const dispatch = useAppDispatch();

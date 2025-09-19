@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 
-import { useAppDispatch } from '../shared/domain/hooks/useAppDispatch';
-import { useAppSelector } from '../shared/domain/hooks/useAppSelector';
-import { checkDemoExpiration } from '../features/auth/domain/store/authSlice';
+import { useAppDispatch } from '../../domain/hooks/useAppDispatch';
+import { useAppSelector } from '../../domain/hooks/useAppSelector';
+import { checkDemoExpiration } from '@features/auth/domain/store/authSlice';
 
 interface AppInitializerProps {
   children: React.ReactNode;

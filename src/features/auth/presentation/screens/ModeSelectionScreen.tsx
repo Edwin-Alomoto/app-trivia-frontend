@@ -19,10 +19,14 @@ import { colors } from '@theme/colors';
 import { getVariantStyle } from '@theme/typography';
 import { RootStackParamList } from '@shared/domain/types';
 
+import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
+
 import { modeSelectionStyles } from '../styles/modeSelectionStyles';
-import { useAppDispatch } from '../../../../shared/domain/hooks/useAppDispatch';
-import { useAppSelector } from '../../../../shared/domain/hooks/useAppSelector';
 import { activateDemoMode, activateSubscription } from '../../domain/store/authSlice';
+import { 
+  ModeSelectionForm
+} from '../components';
 
 type ModeSelectionScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ModeSelection'>;
 
@@ -84,9 +88,10 @@ export const ModeSelectionScreen: React.FC = () => {
     ]).start();
   };
 
-  const handleModeSelection = (mode: 'demo' | 'subscription') => {
-    setSelectedMode(mode);
-    animateCard(mode);
+  const handleModeSelection = (mode: string) => {
+    const validMode = mode as 'demo' | 'subscription';
+    setSelectedMode(validMode);
+    animateCard(validMode);
     Haptics.selectionAsync();
     
     if (mode === 'demo') {
@@ -195,7 +200,7 @@ export const ModeSelectionScreen: React.FC = () => {
           </View>
         </Animated.View>
 
-        {/* Tarjetas de selección */}
+        {/* Formulario de selección */}
         <Animated.View
           style={[
             modeSelectionStyles.cardsContainer,
@@ -205,105 +210,16 @@ export const ModeSelectionScreen: React.FC = () => {
             },
           ]}
         >
-          {/* Tarjeta Modo Demo */}
-          <Animated.View
-            style={[
-              modeSelectionStyles.cardWrapper,
-              {
-                transform: [{ scale: cardAnimDemo }],
-              },
-            ]}
-          >
-            <TouchableOpacity
-              style={[
-                modeSelectionStyles.modeCard,
-                selectedMode === 'demo' && modeSelectionStyles.modeCardSelected,
-              ]}
-              onPress={() => handleModeSelection('demo')}
-              activeOpacity={0.9}
-            >
-              <View style={modeSelectionStyles.modeCardContent}>
-                <View style={modeSelectionStyles.modeIconContainer}>
-                  <Ionicons name="play-circle" size={40} color="#6366f1" />
-                </View>
-                
-                <Text style={[getVariantStyle('h2'), { color: colors.textPrimary }, modeSelectionStyles.centerText4]}>Modo Demo</Text>
-                <Text style={[getVariantStyle('subtitle'), { color: colors.textSecondary }, modeSelectionStyles.centerText20]}>Prueba gratis por 7 días</Text>
-                
-                <View style={modeSelectionStyles.featuresContainer}>
-                  <View style={modeSelectionStyles.featureItem}>
-                    <Ionicons name="checkmark-circle" size={18} color="#10b981" />
-                    <Text style={modeSelectionStyles.featureText}>Trivia ilimitada</Text>
-                  </View>
-                  <View style={modeSelectionStyles.featureItem}>
-                    <Ionicons name="checkmark-circle" size={18} color="#10b981" />
-                    <Text style={modeSelectionStyles.featureText}>Puntos de prueba</Text>
-                  </View>
-                  <View style={modeSelectionStyles.featureItem}>
-                    <Ionicons name="close-circle" size={18} color="#ef4444" />
-                    <Text style={[modeSelectionStyles.featureText, modeSelectionStyles.featureDisabled]}>Premios y sorteos</Text>
-                  </View>
-                </View>
-                
-                <View style={modeSelectionStyles.demoBadge}>
-                  <Text style={[getVariantStyle('caption'), modeSelectionStyles.demoBadgeText]}>GRATIS</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          </Animated.View>
-
-          {/* Tarjeta Suscripción */}
-          <Animated.View
-            style={[
-              modeSelectionStyles.cardWrapper,
-              {
-                transform: [{ scale: cardAnimSub }],
-              },
-            ]}
-          >
-            <TouchableOpacity
-              style={[
-                modeSelectionStyles.modeCard,
-                modeSelectionStyles.premiumCard,
-                selectedMode === 'subscription' && modeSelectionStyles.modeCardSelected,
-              ]}
-              onPress={() => handleModeSelection('subscription')}
-              activeOpacity={0.9}
-            >
-              <View style={modeSelectionStyles.modeCardContent}>
-                <View style={modeSelectionStyles.modeIconContainer}>
-                  <Ionicons name="diamond" size={40} color="#10b981" />
-                </View>
-                
-                <Text style={[getVariantStyle('h2'), { color: colors.textPrimary }, modeSelectionStyles.centerText4]}>Suscripción Premium</Text>
-                <Text style={[getVariantStyle('subtitle'), { color: colors.textSecondary }, modeSelectionStyles.centerText20]}>Acceso completo mensual</Text>
-                
-                <View style={modeSelectionStyles.featuresContainer}>
-                  <View style={modeSelectionStyles.featureItem}>
-                    <Ionicons name="checkmark-circle" size={18} color="#10b981" />
-                    <Text style={modeSelectionStyles.featureText}>Trivia ilimitada</Text>
-                  </View>
-                  <View style={modeSelectionStyles.featureItem}>
-                    <Ionicons name="checkmark-circle" size={18} color="#10b981" />
-                    <Text style={modeSelectionStyles.featureText}>Puntos canjeables</Text>
-                  </View>
-                  <View style={modeSelectionStyles.featureItem}>
-                    <Ionicons name="checkmark-circle" size={18} color="#10b981" />
-                    <Text style={modeSelectionStyles.featureText}>Premios y sorteos</Text>
-                  </View>
-                  <View style={modeSelectionStyles.featureItem}>
-                    <Ionicons name="checkmark-circle" size={18} color="#10b981" />
-                    <Text style={modeSelectionStyles.featureText}>Encuestas exclusivas</Text>
-                  </View>
-                </View>
-                
-                <View style={modeSelectionStyles.priceBadge}>
-                  <Text style={[getVariantStyle('body'), modeSelectionStyles.priceBadgeText]}>$9.99/mes</Text>
-                  <Text style={[getVariantStyle('caption'), modeSelectionStyles.priceBadgeSubtext]}>Renovable mensualmente</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          </Animated.View>
+          <ModeSelectionForm
+            selectedMode={selectedMode}
+            onModeSelect={handleModeSelection}
+            onDemoConfirm={handleConfirmDemo}
+            onSubscriptionConfirm={handleConfirmSubscription}
+            showDemoModal={showDemoModal}
+            showSubscriptionModal={showSubscriptionModal}
+            onCloseDemoModal={() => setShowDemoModal(false)}
+            onCloseSubscriptionModal={() => setShowSubscriptionModal(false)}
+          />
         </Animated.View>
 
         {/* Información adicional */}

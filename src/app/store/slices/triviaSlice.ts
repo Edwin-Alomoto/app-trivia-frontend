@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 
-import { featureFlags } from '../config/featureFlags';
-import { getServices } from '../../services/container';
-import { TriviaState, Category, Question, TriviaSession } from '../../shared/domain/types';
+import { featureFlags } from '@config/featureFlags';
+import { getServices } from '@services/container';
+import { TriviaState, Category, Question, TriviaSession } from '@shared/domain/types';
 
 const initialState: TriviaState = {
   categories: [],
@@ -847,7 +847,7 @@ export const { clearError, answerQuestion, advanceQuestion, resetSession, useHin
 export default triviaSlice.reducer;
 
 // Selectores memoizados
-export const selectTriviaState = (state: any) => state.trivia as import('../../shared/domain/types').TriviaState;
+export const selectTriviaState = (state: any) => state.trivia as import('@shared/domain/types').TriviaState;
 export const selectCategories = createSelector(selectTriviaState, (t) => t.categories);
 export const selectCurrentSession = createSelector(selectTriviaState, (t) => t.currentSession);
 export const selectTriviaLoading = createSelector(selectTriviaState, (t) => t.isLoading);

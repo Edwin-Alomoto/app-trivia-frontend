@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 
-import { useAppDispatch } from '../../../../shared/domain/hooks/useAppDispatch';
-import { useAppSelector } from '../../../../shared/domain/hooks/useAppSelector';
-import { User } from '../../../../shared/domain/types';
+import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
+import { User } from '@shared/domain/types';
 import { loginUser, selectAuthLoading, selectAuthError, selectAuthUser } from '../store/authSlice';
 import { loginSchema, LoginForm } from '../validators/auth';
 

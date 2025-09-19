@@ -16,11 +16,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
 import { Card } from '@shared/presentation/components/ui/Card';
-import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
-import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
-import { CredibilityContent, Testimonial, Winner, fetchTestimonials, markAsViewed } from '../../store/slices/testimonialsSlice';
-import { featureFlags } from '../../../app/config/featureFlags';
-import { useTestimonialsViewModel } from '../../features/testimonials/domain/hooks/useTestimonialsViewModel';
+import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
+import { CredibilityContent, Testimonial, Winner, fetchTestimonials, markAsViewed } from '@store/slices/testimonialsSlice';
+import { featureFlags } from '@config/featureFlags';
+import { useTestimonialsViewModel } from '../../domain/hooks/useTestimonialsViewModel';
 
 const { width } = Dimensions.get('window');
 

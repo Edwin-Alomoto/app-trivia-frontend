@@ -1,5 +1,5 @@
 import { IPurchasesService } from './types';
-import { PointPackage } from '../../shared/domain/types';
+import { PointPackage } from '@shared/domain/types';
 
 export class HttpPurchasesService implements IPurchasesService {
   async getPackages(): Promise<PointPackage[]> {

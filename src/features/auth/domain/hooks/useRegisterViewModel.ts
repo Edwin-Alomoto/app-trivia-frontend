@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../../../shared/domain/hooks';
+import { useAppDispatch, useAppSelector } from '@shared/domain/hooks';
 import { registerSchema, RegisterForm } from '../validators/auth';
 import { registerUser, verifyEmail, selectAuthLoading, selectAuthError } from '../store/authSlice';
 

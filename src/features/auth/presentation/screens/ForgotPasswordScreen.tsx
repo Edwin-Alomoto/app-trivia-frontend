@@ -1,28 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   Alert,
   KeyboardAvoidingView,
   Platform,
-  TouchableOpacity,
   Animated,
-  TextInput,
   StatusBar,
-  Image,
+  TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { colors } from '@theme/colors';
-import { getVariantStyle } from '@theme/typography';
 import { RootStackParamList } from '@shared/domain/types';
-import { forgotPasswordStyles } from '../styles/forgotPasswordStyles';
 
-const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+import { forgotPasswordStyles } from '../styles/forgotPasswordStyles';
+import { 
+  ForgotPasswordForm,
+  ForgotPasswordHeader,
+  SuccessMessage
+} from '../components';
+
 
 type ForgotPasswordScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ForgotPassword'>;
 type ForgotPasswordScreenRouteProp = RouteProp<RootStackParamList, 'ForgotPassword'>;
@@ -35,13 +35,13 @@ export const ForgotPasswordScreen: React.FC = () => {
   const [emailError, setEmailError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
 
   // Animaciones
   const fadeAnim = useState(new Animated.Value(0))[0];
   const slideAnim = useState(new Animated.Value(20))[0];
   const scaleAnim = useState(new Animated.Value(0.98))[0];
-  const emailScaleAnim = useRef(new Animated.Value(1)).current;
-  const sendButtonScaleAnim = useRef(new Animated.Value(1)).current;
+  const emailInputRef = useRef<TextInput>(null);
 
   useEffect(() => {
     // Animaciones de entrada
@@ -65,42 +65,6 @@ export const ForgotPasswordScreen: React.FC = () => {
     ]).start();
   }, [fadeAnim, slideAnim, scaleAnim]);
 
-  const animateFocusIn = (scaleRef: Animated.Value) => {
-    Animated.spring(scaleRef, {
-      toValue: 1.01,
-      tension: 120,
-      friction: 10,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const animateFocusOut = (scaleRef: Animated.Value) => {
-    Animated.spring(scaleRef, {
-      toValue: 1,
-      tension: 120,
-      friction: 10,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleButtonPressIn = () => {
-    if (isLoading) return;
-    Animated.spring(sendButtonScaleAnim, {
-      toValue: 0.98,
-      tension: 120,
-      friction: 10,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleButtonPressOut = () => {
-    Animated.spring(sendButtonScaleAnim, {
-      toValue: 1,
-      tension: 120,
-      friction: 10,
-      useNativeDriver: true,
-    }).start();
-  };
 
   const validateEmail = (emailToValidate: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -167,15 +131,7 @@ export const ForgotPasswordScreen: React.FC = () => {
               },
             ]}
           >
-            <View style={forgotPasswordStyles.logoContainer}>
-              <Image 
-                source={require('../../../../assets/adaptive-icon.png')}
-                style={forgotPasswordStyles.logoImage}
-                resizeMode="contain"
-              />
-              <Text style={[getVariantStyle('h1'), { color: colors.textPrimary }]}>Recuperar contraseña</Text>
-              <Text style={[getVariantStyle('subtitle'), { color: colors.textSecondary }]}>Te ayudamos a recuperar tu cuenta</Text>
-            </View>
+            <ForgotPasswordHeader />
           </Animated.View>
 
           {/* Formulario con animación (idéntico al Login) */}
@@ -190,79 +146,23 @@ export const ForgotPasswordScreen: React.FC = () => {
           >
             <View style={forgotPasswordStyles.formCard}>
               {!isEmailSent ? (
-                <>
-                  <View style={forgotPasswordStyles.inputContainer}>
-                    <Animated.View style={[forgotPasswordStyles.animatedInputWrapper, { transform: [{ scale: emailScaleAnim }] }]}>
-                      <TextInput
-                        style={[getVariantStyle('body'), forgotPasswordStyles.basicInput]}
-                        placeholder="Correo electrónico"
-                        placeholderTextColor={colors.muted}
-                        value={email}
-                        onChangeText={(value) => {
-                          setEmail(value);
-                          if (emailError) setEmailError('');
-                        }}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        autoComplete="email"
-                        textContentType="emailAddress"
-                        onFocus={() => animateFocusIn(emailScaleAnim)}
-                        onBlur={() => animateFocusOut(emailScaleAnim)}
-                        returnKeyType="send"
-                        onSubmitEditing={handleSendResetEmail}
-                      />
-                    </Animated.View>
-                    {!!emailError && (
-                      <Text style={[getVariantStyle('caption'), forgotPasswordStyles.errorText]}>{emailError}</Text>
-                    )}
-                  </View>
-
-                  <AnimatedTouchableOpacity
-                    style={[forgotPasswordStyles.loginButton, isLoading && forgotPasswordStyles.loginButtonDisabled, { transform: [{ scale: sendButtonScaleAnim }] }]}
-                    onPress={handleSendResetEmail}
-                    onPressIn={handleButtonPressIn}
-                    onPressOut={handleButtonPressOut}
-                    disabled={isLoading}
-                  >
-                    <View style={forgotPasswordStyles.loginButtonContent}>
-                      <Text style={[getVariantStyle('body'), forgotPasswordStyles.loginButtonText, forgotPasswordStyles.boldText]}>
-                        {isLoading ? 'Enviando correo...' : 'Enviar correo de recuperación'}
-                      </Text>
-                    </View>
-                  </AnimatedTouchableOpacity>
-
-                  <TouchableOpacity style={forgotPasswordStyles.forgotPasswordContainer} onPress={handleBackToLogin}>
-                    <Text style={[getVariantStyle('body'), forgotPasswordStyles.forgotPasswordText]}>Volver al inicio de sesión</Text>
-                  </TouchableOpacity>
-                </>
+                <ForgotPasswordForm
+                  email={email}
+                  error={emailError}
+                  onEmailChange={(value) => {
+                    setEmail(value);
+                    if (emailError) setEmailError('');
+                  }}
+                  onSendReset={handleSendResetEmail}
+                  onBackToLogin={handleBackToLogin}
+                  isEmailFocused={isEmailFocused}
+                  onEmailFocus={() => setIsEmailFocused(true)}
+                  onEmailBlur={() => setIsEmailFocused(false)}
+                  isLoading={isLoading}
+                  emailInputRef={emailInputRef}
+                />
               ) : (
-                <>
-                  <View style={forgotPasswordStyles.successContainer}>
-                    <View style={forgotPasswordStyles.successIcon}>
-                      <Ionicons name="checkmark-circle" size={64} color="#10B981" />
-                    </View>
-                    <Text style={[getVariantStyle('h2'), forgotPasswordStyles.successTitle]}>¡Correo enviado!</Text>
-                    <Text style={[getVariantStyle('body'), forgotPasswordStyles.successSubtitle]}>
-                      Hemos enviado un enlace de recuperación a:
-                    </Text>
-                    <Text style={[getVariantStyle('body'), forgotPasswordStyles.successEmail]}>{email}</Text>
-                    <Text style={[getVariantStyle('body'), forgotPasswordStyles.successInstructions]}>
-                      Revisa tu bandeja de entrada y sigue las instrucciones para restablecer tu contraseña.
-                    </Text>
-                  </View>
-
-                  <AnimatedTouchableOpacity
-                    style={[forgotPasswordStyles.loginButton, { transform: [{ scale: sendButtonScaleAnim }] }]}
-                    onPress={handleBackToLogin}
-                    onPressIn={handleButtonPressIn}
-                    onPressOut={handleButtonPressOut}
-                  >
-                    <View style={forgotPasswordStyles.loginButtonContent}>
-                      <Text style={[getVariantStyle('body'), forgotPasswordStyles.loginButtonText, forgotPasswordStyles.boldText]}>Volver al inicio de sesión</Text>
-                    </View>
-                  </AnimatedTouchableOpacity>
-                </>
+                <SuccessMessage email={email} />
               )}
             </View>
           </Animated.View>

@@ -17,10 +17,10 @@ import * as Haptics from 'expo-haptics';
 import { colors } from '@theme/colors';
 import { RootStackParamList } from '@shared/domain/types';
 
-import { useAppDispatch } from '../../../../shared/domain/hooks/useAppDispatch';
-import { useAppSelector } from '../../../../shared/domain/hooks/useAppSelector';
+import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { registerUser, verifyEmail } from '../../domain/store/authSlice';
-import { featureFlags } from '../../../../app/config/featureFlags';
+import { featureFlags } from '@config/featureFlags';
 import { useRegisterViewModel } from '../../domain/hooks/useRegisterViewModel';
 import { registerStyles } from '../styles/registerStyles';
 import {

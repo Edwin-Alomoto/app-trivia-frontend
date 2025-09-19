@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import authReducer from '../../features/auth/domain/store/authSlice';
+import authReducer from '@features/auth/domain/store/authSlice';
 import triviaReducer from './slices/triviaSlice';
 import pointsReducer from './slices/pointsSlice';
 import rewardsReducer from './slices/rewardsSlice';

@@ -17,12 +17,12 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Card } from '@shared/presentation/components/ui/Card';
-import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
-import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
-import { fetchUserRewards, markRewardAsUsed } from '../../store/slices/rewardsSlice';
-import { featureFlags } from '../../../app/config/featureFlags';
-import { useRewardsViewModel } from '../../features/rewards/domain/hooks/useRewardsViewModel';
-import { UserReward } from '../../types';
+import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
+import { fetchUserRewards, markRewardAsUsed } from '@store/slices/rewardsSlice';
+import { featureFlags } from '@config/featureFlags';
+import { useRewardsViewModel } from '../../domain/hooks/useRewardsViewModel';
+import { UserReward } from '@shared/domain/types';
 
 const { width, height } = Dimensions.get('window');
 

@@ -1,5 +1,5 @@
 import { IRafflesService } from './types';
-import { Raffle, UserRaffleParticipation, RaffleWinner } from '../../shared/domain/types';
+import { Raffle, UserRaffleParticipation, RaffleWinner } from '@shared/domain/types';
 
 export class HttpRafflesService implements IRafflesService {
   async getRaffles(): Promise<Raffle[]> {

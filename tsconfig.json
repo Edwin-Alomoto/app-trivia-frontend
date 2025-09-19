@@ -19,7 +19,9 @@
       "@config/*": ["src/app/config/*"],
       "@assets/*": ["src/assets/*"],
       "@shared/*": ["src/shared/*"],
-      "@theme/*": ["src/shared/presentation/theme/*"]
+      "@theme/*": ["src/shared/presentation/theme/*"],
+      "@features/*": ["src/features/*"],
+      "@app/*": ["src/app/*"]
     }
   },
   "exclude": ["node_modules"],

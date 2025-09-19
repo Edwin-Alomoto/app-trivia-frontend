@@ -1,5 +1,5 @@
 import { IRewardsService } from './types';
-import { Reward, UserReward } from '../../shared/domain/types';
+import { Reward, UserReward } from '@shared/domain/types';
 
 export class HttpRewardsService implements IRewardsService {
   async getRewards(): Promise<Reward[]> {

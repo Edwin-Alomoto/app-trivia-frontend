@@ -1,4 +1,4 @@
-import { Raffle, UserRaffleParticipation, RaffleWinner } from '../../shared/domain/types';
+import { Raffle, UserRaffleParticipation, RaffleWinner } from '@shared/domain/types';
 
 export interface IRafflesService {
   getRaffles(): Promise<Raffle[]>;
