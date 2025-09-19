@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 
-import { featureFlags } from '../../config/featureFlags';
+import { featureFlags } from '../config/featureFlags';
 import { getServices } from '../../services/container';
 import { RafflesState, Raffle, UserRaffleParticipation } from '../../shared/domain/types';
 import { updateBalanceFromRaffle } from './pointsSlice';

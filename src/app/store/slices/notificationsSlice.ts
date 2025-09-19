@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 
-import { featureFlags } from '../../config/featureFlags';
+import { featureFlags } from '../config/featureFlags';
 import { getServices } from '../../services/container';
 import { NotificationsState, Notification } from '../../shared/domain/types';
 

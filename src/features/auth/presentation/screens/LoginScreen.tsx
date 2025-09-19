@@ -24,9 +24,9 @@ import { getVariantStyle } from '@theme/typography';
 import { RootStackParamList } from '@shared/domain/types';
 
 import { loginUser } from '../../domain/store/authSlice';
-import { useAppDispatch } from '../../../../hooks/useAppDispatch';
-import { useAppSelector } from '../../../../hooks/useAppSelector';
-import { featureFlags } from '../../../../config/featureFlags';
+import { useAppDispatch } from '../../../../shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '../../../../shared/domain/hooks/useAppSelector';
+import { featureFlags } from '../../../../app/config/featureFlags';
 import { useLoginViewModel } from '../../domain/hooks/useLoginViewModel';
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
@@ -270,7 +270,7 @@ export const LoginScreen: React.FC = () => {
             >
             <View style={styles.logoContainer}>
                 <Image 
-                  source={require('../../../../../assets/adaptive-icon.png')}
+                  source={require('../../../../assets/adaptive-icon.png')}
                   style={styles.logoImage}
                   resizeMode="contain"
                 />

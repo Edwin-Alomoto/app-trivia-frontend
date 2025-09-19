@@ -7,8 +7,8 @@ import { useColorScheme, TouchableOpacity } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 
-import { getVariantStyle } from '../theme/typography';
-import { colors } from '../theme/colors';
+import { getVariantStyle } from '../shared/presentation/theme/typography';
+import { colors } from '../shared/presentation/theme/colors';
 
 
 

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { fetchPackages, purchasePoints, selectPointPackages, selectPurchaseHistory, selectPurchasesError, selectPurchasesLoading } from '../../store/slices/purchasesSlice';
+import { useAppDispatch, useAppSelector } from '../../shared/domain/hooks';
+import { fetchPackages, purchasePoints, selectPointPackages, selectPurchaseHistory, selectPurchasesError, selectPurchasesLoading } from '../../app/store/slices/purchasesSlice';
 
 export function usePurchasesViewModel() {
   const dispatch = useAppDispatch();

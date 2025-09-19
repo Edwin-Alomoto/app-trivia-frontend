@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { fetchPointBalance, selectPointBalance } from '../../store/slices/pointsSlice';
+import { useAppDispatch, useAppSelector } from '../../shared/domain/hooks';
+import { fetchPointBalance, selectPointBalance } from '../../app/store/slices/pointsSlice';
 import { logoutUser } from '../../features/auth/domain/store/authSlice';
 
 export function useProfileViewModel() {

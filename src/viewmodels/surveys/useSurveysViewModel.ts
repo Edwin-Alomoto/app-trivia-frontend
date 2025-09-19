@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { fetchSurveys, selectSurveys, selectSurveysError, selectSurveysLoading } from '../../store/slices/surveysSlice';
+import { useAppDispatch, useAppSelector } from '../../shared/domain/hooks';
+import { fetchSurveys, selectSurveys, selectSurveysError, selectSurveysLoading } from '../../app/store/slices/surveysSlice';
 
 export function useSurveysViewModel() {
   const dispatch = useAppDispatch();

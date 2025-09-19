@@ -1,5 +1,5 @@
 import { ISurveysService } from './types';
-import { Survey, SurveyResponse } from '../../store/slices/surveysSlice';
+import { Survey, SurveyResponse } from '../../app/store/slices/surveysSlice';
 
 export class HttpSurveysService implements ISurveysService {
   async getSurveys(): Promise<Survey[]> {

@@ -18,8 +18,8 @@ import { useNavigation } from '@react-navigation/native';
 import { getVariantStyle } from '@theme/typography';
 
 import { Card } from '@shared/presentation/components/ui/Card';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { useAppSelector } from '../../hooks/useAppSelector';
+import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
 import { Survey, fetchSurveys, submitSurvey } from '../../store/slices/surveysSlice';
 import { featureFlags } from '../../config/featureFlags';
 import { useSurveysViewModel } from '../../viewmodels/surveys/useSurveysViewModel';

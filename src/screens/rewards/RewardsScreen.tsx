@@ -22,9 +22,9 @@ import { getVariantStyle } from '@theme/typography';
 
 import { Card } from '@shared/presentation/components/ui/Card';
 import { Button } from '@shared/presentation/components/ui/Button';
-import { DemoRestrictionBanner } from '../../components/ui/DemoRestrictionBanner';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { useAppSelector } from '../../hooks/useAppSelector';
+import { DemoRestrictionBanner } from '../../shared/presentation/components/ui/DemoRestrictionBanner';
+import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
 import { fetchRewards, fetchUserRewards, redeemReward, markRewardAsUsed } from '../../store/slices/rewardsSlice';
 import { Reward } from '../../types';
 import { featureFlags } from '../../config/featureFlags';

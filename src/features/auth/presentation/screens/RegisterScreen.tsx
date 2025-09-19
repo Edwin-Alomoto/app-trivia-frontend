@@ -24,8 +24,8 @@ import { colors } from '@theme/colors';
 import { getVariantStyle } from '@theme/typography';
 import { RootStackParamList } from '@shared/domain/types';
 
-import { useAppDispatch } from '../../../../hooks/useAppDispatch';
-import { useAppSelector } from '../../../../hooks/useAppSelector';
+import { useAppDispatch } from '../../../../shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '../../../../shared/domain/hooks/useAppSelector';
 import { registerUser, verifyEmail } from '../../domain/store/authSlice';
 import { featureFlags } from '../../../../config/featureFlags';
 import { useRegisterViewModel } from '../../domain/hooks/useRegisterViewModel';

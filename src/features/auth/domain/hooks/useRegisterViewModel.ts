@@ -1,14 +1,15 @@
 import { useCallback, useState } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../../../hooks';
+import { useAppDispatch, useAppSelector } from '../../../../shared/domain/hooks';
 import { registerSchema, RegisterForm } from '../validators/auth';
-import { registerUser, verifyEmail } from '../store/authSlice';
+import { registerUser, verifyEmail, selectAuthLoading, selectAuthError } from '../store/authSlice';
 
 type RegisterErrors = Partial<Record<keyof RegisterForm, string>>;
 
 export function useRegisterViewModel() {
   const dispatch = useAppDispatch();
-  const { isLoading, error } = useAppSelector((s) => s.auth);
+  const isLoading = useAppSelector(selectAuthLoading);
+  const error = useAppSelector(selectAuthError);
 
   const [form, setForm] = useState<RegisterForm>({
     email: '',

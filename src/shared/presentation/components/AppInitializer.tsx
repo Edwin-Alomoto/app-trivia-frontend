@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
-import { useAppDispatch } from '../hooks/useAppDispatch';
-import { useAppSelector } from '../hooks/useAppSelector';
+import { useAppDispatch } from '../shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '../shared/domain/hooks/useAppSelector';
 import { checkDemoExpiration } from '../features/auth/domain/store/authSlice';
 
 interface AppInitializerProps {

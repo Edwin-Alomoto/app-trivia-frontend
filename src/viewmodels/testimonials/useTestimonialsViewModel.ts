@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { fetchTestimonials, selectTestimonials, selectTestimonialsError, selectTestimonialsLoading, selectWinners, selectCredibilityContent } from '../../store/slices/testimonialsSlice';
+import { useAppDispatch, useAppSelector } from '../../shared/domain/hooks';
+import { fetchTestimonials, selectTestimonials, selectTestimonialsError, selectTestimonialsLoading, selectWinners, selectCredibilityContent } from '../../app/store/slices/testimonialsSlice';
 
 export function useTestimonialsViewModel() {
   const dispatch = useAppDispatch();

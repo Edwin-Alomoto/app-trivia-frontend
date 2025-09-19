@@ -19,10 +19,10 @@ import { getVariantStyle } from '@theme/typography';
 
 import { Card } from '@shared/presentation/components/ui/Card';
 import { Button } from '@shared/presentation/components/ui/Button';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { useAppSelector } from '../../hooks/useAppSelector';
-import { fetchCategories } from '../../store/slices/triviaSlice';
-import { featureFlags } from '../../config/featureFlags';
+import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
+import { fetchCategories } from '../../app/store/slices/triviaSlice';
+import { featureFlags } from '../../app/config/featureFlags';
 import { useCategoriesViewModel } from '../../viewmodels/trivia/useCategoriesViewModel';
 import { Category } from '../../types';
 

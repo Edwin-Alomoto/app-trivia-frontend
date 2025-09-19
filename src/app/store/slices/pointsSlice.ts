@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 
-import { featureFlags } from '../../config/featureFlags';
+import { featureFlags } from '../config/featureFlags';
 import { getServices } from '../../services/container';
 import { PointsState, PointTransaction, PointBalance, PointPackage } from '../../shared/domain/types';
 

@@ -19,8 +19,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { Card } from '@shared/presentation/components/ui/Card';
 import { Button } from '@shared/presentation/components/ui/Button';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { useAppSelector } from '../../hooks/useAppSelector';
+import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
 import { fetchPackages, purchasePoints } from '../../store/slices/purchasesSlice';
 import { PointPackage } from '../../types';
 import { featureFlags } from '../../config/featureFlags';

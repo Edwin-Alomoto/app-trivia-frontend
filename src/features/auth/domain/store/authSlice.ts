@@ -3,6 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 
 import { AuthState, LoginCredentials } from '../types';
 import { User } from '../../../../shared/domain/types';
+import { RootState } from '../../../../app/store';
 
 const initialState: AuthState = {
   user: null, // Usuario no logueado inicialmente
@@ -12,7 +13,7 @@ const initialState: AuthState = {
 };
 
 type AuthThunkConfig = {
-  state: { auth: AuthState };
+  state: RootState;
   rejectValue: string;
 };
 
@@ -523,7 +524,6 @@ export const { clearError, updateUserPoints } = authSlice.actions;
 export default authSlice.reducer;
 
 // Selectores memoizados
-import type { RootState } from '../../../../store';
 export const selectAuth = (state: RootState) => state.auth;
 export const selectAuthLoading = createSelector(selectAuth, (auth) => auth.isLoading);
 export const selectAuthError = createSelector(selectAuth, (auth) => auth.error);

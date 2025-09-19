@@ -1,4 +1,4 @@
-import { Survey, SurveyResponse } from '../../store/slices/surveysSlice';
+import { Survey, SurveyResponse } from '../../app/store/slices/surveysSlice';
 
 export interface ISurveysService {
   getSurveys(): Promise<Survey[]>;

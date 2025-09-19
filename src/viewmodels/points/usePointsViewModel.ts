@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { fetchPointBalance, fetchTransactions, selectPointBalance, selectPointTransactions, selectPointsError, selectPointsLoading } from '../../store/slices/pointsSlice';
+import { useAppDispatch, useAppSelector } from '../../shared/domain/hooks';
+import { fetchPointBalance, fetchTransactions, selectPointBalance, selectPointTransactions, selectPointsError, selectPointsLoading } from '../../app/store/slices/pointsSlice';
 
 export function usePointsViewModel() {
   const dispatch = useAppDispatch();

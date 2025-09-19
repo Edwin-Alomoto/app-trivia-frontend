@@ -1,5 +1,5 @@
 import { ITestimonialsService } from './types';
-import { CredibilityContent, Testimonial, Winner } from '../../store/slices/testimonialsSlice';
+import { CredibilityContent, Testimonial, Winner } from '../../app/store/slices/testimonialsSlice';
 
 export class HttpTestimonialsService implements ITestimonialsService {
   async getTestimonials(): Promise<{ testimonials: Testimonial[]; winners: Winner[]; credibilityContent: CredibilityContent[] }> {

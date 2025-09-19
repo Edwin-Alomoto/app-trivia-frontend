@@ -17,8 +17,8 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Card } from '@shared/presentation/components/ui/Card';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { useAppSelector } from '../../hooks/useAppSelector';
+import { useAppDispatch } from '../../shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '../../shared/domain/hooks/useAppSelector';
 import { fetchUserRewards, markRewardAsUsed } from '../../store/slices/rewardsSlice';
 import { featureFlags } from '../../config/featureFlags';
 import { useRewardsViewModel } from '../../viewmodels/rewards/useRewardsViewModel';

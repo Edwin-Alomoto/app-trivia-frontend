@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { fetchNotifications, markAsRead, markAllAsRead, selectNotifications, selectNotificationsError, selectNotificationsLoading, selectUnreadCount } from '../../store/slices/notificationsSlice';
+import { useAppDispatch, useAppSelector } from '../../shared/domain/hooks';
+import { fetchNotifications, markAsRead, markAllAsRead, selectNotifications, selectNotificationsError, selectNotificationsLoading, selectUnreadCount } from '../../app/store/slices/notificationsSlice';
 
 export function useNotificationsViewModel() {
   const dispatch = useAppDispatch();

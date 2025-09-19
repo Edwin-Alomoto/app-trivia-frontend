@@ -1,16 +1,18 @@
 import { useCallback, useState } from 'react';
 
-import { useAppDispatch } from '../../../../hooks/useAppDispatch';
-import { useAppSelector } from '../../../../hooks/useAppSelector';
+import { useAppDispatch } from '../../../../shared/domain/hooks/useAppDispatch';
+import { useAppSelector } from '../../../../shared/domain/hooks/useAppSelector';
 import { User } from '../../../../shared/domain/types';
-import { loginUser } from '../store/authSlice';
+import { loginUser, selectAuthLoading, selectAuthError, selectAuthUser } from '../store/authSlice';
 import { loginSchema, LoginForm } from '../validators/auth';
 
 export type LoginFormState = LoginForm;
 
 export function useLoginViewModel() {
   const dispatch = useAppDispatch();
-  const { isLoading, error, user } = useAppSelector((s) => s.auth);
+  const isLoading = useAppSelector(selectAuthLoading);
+  const error = useAppSelector(selectAuthError);
+  const user = useAppSelector(selectAuthUser);
 
   const [form, setForm] = useState<LoginFormState>({ email: '', password: '' });
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof LoginFormState, string>>>({});

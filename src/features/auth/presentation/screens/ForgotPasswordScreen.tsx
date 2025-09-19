@@ -169,7 +169,7 @@ export const ForgotPasswordScreen: React.FC = () => {
           >
             <View style={styles.logoContainer}>
               <Image 
-                source={require('../../../../../assets/adaptive-icon.png')}
+                source={require('../../../../assets/adaptive-icon.png')}
                 style={styles.logoImage}
                 resizeMode="contain"
               />

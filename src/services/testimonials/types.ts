@@ -1,4 +1,4 @@
-import { CredibilityContent, Testimonial, Winner } from '../../store/slices/testimonialsSlice';
+import { CredibilityContent, Testimonial, Winner } from '../../app/store/slices/testimonialsSlice';
 
 export interface ITestimonialsService {
   getTestimonials(): Promise<{ testimonials: Testimonial[]; winners: Winner[]; credibilityContent: CredibilityContent[] }>;

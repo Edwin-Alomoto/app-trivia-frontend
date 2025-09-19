@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { fetchRewards, fetchUserRewards, selectAvailableRewards, selectUserRewards, selectRewardsError, selectRewardsLoading } from '../../store/slices/rewardsSlice';
+import { useAppDispatch, useAppSelector } from '../../shared/domain/hooks';
+import { fetchRewards, fetchUserRewards, selectAvailableRewards, selectUserRewards, selectRewardsError, selectRewardsLoading } from '../../app/store/slices/rewardsSlice';
 
 export function useRewardsViewModel() {
   const dispatch = useAppDispatch();

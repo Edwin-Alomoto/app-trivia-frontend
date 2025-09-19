@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { fetchRaffles, fetchUserParticipations, selectActiveRaffles, selectRafflesLoading, selectRafflesError, selectUserParticipations } from '../../store/slices/rafflesSlice';
+import { useAppDispatch, useAppSelector } from '../../shared/domain/hooks';
+import { fetchRaffles, fetchUserParticipations, selectActiveRaffles, selectRafflesLoading, selectRafflesError, selectUserParticipations } from '../../app/store/slices/rafflesSlice';
 
 export function useRafflesViewModel() {
   const dispatch = useAppDispatch();
