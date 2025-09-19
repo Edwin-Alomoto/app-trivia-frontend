@@ -23,4 +23,10 @@ config.resolver.alias = {
   '@app': path.resolve(__dirname, 'src/app'),
 };
 
+// Configurar assets para Metro
+config.resolver.assetExts = [
+  ...config.resolver.assetExts,
+  'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'
+];
+
 module.exports = config;
