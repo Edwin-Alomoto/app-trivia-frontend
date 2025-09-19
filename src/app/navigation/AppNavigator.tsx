@@ -7,35 +7,35 @@ import { useColorScheme, TouchableOpacity } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 
-import { getVariantStyle } from '../shared/presentation/theme/typography';
-import { colors } from '../shared/presentation/theme/colors';
+import { getVariantStyle } from '../../shared/presentation/theme/typography';
+import { colors } from '../../shared/presentation/theme/colors';
 
 
 
 // Auth Screens
-import { LoginScreen } from '../features/auth/presentation/screens/LoginScreen';
-import { RegisterScreen } from '../features/auth/presentation/screens/RegisterScreen';
-import { ForgotPasswordScreen } from '../features/auth/presentation/screens/ForgotPasswordScreen';
-import { ModeSelectionScreen } from '../features/auth/presentation/screens/ModeSelectionScreen';
+import { LoginScreen } from '../../features/auth/presentation/screens/LoginScreen';
+import { RegisterScreen } from '../../features/auth/presentation/screens/RegisterScreen';
+import { ForgotPasswordScreen } from '../../features/auth/presentation/screens/ForgotPasswordScreen';
+import { ModeSelectionScreen } from '../../features/auth/presentation/screens/ModeSelectionScreen';
 
 // Purchase Screens
-import { BuyPointsScreen } from '../screens/purchases/BuyPointsScreen';
+import { BuyPointsScreen } from '../../features/purchases/presentation/screens/BuyPointsScreen';
 
 // Main Screens
-import { HomeScreen } from '../screens/main/HomeScreen';
-import { CategoriesScreen } from '../screens/main/CategoriesScreen';
-import { TriviaGameScreen } from '../screens/game/TriviaGameScreen';
-import { PointsHistoryScreen } from '../screens/points/PointsHistoryScreen';
-import { RewardsScreen } from '../screens/rewards/RewardsScreen';
-import { RafflesScreen } from '../screens/raffles/RafflesScreen';
-import { RouletteScreen } from '../screens/raffles/RouletteScreen';
-import { MyRafflesScreen } from '../screens/raffles/MyRafflesScreen';
-import { ProfileScreen } from '../screens/profile/ProfileScreen';
-import { SettingsScreen } from '../screens/profile/SettingsScreen';
-import { HelpScreen } from '../screens/profile/HelpScreen';
-import { NotificationsScreen } from '../screens/notifications/NotificationsScreen';
-import { SurveysScreen } from '../screens/surveys/SurveysScreen';
-import { TestimonialsScreen } from '../screens/testimonials/TestimonialsScreen';
+import { HomeScreen } from '../../features/main/presentation/screens/HomeScreen';
+import { CategoriesScreen } from '../../features/main/presentation/screens/CategoriesScreen';
+import { TriviaGameScreen } from '../../features/game/presentation/screens/TriviaGameScreen';
+import { PointsHistoryScreen } from '../../features/points/presentation/screens/PointsHistoryScreen';
+import { RewardsScreen } from '../../features/rewards/presentation/screens/RewardsScreen';
+import { RafflesScreen } from '../../features/raffles/presentation/screens/RafflesScreen';
+import { RouletteScreen } from '../../features/raffles/presentation/screens/RouletteScreen';
+import { MyRafflesScreen } from '../../features/raffles/presentation/screens/MyRafflesScreen';
+import { ProfileScreen } from '../../features/profile/presentation/screens/ProfileScreen';
+import { SettingsScreen } from '../../features/profile/presentation/screens/SettingsScreen';
+import { HelpScreen } from '../../features/profile/presentation/screens/HelpScreen';
+import { NotificationsScreen } from '../../features/notifications/presentation/screens/NotificationsScreen';
+import { SurveysScreen } from '../../features/surveys/presentation/screens/SurveysScreen';
+import { TestimonialsScreen } from '../../features/testimonials/presentation/screens/TestimonialsScreen';
 
 // Types
 import { RootStackParamList, MainTabParamList } from '@shared/domain/types';
