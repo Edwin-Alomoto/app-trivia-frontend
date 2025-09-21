@@ -18,15 +18,15 @@ import { Card } from '@shared/presentation/components/ui/Card';
 import { Button } from '@shared/presentation/components/ui/Button';
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 import { useProfileViewModel } from '../../domain/hooks/useProfileViewModel';
 
 export const SettingsScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
-  const useMVVM = featureFlags.useMVVMSettings;
-  const vm = useMVVM ? useProfileViewModel() : null;
-  const { user } = useMVVM ? { user: vm!.user } : useAppSelector((state) => state.auth);
+  const useAdvanced = featureToggles.useAdvancedSettings;
+  const vm = useAdvanced ? useProfileViewModel() : null;
+  const { user } = useAdvanced ? { user: vm!.user } : useAppSelector((state) => state.auth);
   
   // Estados de configuración
   const [notifications, setNotifications] = useState(true);
@@ -76,7 +76,7 @@ export const SettingsScreen: React.FC = () => {
           text: 'Cerrar Sesión',
           style: 'destructive',
           onPress: () => {
-            if (useMVVM && vm) {
+            if (useAdvanced && vm) {
               vm.logout();
             }
             Alert.alert('Sesión cerrada', 'Has cerrado sesión exitosamente');

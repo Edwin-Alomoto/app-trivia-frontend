@@ -21,7 +21,7 @@ import { Button } from '@shared/presentation/components/ui/Button';
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { fetchTransactions, fetchPointBalance } from '@store/slices/pointsSlice';
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 import { usePointsViewModel } from '../../domain/hooks/usePointsViewModel';
 import { PointTransaction } from '@shared/domain/types';
 import { useDemoStatus } from '@shared/domain/hooks/useDemoStatus';
@@ -32,7 +32,7 @@ export const PointsHistoryScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const { transactions, balance, isLoading } = useAppSelector((state) => state.points);
-  const vm = featureFlags.useMVVMPoints ? usePointsViewModel() : null;
+  const vm = featureToggles.useAdvancedPoints ? usePointsViewModel() : null;
   const { isDemoUser } = useDemoStatus();
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<'all' | 'earned' | 'spent' | 'purchased'>('all');

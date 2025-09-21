@@ -25,7 +25,7 @@ import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { fetchNotifications, markAsRead, markAllAsRead, createWinnerNotification, addNotification } from '@store/slices/notificationsSlice';
 import { Notification } from '@shared/domain/types';
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 import { useNotificationsViewModel } from '../../domain/hooks/useNotificationsViewModel';
 
 const { width, height } = Dimensions.get('window');
@@ -34,7 +34,7 @@ export const NotificationsScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const { items: notifications, unreadCount, isLoading } = useAppSelector((state) => state.notifications);
-  const vm = featureFlags.useMVVMNotifications ? useNotificationsViewModel() : null;
+  const vm = featureToggles.useAdvancedNotifications ? useNotificationsViewModel() : null;
   
   // Debug deshabilitado en producción
   const { user } = useAppSelector((state) => state.auth);

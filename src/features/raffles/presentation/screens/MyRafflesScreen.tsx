@@ -19,7 +19,7 @@ import { Card } from '@shared/presentation/components/ui/Card';
 import { Button } from '@shared/presentation/components/ui/Button';
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 import { useRafflesViewModel } from '../../domain/hooks/useRafflesViewModel';
 
 const { width, height } = Dimensions.get('window');
@@ -43,7 +43,7 @@ export const MyRafflesScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
-  const vm = featureFlags.useMVVMRaffles ? useRafflesViewModel() : null;
+  const vm = featureToggles.useAdvancedRaffles ? useRafflesViewModel() : null;
   
   const [refreshing, setRefreshing] = useState(false);
   const [myRaffles, setMyRaffles] = useState<MyRaffle[]>([]);

@@ -17,7 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Card } from '@shared/presentation/components/ui/Card';
 import { Button } from '@shared/presentation/components/ui/Button';
 
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 import { useProfileViewModel } from '../../domain/hooks/useProfileViewModel';
 
 interface HelpSection {
@@ -31,8 +31,8 @@ interface HelpSection {
 
 export const HelpScreen: React.FC = () => {
   const navigation = useNavigation();
-  const useMVVM = featureFlags.useMVVMHelp;
-  const vm = useMVVM ? useProfileViewModel() : null;
+  const useAdvanced = featureToggles.useAdvancedHelp;
+  const vm = useAdvanced ? useProfileViewModel() : null;
 
 
   // Animaciones

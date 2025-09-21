@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 
-import { featureFlags } from '@config/featureFlags';
-import { getServices } from '@services/container';
+import { featureToggles } from '@config/featureToggles';
 import { TriviaState, Category, Question, TriviaSession } from '@shared/domain/types';
 
 const initialState: TriviaState = {
@@ -645,10 +644,6 @@ export const fetchCategories = createAsyncThunk(
   'trivia/fetchCategories',
   async (_, { rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesTrivia) {
-        const { triviaService } = getServices();
-        return await triviaService.getCategories();
-      }
       await new Promise(resolve => setTimeout(resolve, 500));
       return mockCategories;
     } catch (error) {
@@ -666,17 +661,6 @@ export const startTriviaSession = createAsyncThunk(
         throw new Error('ID de categoría inválido');
       }
 
-      if (featureFlags.useServicesTrivia) {
-        const { triviaService } = getServices();
-        const session = await triviaService.startSession(categoryId);
-        
-        // Validar que la sesión del servicio es válida
-        if (!session || !session.questions || session.questions.length === 0) {
-          throw new Error('El servicio no devolvió preguntas válidas');
-        }
-        
-        return session;
-      }
       
       await new Promise(resolve => setTimeout(resolve, 300));
       const allQuestions = mockQuestions[categoryId] || [];
@@ -732,11 +716,6 @@ export const syncOfflineAnswers = createAsyncThunk(
       const offlineAnswers = state.trivia.offlineAnswers;
       if (offlineAnswers.length === 0) {
         return { message: 'No hay respuestas offline para sincronizar' };
-      }
-      if (featureFlags.useServicesTrivia) {
-        // Si hubiera un servicio de sync, se llamaría aquí; mantenemos mock
-        await new Promise(resolve => setTimeout(resolve, 300));
-        return { message: `${offlineAnswers.length} respuestas sincronizadas exitosamente`, syncedCount: offlineAnswers.length };
       }
       await new Promise(resolve => setTimeout(resolve, 1000));
       return { message: `${offlineAnswers.length} respuestas sincronizadas exitosamente`, syncedCount: offlineAnswers.length };

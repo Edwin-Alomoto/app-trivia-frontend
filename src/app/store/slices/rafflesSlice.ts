@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 
-import { featureFlags } from '@config/featureFlags';
-import { getServices } from '@services/container';
+import { featureToggles } from '@config/featureToggles';
 import { RafflesState, Raffle, UserRaffleParticipation } from '@shared/domain/types';
 import { updateBalanceFromRaffle } from './pointsSlice';
 import { createWinnerNotification } from './notificationsSlice';
@@ -344,11 +343,6 @@ export const fetchRaffles = createAsyncThunk(
   'raffles/fetchRaffles',
   async (_, { rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesRaffles) {
-        const { rafflesService } = getServices();
-        const raffles = await rafflesService.getRaffles();
-        return raffles;
-      }
       // Simular delay de red
       await new Promise(resolve => setTimeout(resolve, 800));
       return mockRaffles;
@@ -362,11 +356,6 @@ export const fetchUserParticipations = createAsyncThunk(
   'raffles/fetchUserParticipations',
   async (_, { rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesRaffles) {
-        const { rafflesService } = getServices();
-        const participations = await rafflesService.getUserParticipations();
-        return participations;
-      }
       // Simular delay de red
       await new Promise(resolve => setTimeout(resolve, 600));
       return mockUserParticipations;
@@ -381,16 +370,6 @@ export const participateInRaffle = createAsyncThunk(
   async (raffleId: string, { getState, dispatch, rejectWithValue }) => {
     try {
       const state = getState() as any;
-      if (featureFlags.useServicesRaffles) {
-        const { rafflesService } = getServices();
-        const result = await rafflesService.participate(raffleId);
-        const raffle = state.raffles.active.find((r: Raffle) => r.id === raffleId);
-        if (!raffle) {
-          throw new Error('Sorteo no encontrado');
-        }
-        dispatch(updateBalanceFromRaffle({ pointsSpent: result.requiredPoints, raffleName: raffle.name, quantity: 1 }));
-        return result;
-      }
       // Simulación existente
       await new Promise(resolve => setTimeout(resolve, 1200));
       const raffle = state.raffles.active.find((r: Raffle) => r.id === raffleId);
@@ -441,14 +420,6 @@ export const simulateWinner = createAsyncThunk(
   'raffles/simulateWinner',
   async (raffleId: string, { dispatch, rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesRaffles) {
-        // En una implementación real, podría invocar un endpoint admin; aquí solo generamos notificación
-        const raffleName = 'Sorteo';
-        const prizeAmount = 100;
-        const prizeType = 'USD';
-        dispatch(createWinnerNotification({ raffleName, prizeAmount, prizeType, raffleId }));
-        return { raffleId, prizeAmount, prizeType, message: `¡Felicidades! Has ganado ${prizeAmount} ${prizeType}` };
-      }
       // Simulación existente
       await new Promise(resolve => setTimeout(resolve, 2000));
       if (raffleId === 'active-1') {

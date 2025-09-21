@@ -27,7 +27,7 @@ import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { fetchRewards, fetchUserRewards, redeemReward, markRewardAsUsed } from '@store/slices/rewardsSlice';
 import { Reward } from '@shared/domain/types';
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 import { useRewardsViewModel } from '../../domain/hooks/useRewardsViewModel';
 
 const { width, height } = Dimensions.get('window');
@@ -38,7 +38,7 @@ export const RewardsScreen: React.FC = () => {
   const { available: rewards, userRewards, isLoading, error } = useAppSelector((state) => state.rewards);
   const { balance } = useAppSelector((state) => state.points);
   const { user } = useAppSelector((state) => state.auth);
-  const vm = featureFlags.useMVVMRewards ? useRewardsViewModel() : null;
+  const vm = featureToggles.useAdvancedRewards ? useRewardsViewModel() : null;
   const [refreshing, setRefreshing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null);

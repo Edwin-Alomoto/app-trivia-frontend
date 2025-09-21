@@ -27,7 +27,7 @@ import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { startTriviaSession, answerQuestion, resetSession, advanceQuestion, useHint } from '@store/slices/triviaSlice';
 import { earnPoints } from '@store/slices/pointsSlice';
 import { RootStackParamList } from '@shared/domain/types';
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 import { useTriviaGameViewModel } from '../../domain/hooks/useTriviaGameViewModel';
 import { PointsParticles } from '@shared/presentation/animations/PointsParticles';
 
@@ -40,7 +40,7 @@ export const TriviaGameScreen: React.FC = () => {
   const route = useRoute<TriviaGameRouteProp>();
   const dispatch = useAppDispatch();
   const { currentSession, isLoading, categories } = useAppSelector((state: any) => state.trivia);
-  const vm = featureFlags.useMVVMGame ? useTriviaGameViewModel(route.params.categoryId) : null;
+  const vm = featureToggles.useAdvancedGame ? useTriviaGameViewModel(route.params.categoryId) : null;
 
   // Estados del juego
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);

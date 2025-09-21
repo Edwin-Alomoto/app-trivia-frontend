@@ -23,7 +23,7 @@ import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { fetchPackages, purchasePoints } from '@store/slices/purchasesSlice';
 import { PointPackage } from '@shared/domain/types';
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 import { usePurchasesViewModel } from '../../domain/hooks/usePurchasesViewModel';
 
 const { width, height } = Dimensions.get('window');
@@ -32,7 +32,7 @@ export const BuyPointsScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const { packages, isLoading, error } = useAppSelector((state) => state.purchases);
-  const vm = featureFlags.useMVVMPurchases ? usePurchasesViewModel() : null;
+  const vm = featureToggles.useAdvancedPurchases ? usePurchasesViewModel() : null;
   const [selectedPackage, setSelectedPackage] = useState<PointPackage | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal' | 'apple'>('card');

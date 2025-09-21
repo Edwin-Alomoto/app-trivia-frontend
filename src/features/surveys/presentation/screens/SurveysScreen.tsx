@@ -21,7 +21,7 @@ import { Card } from '@shared/presentation/components/ui/Card';
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { Survey, fetchSurveys, submitSurvey } from '@store/slices/surveysSlice';
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 import { useSurveysViewModel } from '../../domain/hooks/useSurveysViewModel';
 
 const { width } = Dimensions.get('window');
@@ -35,7 +35,7 @@ export const SurveysScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const { surveys, isLoading, error } = useAppSelector((state: any) => state.surveys);
-  const vm = featureFlags.useMVVMSurveys ? useSurveysViewModel() : null;
+  const vm = featureToggles.useAdvancedSurveys ? useSurveysViewModel() : null;
   
   const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);

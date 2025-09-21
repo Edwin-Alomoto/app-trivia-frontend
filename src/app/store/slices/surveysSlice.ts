@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 
-import { featureFlags } from '@config/featureFlags';
-import { getServices } from '@services/container';
+import { featureToggles } from '@config/featureToggles';
 
 export interface SurveyQuestion {
   id: string;
@@ -150,10 +149,6 @@ export const fetchSurveys = createAsyncThunk(
   'surveys/fetchSurveys',
   async (_, { rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesSurveys) {
-        const { surveysService } = getServices();
-        return await surveysService.getSurveys();
-      }
       // Simulación existente
       await new Promise(resolve => setTimeout(resolve, 1000));
       const activeSurveys = mockSurveys.filter(survey => survey.isActive);
@@ -171,10 +166,6 @@ export const submitSurvey = createAsyncThunk(
     { rejectWithValue, dispatch }
   ) => {
     try {
-      if (featureFlags.useServicesSurveys) {
-        const { surveysService } = getServices();
-        return await surveysService.submitSurvey({ surveyId, responses });
-      }
       // Simulación existente
       await new Promise(resolve => setTimeout(resolve, 1500));
       const survey = mockSurveys.find(s => s.id === surveyId);

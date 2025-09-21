@@ -21,7 +21,7 @@ import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { logoutUser } from '@features/auth/domain/store/authSlice';
 import { fetchPointBalance } from '@store/slices/pointsSlice';
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 import { useProfileViewModel } from '../../domain/hooks/useProfileViewModel';
 
 const { width, height } = Dimensions.get('window');
@@ -31,7 +31,7 @@ export const ProfileScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const { balance } = useAppSelector((state) => state.points);
-  const vm = featureFlags.useMVVMProfile ? useProfileViewModel() : null;
+  const vm = featureToggles.useAdvancedProfile ? useProfileViewModel() : null;
 
   // Animaciones
   const fadeAnim = useState(new Animated.Value(0))[0];

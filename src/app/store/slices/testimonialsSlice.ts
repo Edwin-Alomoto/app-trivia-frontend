@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 
-import { featureFlags } from '@config/featureFlags';
-import { getServices } from '@services/container';
+import { featureToggles } from '@config/featureToggles';
 
 export interface Testimonial {
   id: string;
@@ -195,10 +194,6 @@ export const fetchTestimonials = createAsyncThunk(
   'testimonials/fetchTestimonials',
   async (_, { rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesTestimonials) {
-        const { testimonialsService } = getServices();
-        return await testimonialsService.getTestimonials();
-      }
       // Simulación existente y armado de contenido
       await new Promise(resolve => setTimeout(resolve, 800));
       const activeTestimonials = mockTestimonials.filter(t => t.isActive);
@@ -230,10 +225,6 @@ export const markAsViewed = createAsyncThunk(
   'testimonials/markAsViewed',
   async (contentId: string, { getState, rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesTestimonials) {
-        const { testimonialsService } = getServices();
-        return await testimonialsService.markAsViewed(contentId);
-      }
       await new Promise(resolve => setTimeout(resolve, 300));
       const state = getState() as any;
       const testimonial = state.testimonials.testimonials.find((t: Testimonial) => t.id === contentId);

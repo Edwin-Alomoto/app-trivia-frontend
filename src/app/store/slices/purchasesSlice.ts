@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 
-import { featureFlags } from '@config/featureFlags';
-import { getServices } from '@services/container';
+import { featureToggles } from '@config/featureToggles';
 import { PointPackage, PurchaseState } from '@shared/domain/types';
 
 const initialState: PurchaseState = {
@@ -52,10 +51,6 @@ export const fetchPackages = createAsyncThunk(
   'purchases/fetchPackages',
   async (_, { rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesPurchases) {
-        const { purchasesService } = getServices();
-        return await purchasesService.getPackages();
-      }
       // Simulación de API call
       await new Promise(resolve => setTimeout(resolve, 500));
       return mockPackages;
@@ -69,17 +64,6 @@ export const purchasePoints = createAsyncThunk(
   'purchases/purchasePoints',
   async (packageId: string, { rejectWithValue, dispatch, getState }) => {
     try {
-      if (featureFlags.useServicesPurchases) {
-        const { purchasesService } = getServices();
-        const result = await purchasesService.purchase(packageId);
-        const purchaseRecord = {
-          ...result,
-          timestamp: new Date().toISOString(),
-          status: 'completed',
-          currency: 'USD',
-        } as any;
-        return { ...result, purchaseRecord };
-      }
       // Simulación de proceso de pago
       await new Promise(resolve => setTimeout(resolve, 2000));
       const packageData = mockPackages.find(pkg => pkg.id === packageId);

@@ -21,7 +21,7 @@ import { getVariantStyle } from '@theme/typography';
 import { RootStackParamList } from '@shared/domain/types';
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 
 import { loginUser } from '../../domain/store/authSlice';
 import { useLoginViewModel } from '../../domain/hooks/useLoginViewModel';
@@ -42,7 +42,7 @@ export const LoginScreen: React.FC = () => {
 
   // MVVM (desactivado por defecto)
   const vm = useLoginViewModel();
-  const shouldUseVM = featureFlags.useMVVMLogin;
+  const shouldUseVM = featureToggles.useAdvancedLogin;
 
   // Estados del formulario
   const [formData, setFormData] = useState({

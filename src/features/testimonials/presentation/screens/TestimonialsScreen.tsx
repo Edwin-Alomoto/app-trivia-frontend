@@ -19,7 +19,7 @@ import { Card } from '@shared/presentation/components/ui/Card';
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { CredibilityContent, Testimonial, Winner, fetchTestimonials, markAsViewed } from '@store/slices/testimonialsSlice';
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 import { useTestimonialsViewModel } from '../../domain/hooks/useTestimonialsViewModel';
 
 const { width } = Dimensions.get('window');
@@ -28,7 +28,7 @@ export const TestimonialsScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const { testimonials, winners, credibilityContent, isLoading, error } = useAppSelector((state: any) => state.testimonials);
-  const vm = featureFlags.useMVVMTestimonials ? useTestimonialsViewModel() : null;
+  const vm = featureToggles.useAdvancedTestimonials ? useTestimonialsViewModel() : null;
   
   const [selectedContent, setSelectedContent] = useState<CredibilityContent | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);

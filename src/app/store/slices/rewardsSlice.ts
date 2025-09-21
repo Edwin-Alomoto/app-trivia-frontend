@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 
-import { featureFlags } from '@config/featureFlags';
-import { getServices } from '@services/container';
+import { featureToggles } from '@config/featureToggles';
 import { RewardsState, Reward, UserReward } from '@shared/domain/types';
 import { updateBalanceFromReward } from './pointsSlice';
 
@@ -166,11 +165,6 @@ export const fetchRewards = createAsyncThunk(
   'rewards/fetchRewards',
   async (_, { rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesRewards) {
-        const { rewardsService } = getServices();
-        const rewards = await rewardsService.getRewards();
-        return rewards;
-      }
       // Simular delay de red
       await new Promise(resolve => setTimeout(resolve, 800));
       return mockRewards;
@@ -184,11 +178,6 @@ export const fetchUserRewards = createAsyncThunk(
   'rewards/fetchUserRewards',
   async (_, { rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesRewards) {
-        const { rewardsService } = getServices();
-        const list = await rewardsService.getUserRewards();
-        return list;
-      }
       // Simular delay de red
       await new Promise(resolve => setTimeout(resolve, 600));
       return mockUserRewards;
@@ -203,17 +192,6 @@ export const redeemReward = createAsyncThunk(
   async (rewardId: string, { getState, dispatch, rejectWithValue }) => {
     try {
       const state = getState() as any;
-      if (featureFlags.useServicesRewards) {
-        const { rewardsService } = getServices();
-        const result = await rewardsService.redeemReward(rewardId);
-        const reward = state.rewards.available.find((r: Reward) => r.id === rewardId);
-        if (!reward) {
-          throw new Error('Premio no encontrado');
-        }
-        // Actualizar balance de puntos con lo retornado por el servicio
-        dispatch(updateBalanceFromReward({ pointsSpent: result.pointsSpent, rewardName: reward.name }));
-        return { userReward: result.userReward, reward, pointsSpent: result.pointsSpent };
-      }
       // Simulación existente
       await new Promise(resolve => setTimeout(resolve, 1500));
       const reward = state.rewards.available.find((r: Reward) => r.id === rewardId);
@@ -257,10 +235,6 @@ export const markRewardAsUsed = createAsyncThunk(
   'rewards/markAsUsed',
   async (userRewardId: string, { getState, rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesRewards) {
-        const { rewardsService } = getServices();
-        return await rewardsService.markAsUsed(userRewardId);
-      }
       // Simulación existente
       await new Promise(resolve => setTimeout(resolve, 800));
       const state = getState() as any;

@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 
-import { featureFlags } from '@config/featureFlags';
-import { getServices } from '@services/container';
+import { featureToggles } from '@config/featureToggles';
 import { PointsState, PointTransaction, PointBalance, PointPackage } from '@shared/domain/types';
 
 const initialState: PointsState = {
@@ -59,11 +58,6 @@ export const fetchPointBalance = createAsyncThunk(
   'points/fetchBalance',
   async (_, { getState, rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesPoints) {
-        const { pointsService } = getServices();
-        const balance = await pointsService.getBalance();
-        return balance;
-      }
       // Fallback mock actual
       await new Promise(resolve => setTimeout(resolve, 500));
       const { auth } = getState() as any;
@@ -87,11 +81,6 @@ export const fetchTransactions = createAsyncThunk(
   'points/fetchTransactions',
   async (_, { rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesPoints) {
-        const { pointsService } = getServices();
-        const txs = await pointsService.getTransactions();
-        return txs;
-      }
       // Simulación de API call
       await new Promise(resolve => setTimeout(resolve, 500));
       // Mock transactions más completas
@@ -238,11 +227,6 @@ export const purchasePoints = createAsyncThunk(
   'points/purchase',
   async (packageId: string, { rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesPoints) {
-        const { pointsService } = getServices();
-        const result = await pointsService.purchasePoints(packageId);
-        return result;
-      }
       // Simulación de API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       
@@ -276,10 +260,6 @@ export const spendPoints = createAsyncThunk(
     metadata?: any;
   }, { rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesPoints) {
-        const { pointsService } = getServices();
-        return await pointsService.spendPoints({ amount, description, metadata });
-      }
       // Simulación de API call
       await new Promise(resolve => setTimeout(resolve, 500));
       
@@ -308,10 +288,6 @@ export const earnPoints = createAsyncThunk(
     metadata?: any;
   }, { getState, rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesPoints) {
-        const { pointsService } = getServices();
-        return await pointsService.earnPoints({ amount, description, metadata });
-      }
       // Simulación de API call
       await new Promise(resolve => setTimeout(resolve, 300));
       

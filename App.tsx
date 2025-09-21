@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { ActivityIndicator, Text, TextInput, StyleSheet } from 'react-native';
+import { ActivityIndicator, Text, TextInput, StyleSheet, Image } from 'react-native';
 import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { Provider } from 'react-redux';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -11,6 +11,9 @@ import { TypographyProvider } from '@shared/presentation/providers/TypographyPro
 
 import { store } from './src/app/store';
 import { AppNavigator } from './src/app/navigation/AppNavigator';
+
+// Importación directa del logo
+const SplashIcon = require('./src/assets/splash-icon.png');
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -24,6 +27,11 @@ export default function App() {
     return (
       <GestureHandlerRootView style={styles.centered}>
         <StatusBar style="auto" />
+        <Image 
+          source={SplashIcon} 
+          style={styles.splashLogo}
+          resizeMode="contain"
+        />
         <ActivityIndicator size="large" />
       </GestureHandlerRootView>
     );
@@ -57,4 +65,9 @@ export default function App() {
 const styles = StyleSheet.create({
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   root: { flex: 1 },
+  splashLogo: {
+    width: 100,
+    height: 100,
+    marginBottom: 20,
+  },
 });

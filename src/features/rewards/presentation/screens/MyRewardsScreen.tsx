@@ -20,7 +20,7 @@ import { Card } from '@shared/presentation/components/ui/Card';
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { fetchUserRewards, markRewardAsUsed } from '@store/slices/rewardsSlice';
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 import { useRewardsViewModel } from '../../domain/hooks/useRewardsViewModel';
 import { UserReward } from '@shared/domain/types';
 
@@ -30,7 +30,7 @@ export const MyRewardsScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const { userRewards, available: rewards, isLoading } = useAppSelector((state) => state.rewards);
-  const vm = featureFlags.useMVVMRewards ? useRewardsViewModel() : null;
+  const vm = featureToggles.useAdvancedRewards ? useRewardsViewModel() : null;
   const [refreshing, setRefreshing] = useState(false);
 
   // Animaciones

@@ -23,7 +23,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useAppNavigation } from "@app/navigation/types";
-import { featureFlags } from "@config/featureFlags";
+import { featureToggles } from "@config/featureToggles";
 import { useHomeViewModel } from "../../domain/hooks/useHomeViewModel";
 import { Card } from "@shared/presentation/components/ui/Card";
 import { DemoRestrictionBanner } from "@shared/presentation/components/ui/DemoRestrictionBanner";
@@ -57,11 +57,11 @@ export const HomeScreen: React.FC = () => {
   const { available: rewards } = useAppSelector((state) => state.rewards);
   const { active: raffles } = useAppSelector((state) => state.raffles);
   const { surveys } = useAppSelector((state) => state.surveys);
-  const useMVVM = featureFlags.useMVVMHome;
-  const vm = useMVVM ? useHomeViewModel() : null;
+  const useAdvanced = featureToggles.useAdvancedHome;
+  const vm = useAdvanced ? useHomeViewModel() : null;
   
   // Hook para estado del demo
-  const demoCtx = useMVVM ? vm!.demo : useDemoStatus();
+  const demoCtx = useAdvanced ? vm!.demo : useDemoStatus();
   const {
     isDemoUser,
     isSubscribed,
@@ -74,11 +74,11 @@ export const HomeScreen: React.FC = () => {
   } = demoCtx;
 
   // Valores por defecto para evitar errores de undefined
-  const safeRewards = useMVVM ? vm!.safeRewards : (Array.isArray(rewards) ? rewards : []);
-  const safeRaffles = useMVVM ? vm!.safeRaffles : (Array.isArray(raffles) ? raffles : []);
-  const safeCategories = useMVVM ? vm!.safeCategories : (Array.isArray(categories) ? categories : []);
-  const safeSurveys = useMVVM ? vm!.safeSurveys : (Array.isArray(surveys) ? surveys : []);
-  const safeUnreadCount = useMVVM ? vm!.safeUnreadCount : (typeof unreadCount === 'number' ? unreadCount : 0);
+  const safeRewards = useAdvanced ? vm!.safeRewards : (Array.isArray(rewards) ? rewards : []);
+  const safeRaffles = useAdvanced ? vm!.safeRaffles : (Array.isArray(raffles) ? raffles : []);
+  const safeCategories = useAdvanced ? vm!.safeCategories : (Array.isArray(categories) ? categories : []);
+  const safeSurveys = useAdvanced ? vm!.safeSurveys : (Array.isArray(surveys) ? surveys : []);
+  const safeUnreadCount = useAdvanced ? vm!.safeUnreadCount : (typeof unreadCount === 'number' ? unreadCount : 0);
 
   // Logs de depuración removidos para producción
 
@@ -152,18 +152,18 @@ export const HomeScreen: React.FC = () => {
   useFocusEffect(
     React.useCallback(() => {
       // Recargar los puntos cuando se regresa a la pantalla
-      if (useMVVM) {
+      if (useAdvanced) {
         vm!.refreshPoints();
       } else {
         dispatch(fetchPointBalance());
         dispatch(fetchTransactions());
       }
-    }, [dispatch, useMVVM, vm])
+    }, [dispatch, useAdvanced, vm])
   );
 
   const loadData = async () => {
     try {
-      if (useMVVM) {
+      if (useAdvanced) {
         await vm!.loadData();
       } else {
         await Promise.all([

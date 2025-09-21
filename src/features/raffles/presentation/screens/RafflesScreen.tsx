@@ -27,7 +27,7 @@ import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { fetchRaffles, fetchUserParticipations, participateInRaffle, getRaffleWinners, checkRaffleResults } from '@store/slices/rafflesSlice';
 import { Raffle, UserRaffleParticipation } from '@shared/domain/types';
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 import { useRafflesViewModel } from '../../domain/hooks/useRafflesViewModel';
 
 const { width, height } = Dimensions.get('window');
@@ -59,7 +59,7 @@ export const RafflesScreen: React.FC = () => {
   const { active: raffles, userParticipations, isLoading, error } = useAppSelector((state) => state.raffles);
   const { balance } = useAppSelector((state) => state.points);
   const { user } = useAppSelector((state) => state.auth);
-  const vm = featureFlags.useMVVMRaffles ? useRafflesViewModel() : null;
+  const vm = featureToggles.useAdvancedRaffles ? useRafflesViewModel() : null;
   const balanceTotal = balance.total || 0;
   const [refreshing, setRefreshing] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('all');

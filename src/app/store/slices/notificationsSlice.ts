@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 
-import { featureFlags } from '@config/featureFlags';
-import { getServices } from '@services/container';
+import { featureToggles } from '@config/featureToggles';
 import { NotificationsState, Notification } from '@shared/domain/types';
 
 const initialState: NotificationsState = {
@@ -16,10 +15,6 @@ export const fetchNotifications = createAsyncThunk(
   'notifications/fetchNotifications',
   async (_, { rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesNotifications) {
-        const { notificationsService } = getServices();
-        return await notificationsService.getNotifications();
-      }
       await new Promise(resolve => setTimeout(resolve, 500));
       const notifications: Notification[] = [
         {
@@ -74,10 +69,6 @@ export const markAsRead = createAsyncThunk(
   'notifications/markAsRead',
   async (notificationId: string, { rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesNotifications) {
-        const { notificationsService } = getServices();
-        return await notificationsService.markAsRead(notificationId);
-      }
       await new Promise(resolve => setTimeout(resolve, 300));
       return notificationId;
     } catch (error) {
@@ -90,11 +81,6 @@ export const markAllAsRead = createAsyncThunk(
   'notifications/markAllAsRead',
   async (_, { rejectWithValue }) => {
     try {
-      if (featureFlags.useServicesNotifications) {
-        const { notificationsService } = getServices();
-        await notificationsService.markAllAsRead();
-        return null;
-      }
       await new Promise(resolve => setTimeout(resolve, 300));
       return null;
     } catch (error) {

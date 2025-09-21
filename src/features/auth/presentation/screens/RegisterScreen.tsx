@@ -23,7 +23,7 @@ import { RootStackParamList } from '@shared/domain/types';
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { registerUser, verifyEmail } from '../../domain/store/authSlice';
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 import { useRegisterViewModel } from '../../domain/hooks/useRegisterViewModel';
 import { registerStyles } from '../styles/registerStyles';
 import {
@@ -42,7 +42,7 @@ export const RegisterScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((state) => state.auth);
   const vm = useRegisterViewModel();
-  const shouldUseVM = featureFlags.useMVVMRegister;
+  const shouldUseVM = featureToggles.useAdvancedRegister;
 
   // Estados del formulario
   const [formData, setFormData] = useState({

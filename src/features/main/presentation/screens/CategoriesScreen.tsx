@@ -22,7 +22,7 @@ import { Button } from '@shared/presentation/components/ui/Button';
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { fetchCategories } from '@store/slices/triviaSlice';
-import { featureFlags } from '@config/featureFlags';
+import { featureToggles } from '@config/featureToggles';
 import { useCategoriesViewModel } from '@features/game/domain/hooks/useCategoriesViewModel';
 import { Category } from '@shared/domain/types';
 
@@ -32,7 +32,7 @@ export const CategoriesScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const { categories, isLoading, error } = useAppSelector((state) => state.trivia);
-  const vm = featureFlags.useMVVMCategories ? useCategoriesViewModel() : null;
+  const vm = featureToggles.useAdvancedCategories ? useCategoriesViewModel() : null;
   const [refreshing, setRefreshing] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] = useState<'all' | 'easy' | 'medium' | 'hard'>('all');
   const [hasError, setHasError] = useState(false);
