@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { colors } from '@theme/colors';
 import { getVariantStyle } from '@theme/typography';
 
@@ -16,12 +16,19 @@ export const ForgotPasswordHeader: React.FC<ForgotPasswordHeaderProps> = ({
 }) => {
   return (
     <View style={[styles.header, style]}>
-      <Text style={[getVariantStyle('h1'), styles.title]}>
-        {title}
-      </Text>
-      <Text style={[getVariantStyle('subtitle'), styles.subtitle]}>
-        {subtitle}
-      </Text>
+      <View style={styles.logoContainer}>
+        <Image 
+          source={require('../../../../../assets/adaptive-icon.png')}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
+        <Text style={[getVariantStyle('h1'), styles.title]}>
+          {title}
+        </Text>
+        <Text style={[getVariantStyle('subtitle'), styles.subtitle]}>
+          {subtitle}
+        </Text>
+      </View>
     </View>
   );
 };
@@ -30,6 +37,14 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginBottom: 32,
+  },
+  logoContainer: {
+    alignItems: 'center',
+  },
+  logoImage: {
+    width: 72,
+    height: 72,
+    marginBottom: 16,
   },
   title: {
     color: colors.textPrimary,

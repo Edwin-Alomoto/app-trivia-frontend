@@ -9,12 +9,15 @@ import {
   Dimensions,
   TextInput,
   StatusBar,
+  Image,
+  Text,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import * as Haptics from 'expo-haptics';
 import { colors } from '@theme/colors';
+import { getVariantStyle } from '@theme/typography';
 import { RootStackParamList } from '@shared/domain/types';
 
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
@@ -353,7 +356,21 @@ export const RegisterScreen: React.FC = () => {
               },
             ]}
           >
-            <RegisterHeader />
+            <View style={registerStyles.header}>
+              <View style={registerStyles.logoContainer}>
+                <Image 
+                  source={require('../../../../assets/adaptive-icon.png')}
+                  style={registerStyles.logoImage}
+                  resizeMode="contain"
+                />
+                <Text style={[getVariantStyle('h1'), registerStyles.title]}>
+                  ¡Únete a WinUp!
+                </Text>
+                <Text style={[getVariantStyle('subtitle'), registerStyles.subtitle]}>
+                  Regístrate y empieza a ganar
+                </Text>
+              </View>
+            </View>
           </Animated.View>
 
           {/* Formulario */}

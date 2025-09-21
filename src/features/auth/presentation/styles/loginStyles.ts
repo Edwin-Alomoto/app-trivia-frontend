@@ -53,7 +53,16 @@ export const loginStyles = StyleSheet.create({
   logoImage: {
     width: 72,
     height: 72,
-    marginBottom: 28,
+    marginBottom: 16,
+  },
+  title: {
+    color: colors.textPrimary,
+    textAlign: 'center',
+  },
+  subtitle: {
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginTop: 8,
   },
   appName: {
     marginBottom: 6,

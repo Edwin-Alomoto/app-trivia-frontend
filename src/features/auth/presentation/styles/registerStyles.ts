@@ -49,9 +49,18 @@ export const registerStyles = StyleSheet.create({
     fontSize: 40,
   },
   logoImage: {
-    width: 56,
-    height: 56,
-    marginBottom: 24,
+    width: 72,
+    height: 72,
+    marginBottom: 16,
+  },
+  title: {
+    color: colors.textPrimary,
+    textAlign: 'center',
+  },
+  subtitle: {
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginTop: 8,
   },
   appName: {
     marginBottom: 8,

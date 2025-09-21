@@ -8,18 +8,20 @@ import {
   Animated,
   StatusBar,
   TextInput,
+  Image,
+  Text,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import * as Haptics from 'expo-haptics';
 import { colors } from '@theme/colors';
+import { getVariantStyle } from '@theme/typography';
 import { RootStackParamList } from '@shared/domain/types';
 
 import { forgotPasswordStyles } from '../styles/forgotPasswordStyles';
 import { 
   ForgotPasswordForm,
-  ForgotPasswordHeader,
   SuccessMessage
 } from '../components';
 
@@ -131,7 +133,21 @@ export const ForgotPasswordScreen: React.FC = () => {
               },
             ]}
           >
-            <ForgotPasswordHeader />
+            <View style={forgotPasswordStyles.header}>
+              <View style={forgotPasswordStyles.logoContainer}>
+                <Image 
+                  source={require('../../../../assets/adaptive-icon.png')}
+                  style={forgotPasswordStyles.logoImage}
+                  resizeMode="contain"
+                />
+                <Text style={[getVariantStyle('h1'), forgotPasswordStyles.title]}>
+                  ¿Olvidaste tu contraseña?
+                </Text>
+                <Text style={[getVariantStyle('subtitle'), forgotPasswordStyles.subtitle]}>
+                  No te preocupes, te ayudamos a recuperarla.
+                </Text>
+              </View>
+            </View>
           </Animated.View>
 
           {/* Formulario con animación (idéntico al Login) */}

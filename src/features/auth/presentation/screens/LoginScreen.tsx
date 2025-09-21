@@ -9,14 +9,16 @@ import {
   StatusBar,
   Dimensions,
   TextInput,
+  Image,
+  Text,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import * as Haptics from 'expo-haptics';
 import { colors } from '@theme/colors';
+import { getVariantStyle } from '@theme/typography';
 import { RootStackParamList } from '@shared/domain/types';
-
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { featureFlags } from '@config/featureFlags';
@@ -25,8 +27,7 @@ import { loginUser } from '../../domain/store/authSlice';
 import { useLoginViewModel } from '../../domain/hooks/useLoginViewModel';
 import { loginStyles } from '../styles/loginStyles';
 import { 
-  LoginForm,
-  LoginHeader
+  LoginForm
 } from '../components';
 
 
@@ -217,7 +218,21 @@ export const LoginScreen: React.FC = () => {
               },
             ]}
           >
-            <LoginHeader />
+            <View style={loginStyles.header}>
+              <View style={loginStyles.logoContainer}>
+                <Image 
+                  source={require('../../../../assets/adaptive-icon.png')}
+                  style={loginStyles.logoImage}
+                  resizeMode="contain"
+                />
+                <Text style={[getVariantStyle('h1'), loginStyles.title]}>
+                  ¡Bienvenido a WinUp!
+                </Text>
+                <Text style={[getVariantStyle('subtitle'), loginStyles.subtitle]}>
+                  Acumula puntos y gana premios.
+                </Text>
+              </View>
+            </View>
           </Animated.View>
 
           {/* Formulario */}

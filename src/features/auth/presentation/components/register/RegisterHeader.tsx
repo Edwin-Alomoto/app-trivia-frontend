@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { colors } from '@theme/colors';
 import { getVariantStyle } from '@theme/typography';
 
@@ -17,6 +17,11 @@ export const RegisterHeader: React.FC<RegisterHeaderProps> = ({
   return (
     <View style={[styles.header, style]}>
       <View style={styles.logoContainer}>
+        <Image 
+          source={require('../../../../../assets/adaptive-icon.png')}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
         <Text style={[getVariantStyle('h1'), styles.title]}>
           {title}
         </Text>
@@ -35,6 +40,11 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
+  },
+  logoImage: {
+    width: 72,
+    height: 72,
+    marginBottom: 16,
   },
   title: {
     color: colors.textPrimary,
