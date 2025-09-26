@@ -6,6 +6,7 @@ export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   ForgotPassword: { email?: string };
+  ResetPassword: { token: string };
   ModeSelection: undefined;
   MainTabs: undefined;
   TriviaGame: { categoryId: string };

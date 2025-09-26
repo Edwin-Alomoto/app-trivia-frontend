@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { startTriviaSession, answerQuestion, resetSession, selectCurrentSession, selectTriviaLoading, advanceQuestion } from '../../store/slices/triviaSlice';
-import { earnPoints } from '../../store/slices/pointsSlice';
+import { useAppDispatch, useAppSelector } from '../../../../hooks';
+import { startTriviaSession, answerQuestion, resetSession, selectCurrentSession, selectTriviaLoading, advanceQuestion } from '../../../../store/slices/triviaSlice';
+import { earnPoints } from '../../../../store/slices/pointsSlice';
 
 export function useTriviaGameViewModel(categoryId: string) {
   const dispatch = useAppDispatch();
@@ -41,27 +41,7 @@ export function useTriviaGameViewModel(categoryId: string) {
         setHintsUsed(0);
       }
     }
-  }, [currentSession?.currentQuestionIndex, currentSession?.isCompleted]);
-
-  useEffect(() => {
-    if (!currentSession || currentSession.isCompleted || isAnswered) return;
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          handleTimeUp();
-          return 30;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [currentSession, isAnswered]);
-
-  const handleTimeUp = useCallback(() => {
-    if (!isAnswered && currentSession && !currentSession.isCompleted) {
-      handleAnswer(-1);
-    }
-  }, [isAnswered, currentSession]);
+  }, [currentSession, currentSession?.currentQuestionIndex, currentSession?.isCompleted]);
 
   const handleAnswer = useCallback(async (answerIndex: number) => {
     if (isAnswered || !currentSession || currentSession.isCompleted) return;
@@ -119,6 +99,26 @@ export function useTriviaGameViewModel(categoryId: string) {
     }, 900);
   }, [isAnswered, currentSession, comboMultiplier, timeLeft, streak, dispatch, categoryId]);
 
+  const handleTimeUp = useCallback(() => {
+    if (!isAnswered && currentSession && !currentSession.isCompleted) {
+      handleAnswer(-1);
+    }
+  }, [isAnswered, currentSession, handleAnswer]);
+
+  useEffect(() => {
+    if (!currentSession || currentSession.isCompleted || isAnswered) return;
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          handleTimeUp();
+          return 30;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [currentSession, isAnswered, handleTimeUp]);
+
   const handleUseHint = useCallback(() => {
     if (hintsUsed >= 2 || isAnswered || !currentSession || currentSession.isCompleted) return;
     const currentQuestion = currentQuestionRef.current;
@@ -172,5 +172,3 @@ export function useTriviaGameViewModel(categoryId: string) {
     reset,
   };
 }
-
-

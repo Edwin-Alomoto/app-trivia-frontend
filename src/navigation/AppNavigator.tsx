@@ -16,6 +16,7 @@ import { colors } from '../theme/colors';
 import { LoginScreen } from '../features/auth/presentation/screens/LoginScreen';
 import { RegisterScreen } from '../features/auth/presentation/screens/RegisterScreen';
 import { ForgotPasswordScreen } from '../features/auth/presentation/screens/ForgotPasswordScreen';
+import { ResetPasswordScreen } from '../features/auth/presentation/screens/ResetPasswordScreen';
 import { ModeSelectionScreen } from '../features/auth/presentation/screens/ModeSelectionScreen';
 
 // Purchase Screens
@@ -23,8 +24,8 @@ import { BuyPointsScreen } from '../screens/purchases/BuyPointsScreen';
 
 // Main Screens
 import { HomeScreen } from '../screens/main/HomeScreen';
-import { CategoriesScreen } from '../screens/main/CategoriesScreen';
-import { TriviaGameScreen } from '../screens/game/TriviaGameScreen';
+import { CategoriesScreen } from '../features/trivia/presentation/screens/CategoriesScreen';
+import { TriviaGameScreen } from '../features/game/presentation/screens/TriviaGameScreen';
 import { PointsHistoryScreen } from '../screens/points/PointsHistoryScreen';
 import { RewardsScreen } from '../screens/rewards/RewardsScreen';
 import { RafflesScreen } from '../screens/raffles/RafflesScreen';
@@ -50,6 +51,7 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
         <Stack.Screen name="ModeSelection" component={ModeSelectionScreen} />
         <Stack.Screen name="MainTabs" component={MainTabNavigator} />
         <Stack.Screen name="TriviaGame" component={TriviaGameScreen} />

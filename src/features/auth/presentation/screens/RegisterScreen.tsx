@@ -27,6 +27,8 @@ import { registerUser, verifyEmail } from '../../domain/store/authSlice';
 import { featureFlags } from '../../../../config/featureFlags';
 import { useRegisterViewModel } from '../../domain/hooks/useRegisterViewModel';
 import { registerScreenStyles } from './styles/RegisterScreen.styles';
+import ErrorModal from '../../../../shared/presentation/components/ui/ErrorModal';
+import { SuccessModal } from '../../../../shared/presentation/components/ui/SuccessModal';
 import FormTextInput from '../components/FormTextInput';
 import PasswordInput from '../components/PasswordInput';
 import InlineDropdown from '../components/InlineDropdown';
@@ -78,6 +80,8 @@ export const RegisterScreen: React.FC = () => {
   // Estados de validación
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
+  const [errorModal, setErrorModal] = useState<{ visible: boolean; message: string }>({ visible: false, message: '' });
+  const [successModal, setSuccessModal] = useState<{ visible: boolean; message: string }>({ visible: false, message: '' });
   // Visibilidad de password manejada dentro de PasswordInput
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
@@ -335,18 +339,31 @@ export const RegisterScreen: React.FC = () => {
         return;
       }
 
-      await dispatch(registerUser({
+      // Mapear formData al payload esperado por la API
+      const registerPayload = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        address: formData.address,
+        username: formData.email.split('@')[0], // Usar parte del email como username temporal
         email: formData.email,
         password: formData.password,
-      })).unwrap();
-      setShowVerificationModal(true);
-      setResendTimer(60);
+        phone: formData.phone,
+        birth_date: formData.birthdate.split('/').reverse().join('-'), // Convertir DD/MM/AAAA a YYYY-MM-DD
+        gender: formData.gender,
+        status: 'ACTIVE',
+      };
+
+      console.log('🟣 [RegisterScreen] Enviando registro con payload:', JSON.stringify(registerPayload, null, 2));
+      await dispatch(registerUser(registerPayload)).unwrap();
+      console.log('🟣 [RegisterScreen] Registro exitoso, mostrando modal de éxito...');
+      // Mostrar modal de éxito en lugar de navegar directamente
+      setSuccessModal({ 
+        visible: true, 
+        message: 'Revisa tu correo electrónico para verificar tu cuenta antes de iniciar sesión.' 
+      });
       
     } catch (registerError) {
-      Alert.alert(
-        'Error',
-        'No pudimos crear tu cuenta. Inténtalo nuevamente.'
-      );
+      setErrorModal({ visible: true, message: (registerError as any)?.message || 'No pudimos crear tu cuenta. Inténtalo nuevamente.' });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
   };
@@ -765,6 +782,25 @@ export const RegisterScreen: React.FC = () => {
           </View>
         </Modal>
 
+        {/* Modal de Error */}
+        <ErrorModal
+          visible={errorModal.visible}
+          title="No pudimos crear tu cuenta"
+          message={errorModal.message}
+          onClose={() => setErrorModal({ visible: false, message: '' })}
+          primaryActionLabel="Entendido"
+        />
+
+        {/* Modal de Éxito */}
+        <SuccessModal
+          visible={successModal.visible}
+          title="¡Registro exitoso!"
+          message={successModal.message}
+          onPress={() => {
+            setSuccessModal({ visible: false, message: '' });
+            navigation.navigate('Login' as never);
+          }}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

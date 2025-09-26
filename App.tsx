@@ -7,7 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { store } from './src/store';
-import { AppNavigator } from './src/navigation/AppNavigator';
+import { AuthNavigator } from './src/navigation/AuthNavigator';
 import { ErrorBoundary } from '@shared/presentation/components/ErrorBoundary';
 import { AppInitializer } from './src/components/AppInitializer';
 import { TypographyProvider } from '@shared/presentation/providers/TypographyProvider';
@@ -43,7 +43,7 @@ export default function App() {
           <AppInitializer>
             <TypographyProvider>
               <ErrorBoundary>
-                <AppNavigator />
+                <AuthNavigator />
               </ErrorBoundary>
             </TypographyProvider>
           </AppInitializer>
