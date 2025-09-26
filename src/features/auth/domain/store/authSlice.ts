@@ -4,6 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 import { AuthState, LoginCredentials } from '../types';
 import { User } from '@shared/domain/types';
 import { RootState } from '@app/store';
+import { apiLogin, apiRegister, apiForgotPassword, apiLogout } from '../services/authApi';
 
 const initialState: AuthState = {
   user: null, // Usuario no logueado inicialmente
@@ -26,123 +27,104 @@ export const loginUser = createAsyncThunk<
   'auth/login',
   async (credentials: LoginCredentials, { rejectWithValue }) => {
     try {
-      // Simulación de API call
-      await new Promise(resolve => setTimeout(resolve, 700));
+      const apiData = await apiLogin({ email: credentials.email, password: credentials.password });
+      const accessToken: string = apiData?.accessToken;
+      const refreshToken: string = apiData?.refreshToken;
+      const apiUser = apiData?.user as { id: string; username: string; email: string; role?: string };
 
-      // Simular credenciales incorrectas
-      if (credentials.password !== '12345678') {
-        throw new Error('credenciales_invalidas');
+      if (!accessToken || !refreshToken || !apiUser) {
+        return rejectWithValue('Respuesta inválida del servidor');
       }
 
-      // Mock response exitoso - usuario no suscrito por defecto
-      const mockUser: User = {
-        id: '1',
-        email: credentials.email,
-        name: 'Usuario Demo',
-        alias: 'trivia_master',
+      const mappedUser: User = {
+        id: apiUser.id,
+        email: apiUser.email,
+        name: apiUser.username,
+        alias: apiUser.username,
         points: 0,
         createdAt: new Date().toISOString(),
-        preferences: {
-          notifications: true,
-          language: 'es',
-          sound: true,
-          haptics: true,
-        },
+        preferences: { notifications: true, language: 'es', sound: true, haptics: true },
         subscriptionStatus: 'not_subscribed',
       };
 
-      const token = 'mock_jwt_token_' + Date.now();
+      await SecureStore.setItemAsync('auth_access_token', accessToken);
+      await SecureStore.setItemAsync('auth_refresh_token', refreshToken);
+      await SecureStore.setItemAsync('user_data', JSON.stringify(mappedUser));
 
-      // Guardar token en SecureStore
-      await SecureStore.setItemAsync('auth_token', token);
-      await SecureStore.setItemAsync('user_data', JSON.stringify(mockUser));
-
-      return { user: mockUser, token };
+      return { user: mappedUser, token: accessToken };
     } catch (error: any) {
-      // Manejar diferentes tipos de error
-      if (error.message === 'credenciales_invalidas') {
-        return rejectWithValue('Email o contraseña incorrectos.');
-      }
-
-      return rejectWithValue('Error al iniciar sesión. Inténtalo de nuevo.');
+      return rejectWithValue(error?.response?.data?.message || 'Error al iniciar sesión. Inténtalo de nuevo.');
     }
   }
 );
 
 export const registerUser = createAsyncThunk<
-  { user: User; requiresVerification: boolean },
-  { email: string; password: string },
+  { user: User; token: string },
+  { firstName: string; lastName: string; email: string; password: string; birthdate?: string; gender?: string },
   AuthThunkConfig
 >(
   'auth/register',
-  async (userData: { email: string; password: string }, { rejectWithValue }) => {
+  async (userData, { rejectWithValue }) => {
     try {
-      // Simulación de API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Convertir DD/MM/YYYY a YYYY-MM-DD
+      const birth_date = userData.birthdate
+        ? (() => { const [d,m,y] = userData.birthdate.split('/'); return `${y}-${m}-${d}`; })()
+        : undefined;
+      const username = userData.email.split('@')[0];
 
-      // Mock response - usuario en estado pendiente de verificación
-      const mockUser: User = {
-        id: '1',
+      const apiData = await apiRegister({
+        first_name: userData.firstName,
+        last_name: userData.lastName,
+        username,
         email: userData.email,
-        name: userData.email.split('@')[0], // Usar parte del email como nombre temporal
-        alias: userData.email.split('@')[0], // Usar parte del email como alias temporal
+        password: userData.password,
+        birth_date,
+        gender: userData.gender,
+      });
+
+      const accessToken: string = apiData?.accessToken;
+      const refreshToken: string = apiData?.refreshToken;
+      const apiUser = apiData?.user as { id: string; username: string; email: string };
+
+      if (!accessToken || !refreshToken || !apiUser) {
+        return rejectWithValue('Respuesta inválida del servidor');
+      }
+
+      const mappedUser: User = {
+        id: apiUser.id,
+        email: apiUser.email,
+        name: apiUser.username,
+        alias: apiUser.username,
         points: 0,
         createdAt: new Date().toISOString(),
-        preferences: {
-          notifications: true,
-          language: 'es',
-          sound: true,
-          haptics: true,
-        },
+        preferences: { notifications: true, language: 'es', sound: true, haptics: true },
         subscriptionStatus: 'not_subscribed',
       };
 
-      // En el prototipo, no guardamos el token hasta que se verifique el email
-      // Simulamos que el usuario está en estado "pendiente de verificación"
+      await SecureStore.setItemAsync('auth_access_token', accessToken);
+      await SecureStore.setItemAsync('auth_refresh_token', refreshToken);
+      await SecureStore.setItemAsync('user_data', JSON.stringify(mappedUser));
 
-      return { user: mockUser, requiresVerification: true };
-    } catch (error) {
-      return rejectWithValue('Error al registrar usuario');
+      return { user: mappedUser, token: accessToken };
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || 'Error al registrar usuario');
     }
   }
 );
 
+// No hay verificación de correo en backend actual; mantenemos thunk por compatibilidad pero no hace nada
 export const verifyEmail = createAsyncThunk<
   { user: User; token: string },
   string,
   AuthThunkConfig
 >(
   'auth/verifyEmail',
-  async (verificationToken: string, { rejectWithValue }) => {
+  async (_verificationToken: string, { getState, rejectWithValue }) => {
     try {
-      // Simulación de verificación de email
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Mock response - usuario verificado pero no suscrito
-      const mockUser: User = {
-        id: '1',
-        email: 'usuario@demo.com',
-        name: 'Usuario Demo',
-        alias: 'trivia_master',
-        points: 0,
-        createdAt: new Date().toISOString(),
-        preferences: {
-          notifications: true,
-          language: 'es',
-          sound: true,
-          haptics: true,
-        },
-        subscriptionStatus: 'not_subscribed',
-      };
-
-      const token = 'mock_jwt_token_' + Date.now();
-
-      // Guardar token en SecureStore después de verificación
-      await SecureStore.setItemAsync('auth_token', token);
-      await SecureStore.setItemAsync('user_data', JSON.stringify(mockUser));
-
-      return { user: mockUser, token };
-    } catch (error) {
+      const { auth } = getState() as { auth: AuthState };
+      if (!auth.user || !auth.token) throw new Error('Usuario no autenticado');
+      return { user: auth.user, token: auth.token };
+    } catch (_e) {
       return rejectWithValue('Error al verificar email');
     }
   }
@@ -156,8 +138,12 @@ export const logoutUser = createAsyncThunk<
   'auth/logout',
   async (_, { rejectWithValue }) => {
     try {
-      // Limpiar SecureStore
-      await SecureStore.deleteItemAsync('auth_token');
+      const refreshToken = await SecureStore.getItemAsync('auth_refresh_token');
+      if (refreshToken) {
+        try { await apiLogout(refreshToken); } catch {}
+      }
+      await SecureStore.deleteItemAsync('auth_access_token');
+      await SecureStore.deleteItemAsync('auth_refresh_token');
       await SecureStore.deleteItemAsync('user_data');
       return null;
     } catch (error) {
@@ -174,7 +160,7 @@ export const checkAuthStatus = createAsyncThunk<
   'auth/checkStatus',
   async (_, { rejectWithValue }) => {
     try {
-      const token = await SecureStore.getItemAsync('auth_token');
+      const token = await SecureStore.getItemAsync('auth_access_token');
       const userData = await SecureStore.getItemAsync('user_data');
 
       if (token && userData) {
@@ -185,6 +171,21 @@ export const checkAuthStatus = createAsyncThunk<
       return null;
     } catch (error) {
       return rejectWithValue('Error al verificar autenticación');
+    }
+  }
+);
+
+export const forgotPassword = createAsyncThunk<
+  void,
+  { email: string },
+  AuthThunkConfig
+>(
+  'auth/forgotPassword',
+  async ({ email }, { rejectWithValue }) => {
+    try {
+      await apiForgotPassword(email);
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || 'Error al solicitar recuperación');
     }
   }
 );
@@ -415,10 +416,7 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload.user;
-        // No establecemos el token hasta que se verifique el email
-        if (!action.payload.requiresVerification && 'token' in action.payload) {
-          state.token = action.payload.token as string;
-        }
+        state.token = action.payload.token;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
