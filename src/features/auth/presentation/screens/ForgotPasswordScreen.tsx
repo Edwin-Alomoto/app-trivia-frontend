@@ -24,6 +24,8 @@ import {
   ForgotPasswordForm,
   SuccessMessage
 } from '../components';
+import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { forgotPassword } from '../../domain/store/authSlice';
 
 
 type ForgotPasswordScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ForgotPassword'>;
@@ -32,6 +34,7 @@ type ForgotPasswordScreenRouteProp = RouteProp<RootStackParamList, 'ForgotPasswo
 export const ForgotPasswordScreen: React.FC = () => {
   const navigation = useNavigation<ForgotPasswordScreenNavigationProp>();
   const route = useRoute<ForgotPasswordScreenRouteProp>();
+  const dispatch = useAppDispatch();
   
   const [email, setEmail] = useState(route.params?.email || '');
   const [emailError, setEmailError] = useState('');
@@ -88,8 +91,7 @@ export const ForgotPasswordScreen: React.FC = () => {
     setEmailError('');
 
     try {
-      // Simular envío de email
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await dispatch(forgotPassword({ email })).unwrap();
       
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setIsEmailSent(true);
