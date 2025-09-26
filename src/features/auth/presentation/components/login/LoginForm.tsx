@@ -131,6 +131,24 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         </Text>
       </TouchableOpacity>
 
+      {/* Credenciales de prueba */}
+      <View style={styles.testCredentialsContainer}>
+        <Text style={[getVariantStyle('caption'), styles.testCredentialsTitle]}>
+          🔐 Credenciales de Prueba
+        </Text>
+        <TouchableOpacity
+          style={styles.testCredentialsButton}
+          onPress={() => {
+            onFormDataChange('email', 'arielalomoto1999@gmail.com');
+            onFormDataChange('password', 'M1234567890*a');
+          }}
+        >
+          <Text style={[getVariantStyle('caption'), styles.testCredentialsText]}>
+            Usar credenciales de prueba
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       {/* Footer */}
       <AuthFooter
         text="¿No tienes cuenta? "
@@ -152,6 +170,32 @@ const styles = StyleSheet.create({
   },
   forgotPasswordText: {
     color: '#6366f1',
+    fontWeight: '600',
+  },
+  testCredentialsContainer: {
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+  },
+  testCredentialsTitle: {
+    color: '#6c757d',
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  testCredentialsButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: '#28a745',
+    borderRadius: 6,
+  },
+  testCredentialsText: {
+    color: '#ffffff',
     fontWeight: '600',
   },
 });
