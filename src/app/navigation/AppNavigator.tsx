@@ -39,17 +39,24 @@ import { TestimonialsScreen } from '@features/testimonials/presentation/screens/
 
 // Types
 import { RootStackParamList, MainTabParamList } from '@shared/domain/types';
+import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const AppNavigator: React.FC = () => {
+  const token = useAppSelector((s) => s.auth.token);
+  const initialRouteName = token ? 'MainTabs' : 'Login';
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRouteName as any}>
+        {!token && (
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+          </>
+        )}
         <Stack.Screen name="ModeSelection" component={ModeSelectionScreen} />
         <Stack.Screen name="MainTabs" component={MainTabNavigator} />
         <Stack.Screen name="TriviaGame" component={TriviaGameScreen} />

@@ -260,11 +260,17 @@ export const RegisterScreen: React.FC = () => {
       }
 
       await dispatch(registerUser({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
+        birthdate: formData.birthdate,
+        gender: formData.gender,
       })).unwrap();
-      setShowVerificationModal(true);
-      setResendTimer(60);
+      // En el backend actual, no requiere verificación de email para emitir tokens.
+      // Mostramos éxito y navegamos a selección de modo o tabs.
+      Alert.alert('Registro exitoso', 'Tu cuenta ha sido creada.');
+      navigation.navigate('ModeSelection' as never);
       
     } catch (registerError) {
       Alert.alert(
