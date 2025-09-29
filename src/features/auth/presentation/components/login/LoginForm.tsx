@@ -139,8 +139,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         <TouchableOpacity
           style={styles.testCredentialsButton}
           onPress={() => {
-            onFormDataChange('email', 'arielalomoto1999@gmail.com');
-            onFormDataChange('password', 'M1234567890*a');
+            onFormDataChange('email', 'Usuario@Example2.com');
+            onFormDataChange('password', 'M123457890*a');
           }}
         >
           <Text style={[getVariantStyle('caption'), styles.testCredentialsText]}>
