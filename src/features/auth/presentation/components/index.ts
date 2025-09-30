@@ -7,6 +7,7 @@ export { AuthButton } from './AuthButton';
 export { AuthHeader } from './AuthHeader';
 export { AuthFooter } from './AuthFooter';
 export { RememberMeCheckbox } from './RememberMeCheckbox';
+export { ModalAlert } from './ModalAlert';
 
 // Componentes específicos por pantalla
 export * from './login';

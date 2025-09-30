@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { AuthInput } from '../AuthInput';
 import { AuthButton } from '../AuthButton';
-import { AuthFooter } from '../AuthFooter';
+import { colors } from '@theme/colors';
+import { getVariantStyle } from '@theme/typography';
 
 interface ForgotPasswordFormProps {
   // Form data
@@ -68,15 +69,16 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
         onPress={onSendReset}
         disabled={isLoading}
         loading={isLoading}
-        variant="primary"
+        gradient="gold"
       />
 
       {/* Footer */}
-      <AuthFooter
-        text="¿Recordaste tu contraseña? "
-        linkText="Volver al login"
-        onLinkPress={onBackToLogin}
-      />
+      <View style={styles.footerContainer}>
+        <Text style={[getVariantStyle('body'), styles.footerText]}>¿Recordaste tu contraseña?</Text>
+        <TouchableOpacity onPress={onBackToLogin}>
+          <Text style={[getVariantStyle('body'), styles.linkText]}>Volver al login</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -84,5 +86,17 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
 const styles = StyleSheet.create({
   form: {
     flex: 1,
+  },
+  footerContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  footerText: {
+    color: '#ffffff',
+    marginBottom: 8,
+  },
+  linkText: {
+    color: colors.gold,
+    fontWeight: '600',
   },
 });
