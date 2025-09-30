@@ -9,6 +9,8 @@ type RegisterPayload = {
   password: string;
   birth_date?: string;
   gender?: string;
+  address?: string;
+  phone?: string;
 };
 
 export async function apiLogin(payload: LoginPayload) {

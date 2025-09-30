@@ -60,7 +60,7 @@ export const loginUser = createAsyncThunk<
 
 export const registerUser = createAsyncThunk<
   { user: User; token: string },
-  { firstName: string; lastName: string; email: string; password: string; birthdate?: string; gender?: string },
+  { firstName: string; lastName: string; username?: string; address?: string; phone?: string; email: string; password: string; birthdate?: string; gender?: string },
   AuthThunkConfig
 >(
   'auth/register',
@@ -70,7 +70,16 @@ export const registerUser = createAsyncThunk<
       const birth_date = userData.birthdate
         ? (() => { const [d,m,y] = userData.birthdate.split('/'); return `${y}-${m}-${d}`; })()
         : undefined;
-      const username = userData.email.split('@')[0];
+      const username = (userData.username && userData.username.trim()) || userData.email.split('@')[0];
+
+      // Normalizar género desde etiquetas en español a códigos esperados por la API
+      const genderCode = (() => {
+        const g = (userData.gender || '').toLowerCase();
+        if (g.startsWith('m')) return 'M'; // Masculino
+        if (g.startsWith('f')) return 'F'; // Femenino
+        if (g.startsWith('o')) return 'O'; // Otro
+        return g ? 'N' : undefined; // Prefiero no decirlo -> N, o undefined si no viene
+      })();
 
       const apiData = await apiRegister({
         first_name: userData.firstName,
@@ -79,7 +88,9 @@ export const registerUser = createAsyncThunk<
         email: userData.email,
         password: userData.password,
         birth_date,
-        gender: userData.gender,
+        gender: genderCode,
+        address: userData.address,
+        phone: userData.phone,
       });
 
       const accessToken: string = apiData?.accessToken;

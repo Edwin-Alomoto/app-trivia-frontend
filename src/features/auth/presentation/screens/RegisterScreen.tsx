@@ -51,6 +51,9 @@ export const RegisterScreen: React.FC = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    username: '',
+    address: '',
+    phone: '',
     email: '',
     birthdate: '',
     gender: '',
@@ -60,6 +63,9 @@ export const RegisterScreen: React.FC = () => {
   const [errors, setErrors] = useState({
     firstName: '',
     lastName: '',
+    username: '',
+    address: '',
+    phone: '',
     email: '',
     birthdate: '',
     gender: '',
@@ -193,9 +199,12 @@ export const RegisterScreen: React.FC = () => {
 
   // Validación del formulario
   const validateForm = () => {
-    const newErrors = {
+    const newErrors: any = {
       firstName: '',
       lastName: '',
+      username: '',
+      address: '',
+      phone: '',
       email: '',
       birthdate: '',
       gender: '',
@@ -207,6 +216,15 @@ export const RegisterScreen: React.FC = () => {
     }
     if (!formData.lastName) {
       newErrors.lastName = 'Ingresa tu apellido.';
+    }
+    if (!formData.username) {
+      newErrors.username = 'Ingresa tu nombre de usuario.';
+    }
+    if (!formData.address) {
+      newErrors.address = 'Ingresa tu dirección.';
+    }
+    if (!formData.phone) {
+      newErrors.phone = 'Ingresa tu teléfono.';
     }
     if (!formData.email) {
       newErrors.email = 'Ingresa tu correo electrónico.';
@@ -265,6 +283,9 @@ export const RegisterScreen: React.FC = () => {
       await dispatch(registerUser({
         firstName: formData.firstName,
         lastName: formData.lastName,
+        username: formData.username,
+        address: formData.address,
+        phone: formData.phone,
         email: formData.email,
         password: formData.password,
         birthdate: formData.birthdate,
