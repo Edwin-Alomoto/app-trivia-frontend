@@ -1,11 +1,13 @@
 import { StyleSheet } from 'react-native';
 import { colors } from '@theme/colors';
+
 import { commonStyles } from './common';
 
 export const registerStyles = StyleSheet.create({
   // Container styles
   container: {
     ...commonStyles.container,
+    backgroundColor: 'transparent',
   },
   backgroundLayer: {
     ...commonStyles.backgroundLayer,
@@ -30,7 +32,6 @@ export const registerStyles = StyleSheet.create({
   // Header styles
   header: {
     alignItems: 'center',
-    paddingTop: 60,
     paddingBottom: 5,
   },
   logoContainer: {
@@ -43,22 +44,22 @@ export const registerStyles = StyleSheet.create({
     backgroundColor: colors.primary100,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 24,
   },
   logo: {
     fontSize: 40,
   },
   logoImage: {
-    width: 72,
-    height: 72,
-    marginBottom: 16,
+    marginTop: 30,
+    width: 180,
+    height: 65,
+    marginBottom: 15,
   },
   title: {
-    color: colors.textPrimary,
+    color: colors.gold,
     textAlign: 'center',
   },
   subtitle: {
-    color: colors.textSecondary,
+    color: '#ffffff',
     textAlign: 'center',
     marginTop: 8,
   },

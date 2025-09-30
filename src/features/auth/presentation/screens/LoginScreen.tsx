@@ -10,6 +10,7 @@ import {
   Dimensions,
   TextInput,
   Image,
+  ImageBackground,
   Text,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -22,6 +23,8 @@ import { RootStackParamList } from '@shared/domain/types';
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { featureToggles } from '@config/featureToggles';
+import { ModalAlert } from '../components/ModalAlert';
+import { Background, AdaptiveIcon } from '../../../../assets';
 
 import { loginUser } from '../../domain/store/authSlice';
 import { useLoginViewModel } from '../../domain/hooks/useLoginViewModel';
@@ -69,6 +72,9 @@ export const LoginScreen: React.FC = () => {
 
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [modal, setModal] = useState<{ visible: boolean; title: string; message: string }>(
+    { visible: false, title: '', message: '' }
+  );
 
   useEffect(() => {
     // Animaciones de entrada muy suaves
@@ -164,12 +170,12 @@ export const LoginScreen: React.FC = () => {
   // Manejar recuperación de contraseña
   const handleForgotPassword = () => {
     if (!formData.email) {
-      Alert.alert('Email requerido', 'Ingresa tu email para recuperar tu contraseña.');
+      setModal({ visible: true, title: 'Email requerido', message: 'Ingresa tu email para recuperar tu contraseña.' });
       return;
     }
     
     if (!validateEmail(formData.email)) {
-      Alert.alert('Email inválido', 'Ingresa un email válido.');
+      setModal({ visible: true, title: 'Email inválido', message: 'Ingresa un email válido.' });
       return;
     }
     
@@ -191,13 +197,15 @@ export const LoginScreen: React.FC = () => {
   };
 
   return (
+    <ImageBackground source={Background} style={{ flex: 1 }} resizeMode="cover">
+      <ModalAlert
+        visible={modal.visible}
+        title={modal.title}
+        message={modal.message}
+        onClose={() => setModal({ visible: false, title: '', message: '' })}
+      />
     <SafeAreaView style={loginStyles.container}>
-      {/* Fondo con blobs orgánicos tenues */}
-      <View pointerEvents="none" style={loginStyles.backgroundLayer}>
-        <View style={loginStyles.blobTop} />
-        <View style={loginStyles.blobCenter} />
-        <View style={loginStyles.blobBottom} />
-      </View>
+      {/* Fondo con blobs removido para usar solo la imagen de fondo */}
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -221,7 +229,7 @@ export const LoginScreen: React.FC = () => {
             <View style={loginStyles.header}>
               <View style={loginStyles.logoContainer}>
                 <Image 
-                  source={require('../../../../assets/adaptive-icon.png')}
+                  source={AdaptiveIcon}
                   style={loginStyles.logoImage}
                   resizeMode="contain"
                 />
@@ -273,5 +281,6 @@ export const LoginScreen: React.FC = () => {
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
+    </ImageBackground>
   );
 };

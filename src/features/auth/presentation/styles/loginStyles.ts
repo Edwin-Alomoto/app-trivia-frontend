@@ -8,6 +8,7 @@ export const loginStyles = StyleSheet.create({
   // Container styles
   container: {
     ...commonStyles.container,
+    backgroundColor: 'transparent',
   },
   backgroundLayer: {
     ...commonStyles.backgroundLayer,
@@ -51,16 +52,16 @@ export const loginStyles = StyleSheet.create({
     fontSize: 36,
   },
   logoImage: {
-    width: 72,
-    height: 72,
+    width: 96,
+    height: 96,
     marginBottom: 16,
   },
   title: {
-    color: colors.textPrimary,
+    color: colors.gold,
     textAlign: 'center',
   },
   subtitle: {
-    color: colors.textSecondary,
+    color: '#ffffff',
     textAlign: 'center',
     marginTop: 8,
   },

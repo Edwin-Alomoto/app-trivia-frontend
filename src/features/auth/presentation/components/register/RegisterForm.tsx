@@ -251,6 +251,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         disabled={!acceptedTerms || !acceptedPrivacy || isLoading}
         loading={isLoading}
         variant="primary"
+        gradient="gold"
       />
 
       {/* Footer */}
