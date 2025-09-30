@@ -131,23 +131,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         </Text>
       </TouchableOpacity>
 
-      {/* Credenciales de prueba */}
-      <View style={styles.testCredentialsContainer}>
-        <Text style={[getVariantStyle('caption'), styles.testCredentialsTitle]}>
-          🔐 Credenciales de Prueba
-        </Text>
-        <TouchableOpacity
-          style={styles.testCredentialsButton}
-          onPress={() => {
-            onFormDataChange('email', 'Usuario@Example2.com');
-            onFormDataChange('password', 'M123457890*a');
-          }}
-        >
-          <Text style={[getVariantStyle('caption'), styles.testCredentialsText]}>
-            Usar credenciales de prueba
-          </Text>
-        </TouchableOpacity>
-      </View>
+      
 
       {/* Footer */}
       <AuthFooter
