@@ -19,6 +19,8 @@ export const colors = {
   muted: '#94a3b8',
   error: '#ef4444',
   onPrimary: '#ffffff',
+  // Metallic palette
+  gold: '#efb810',
 };
 
 export type AppColors = typeof colors;

@@ -64,11 +64,11 @@ const styles = StyleSheet.create({
   },
   checkboxText: {
     flex: 1,
-    color: colors.textPrimary,
+    color: '#ffffff',
     lineHeight: 20,
   },
   linkText: {
-    color: colors.primary600,
+    color: colors.gold,
     fontWeight: '600',
   },
 });

@@ -31,10 +31,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footerText: {
-    color: colors.textSecondary,
+    color: '#ffffff',
   },
   linkText: {
-    color: colors.primary600,
+    color: colors.gold,
     fontWeight: '600',
   },
   boldText: {

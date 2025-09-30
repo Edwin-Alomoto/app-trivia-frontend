@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { colors } from '@theme/colors';
 import { AuthInput } from '../AuthInput';
 import { PasswordInput } from '../PasswordInput';
 import { AuthButton } from '../AuthButton';
@@ -119,6 +120,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         disabled={isLoading}
         loading={isLoading}
         variant="primary"
+        gradient="gold"
       />
 
       {/* Enlace recuperar contraseña */}
@@ -153,7 +155,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   forgotPasswordText: {
-    color: '#6366f1',
+    color: colors.gold,
     fontWeight: '600',
   },
   testCredentialsContainer: {

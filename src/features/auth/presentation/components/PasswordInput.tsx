@@ -148,11 +148,11 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   inputError: {
-    borderColor: colors.error,
+    borderColor: colors.gold,
     backgroundColor: '#fef2f2',
   },
   errorText: {
-    color: colors.error,
+    color: colors.gold,
     marginTop: 6,
     marginLeft: 4,
   },

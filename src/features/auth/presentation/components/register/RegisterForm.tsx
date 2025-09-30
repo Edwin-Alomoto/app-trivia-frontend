@@ -14,6 +14,9 @@ interface RegisterFormProps {
   formData: {
     firstName: string;
     lastName: string;
+    username?: string;
+    address?: string;
+    phone?: string;
     email: string;
     birthdate: string;
     gender: string;
@@ -22,6 +25,9 @@ interface RegisterFormProps {
   errors: {
     firstName: string;
     lastName: string;
+    username?: string;
+    address?: string;
+    phone?: string;
     email: string;
     birthdate: string;
     gender: string;
@@ -135,6 +141,17 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
   return (
     <View style={[styles.form, style]}>
+      {/* Campo Username */}
+      <AuthInput
+        placeholder="Nombre de usuario"
+        value={formData.username || ''}
+        onChangeText={(value) => onFormDataChange('username', value)}
+        error={errors.username || ''}
+        autoCapitalize="none"
+        returnKeyType="next"
+        onSubmitEditing={() => {}}
+      />
+
       {/* Campo Nombre */}
       <AuthInput
         placeholder="Nombre"
@@ -150,6 +167,26 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         onSubmitEditing={() => lastNameInputRef.current?.focus()}
         autoComplete="name"
         textContentType="name"
+      />
+
+      {/* Campo Dirección */}
+      <AuthInput
+        placeholder="Dirección"
+        value={formData.address || ''}
+        onChangeText={(value) => onFormDataChange('address', value)}
+        error={errors.address || ''}
+        autoCapitalize="sentences"
+        returnKeyType="next"
+      />
+
+      {/* Campo Teléfono */}
+      <AuthInput
+        placeholder="Teléfono"
+        value={formData.phone || ''}
+        onChangeText={(value) => onFormDataChange('phone', value)}
+        error={errors.phone || ''}
+        keyboardType="phone-pad"
+        returnKeyType="next"
       />
 
       {/* Campo Apellido */}
@@ -251,6 +288,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         disabled={!acceptedTerms || !acceptedPrivacy || isLoading}
         loading={isLoading}
         variant="primary"
+        gradient="gold"
       />
 
       {/* Footer */}

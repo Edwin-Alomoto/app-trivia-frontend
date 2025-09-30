@@ -52,6 +52,6 @@ const styles = StyleSheet.create({
     borderColor: colors.primary600,
   },
   text: {
-    color: colors.textSecondary,
+    color: '#ffffff',
   },
 });

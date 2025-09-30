@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import { colors } from '@theme/colors';
 import { CheckboxInput } from './CheckboxInput';
 
 interface TermsAndPrivacySectionProps {
@@ -45,5 +46,8 @@ export const TermsAndPrivacySection: React.FC<TermsAndPrivacySectionProps> = ({
 const styles = StyleSheet.create({
   container: {
     marginVertical: 24,
+    padding: 8,
+    borderRadius: 12,
+    borderWidth: 0,
   },
 });

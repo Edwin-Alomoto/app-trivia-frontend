@@ -10,6 +10,7 @@ import {
   TextInput,
   StatusBar,
   Image,
+  ImageBackground,
   Text,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -26,11 +27,13 @@ import { registerUser, verifyEmail } from '../../domain/store/authSlice';
 import { featureToggles } from '@config/featureToggles';
 import { useRegisterViewModel } from '../../domain/hooks/useRegisterViewModel';
 import { registerStyles } from '../styles/registerStyles';
+import { Background, Letter } from '../../../../assets';
 import {
   RegisterForm,
   RegisterHeader,
   VerificationModal
 } from '../components/register';
+
 
 
 type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
@@ -48,6 +51,9 @@ export const RegisterScreen: React.FC = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    username: '',
+    address: '',
+    phone: '',
     email: '',
     birthdate: '',
     gender: '',
@@ -57,6 +63,9 @@ export const RegisterScreen: React.FC = () => {
   const [errors, setErrors] = useState({
     firstName: '',
     lastName: '',
+    username: '',
+    address: '',
+    phone: '',
     email: '',
     birthdate: '',
     gender: '',
@@ -190,9 +199,12 @@ export const RegisterScreen: React.FC = () => {
 
   // Validación del formulario
   const validateForm = () => {
-    const newErrors = {
+    const newErrors: any = {
       firstName: '',
       lastName: '',
+      username: '',
+      address: '',
+      phone: '',
       email: '',
       birthdate: '',
       gender: '',
@@ -204,6 +216,15 @@ export const RegisterScreen: React.FC = () => {
     }
     if (!formData.lastName) {
       newErrors.lastName = 'Ingresa tu apellido.';
+    }
+    if (!formData.username) {
+      newErrors.username = 'Ingresa tu nombre de usuario.';
+    }
+    if (!formData.address) {
+      newErrors.address = 'Ingresa tu dirección.';
+    }
+    if (!formData.phone) {
+      newErrors.phone = 'Ingresa tu teléfono.';
     }
     if (!formData.email) {
       newErrors.email = 'Ingresa tu correo electrónico.';
@@ -262,6 +283,9 @@ export const RegisterScreen: React.FC = () => {
       await dispatch(registerUser({
         firstName: formData.firstName,
         lastName: formData.lastName,
+        username: formData.username,
+        address: formData.address,
+        phone: formData.phone,
         email: formData.email,
         password: formData.password,
         birthdate: formData.birthdate,
@@ -335,13 +359,8 @@ export const RegisterScreen: React.FC = () => {
 
 
   return (
+    <ImageBackground source={Background} style={{ flex: 1 }} resizeMode="cover">
     <SafeAreaView style={registerStyles.container}>
-      {/* Fondo con blobs orgánicos tenues */}
-      <View pointerEvents="none" style={registerStyles.backgroundLayer}>
-        <View style={registerStyles.blobTop} />
-        <View style={registerStyles.blobCenter} />
-        <View style={registerStyles.blobBottom} />
-      </View>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -365,9 +384,9 @@ export const RegisterScreen: React.FC = () => {
             <View style={registerStyles.header}>
               <View style={registerStyles.logoContainer}>
                 <Image 
-                  source={require('../../../../assets/adaptive-icon.png')}
+                  source={Letter}
                   style={registerStyles.logoImage}
-                  resizeMode="contain"
+                  resizeMode="stretch"
                 />
                 <Text style={[getVariantStyle('h1'), registerStyles.title]}>
                   ¡Únete a WinUp!
@@ -448,5 +467,6 @@ export const RegisterScreen: React.FC = () => {
 
       </KeyboardAvoidingView>
     </SafeAreaView>
+    </ImageBackground>
   );
 };
