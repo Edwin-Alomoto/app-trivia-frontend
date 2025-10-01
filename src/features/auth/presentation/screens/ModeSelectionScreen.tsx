@@ -9,6 +9,8 @@ import {
   Dimensions,
   Modal,
   StatusBar,
+  Image,
+  ImageBackground,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -18,11 +20,11 @@ import * as Haptics from 'expo-haptics';
 import { colors } from '@theme/colors';
 import { getVariantStyle } from '@theme/typography';
 import { RootStackParamList } from '@shared/domain/types';
-
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 
 import { modeSelectionStyles } from '../styles/modeSelectionStyles';
+import { Background, Letter } from '../../../../assets';
 import { activateDemoMode, activateSubscription } from '../../domain/store/authSlice';
 import { 
   ModeSelectionForm
@@ -171,20 +173,15 @@ export const ModeSelectionScreen: React.FC = () => {
   };
 
   return (
+    <ImageBackground source={Background} style={{ flex: 1 }} resizeMode="cover">
     <SafeAreaView style={modeSelectionStyles.container}>
-      {/* Fondo con blobs orgánicos tenues */}
-      <View pointerEvents="none" style={modeSelectionStyles.backgroundLayer}>
-        <View style={modeSelectionStyles.blobTop} />
-        <View style={modeSelectionStyles.blobCenter} />
-        <View style={modeSelectionStyles.blobBottom} />
-      </View>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.surface} />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
       <ScrollView
         contentContainerStyle={modeSelectionStyles.scrollContent}
         showsVerticalScrollIndicator={false}
         bounces={false}
       >
-        {/* Header minimalista */}
+        {/* Header estilo login */}
         <Animated.View
           style={[
             modeSelectionStyles.header,
@@ -195,8 +192,12 @@ export const ModeSelectionScreen: React.FC = () => {
           ]}
         >
           <View style={modeSelectionStyles.logoContainer}>
-            <Text style={[getVariantStyle('h1'), { color: colors.textPrimary }, modeSelectionStyles.marginBottom8]}>¡Hola, {user?.name}!</Text>
-            <Text style={[getVariantStyle('subtitle'), { color: colors.textSecondary }]}>Elige cómo quieres empezar</Text>
+            <Image 
+              source={Letter}
+              style={modeSelectionStyles.logoImage}
+              resizeMode="stretch"
+            />
+            <Text style={[getVariantStyle('h1'), modeSelectionStyles.title]}>Elije tu plan</Text>
           </View>
         </Animated.View>
 
@@ -234,10 +235,10 @@ export const ModeSelectionScreen: React.FC = () => {
         >
           <View style={modeSelectionStyles.infoCard}>
             <View style={modeSelectionStyles.infoHeader}>
-              <Ionicons name="information-circle" size={20} color="#6366f1" />
-              <Text style={[getVariantStyle('h2'), { color: colors.textPrimary }, modeSelectionStyles.marginLeft10]}>¿Por qué suscribirte?</Text>
+              <Ionicons name="information-circle" size={20} color={colors.gold} />
+              <Text style={[getVariantStyle('h2'), { color: colors.gold }, modeSelectionStyles.marginLeft10]}>¿Por qué suscribirte?</Text>
             </View>
-            <Text style={[getVariantStyle('body'), { color: colors.textSecondary }, modeSelectionStyles.lineHeight20]}>
+            <Text style={[getVariantStyle('body'), { color: colors.onPrimary }, modeSelectionStyles.lineHeight20]}>
               Con la suscripción Premium obtienes acceso completo a todas las funciones, 
               puntos canjeables por premios reales y participación en sorteos exclusivos. 
               La suscripción se renueva automáticamente cada mes por $9.99 USD.
@@ -256,7 +257,7 @@ export const ModeSelectionScreen: React.FC = () => {
         <View style={modeSelectionStyles.modalOverlay}>
           <View style={modeSelectionStyles.demoModal}>
             <View style={modeSelectionStyles.demoModalHeader}>
-              <Ionicons name="play-circle" size={40} color="#6366f1" />
+              <Ionicons name="play-circle" size={40} color={colors.primary600} />
               <Text style={modeSelectionStyles.demoModalTitle}>Modo Demo</Text>
               <Text style={modeSelectionStyles.demoModalSubtitle}>
                 ¡Perfecto para conocer la aplicación!
@@ -267,17 +268,17 @@ export const ModeSelectionScreen: React.FC = () => {
               <View style={modeSelectionStyles.demoFeatures}>
                 <Text style={modeSelectionStyles.demoFeaturesTitle}>Durante los próximos 7 días podrás:</Text>
                 
-                <View style={modeSelectionStyles.demoFeaturesList}>
-                  <View style={modeSelectionStyles.demoFeatureItem}>
-                    <Ionicons name="checkmark-circle" size={18} color="#10b981" />
+                  <View style={modeSelectionStyles.demoFeaturesList}>
+                    <View style={modeSelectionStyles.demoFeatureItem}>
+                      <Ionicons name="checkmark-circle" size={18} color={colors.primary600} />
                     <Text style={modeSelectionStyles.demoFeatureText}>Jugar trivia ilimitada</Text>
                   </View>
                   <View style={modeSelectionStyles.demoFeatureItem}>
-                    <Ionicons name="checkmark-circle" size={18} color="#10b981" />
+                      <Ionicons name="checkmark-circle" size={18} color={colors.primary600} />
                     <Text style={modeSelectionStyles.demoFeatureText}>Acumular puntos de prueba</Text>
                   </View>
                   <View style={modeSelectionStyles.demoFeatureItem}>
-                    <Ionicons name="checkmark-circle" size={18} color="#10b981" />
+                      <Ionicons name="checkmark-circle" size={18} color={colors.primary600} />
                     <Text style={modeSelectionStyles.demoFeatureText}>Explorar todas las categorías</Text>
                   </View>
                 </View>
@@ -304,9 +305,9 @@ export const ModeSelectionScreen: React.FC = () => {
                   onPress={handleConfirmDemo}
                   disabled={isLoading}
                 >
-                  <Ionicons name="play" size={18} color="#fff" />
+                  <Ionicons name="play" size={18} color={colors.gold} />
                   <Text style={modeSelectionStyles.demoConfirmButtonText}>
-                    {isLoading ? 'Activando...' : 'Empezar Demo'}
+                    {isLoading ? 'Activando...' : 'Empezar'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -325,7 +326,7 @@ export const ModeSelectionScreen: React.FC = () => {
         <View style={modeSelectionStyles.modalOverlay}>
           <View style={modeSelectionStyles.subscriptionModal}>
             <View style={modeSelectionStyles.subscriptionModalHeader}>
-              <Ionicons name="diamond" size={40} color="#10b981" />
+              <Ionicons name="diamond" size={40} color={colors.gold} />
               <Text style={modeSelectionStyles.subscriptionModalTitle}>Suscripción Premium</Text>
               <Text style={modeSelectionStyles.subscriptionModalSubtitle}>
                 Acceso completo mensual renovable
@@ -336,25 +337,25 @@ export const ModeSelectionScreen: React.FC = () => {
               <View style={modeSelectionStyles.subscriptionFeatures}>
                 <Text style={modeSelectionStyles.subscriptionFeaturesTitle}>Con Premium obtienes:</Text>
                 
-                <View style={modeSelectionStyles.subscriptionFeaturesList}>
-                  <View style={modeSelectionStyles.subscriptionFeatureItem}>
-                    <Ionicons name="infinite" size={18} color="#10b981" />
+                  <View style={modeSelectionStyles.subscriptionFeaturesList}>
+                    <View style={modeSelectionStyles.subscriptionFeatureItem}>
+                      <Ionicons name="infinite" size={18} color={colors.primary200} />
                     <Text style={modeSelectionStyles.subscriptionFeatureText}>Trivia ilimitada</Text>
                   </View>
                   <View style={modeSelectionStyles.subscriptionFeatureItem}>
-                    <Ionicons name="diamond" size={18} color="#10b981" />
+                      <Ionicons name="diamond" size={18} color={colors.primary200} />
                     <Text style={modeSelectionStyles.subscriptionFeatureText}>Puntos canjeables</Text>
                   </View>
                   <View style={modeSelectionStyles.subscriptionFeatureItem}>
-                    <Ionicons name="gift" size={18} color="#10b981" />
+                      <Ionicons name="gift" size={18} color={colors.primary200} />
                     <Text style={modeSelectionStyles.subscriptionFeatureText}>Premios reales</Text>
                   </View>
                   <View style={modeSelectionStyles.subscriptionFeatureItem}>
-                    <Ionicons name="trophy" size={18} color="#10b981" />
+                      <Ionicons name="trophy" size={18} color={colors.primary200} />
                     <Text style={modeSelectionStyles.subscriptionFeatureText}>Sorteos exclusivos</Text>
                   </View>
                   <View style={modeSelectionStyles.subscriptionFeatureItem}>
-                    <Ionicons name="chatbubbles" size={18} color="#10b981" />
+                      <Ionicons name="chatbubbles" size={18} color={colors.primary200} />
                     <Text style={modeSelectionStyles.subscriptionFeatureText}>Encuestas premium</Text>
                   </View>
                 </View>
@@ -392,5 +393,6 @@ export const ModeSelectionScreen: React.FC = () => {
         </View>
       </Modal>
     </SafeAreaView>
+    </ImageBackground>
   );
 };

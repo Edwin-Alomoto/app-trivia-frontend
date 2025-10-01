@@ -1,30 +1,16 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ModeCard } from './ModeCard';
-import { DemoModal } from './DemoModal';
-import { SubscriptionModal } from './SubscriptionModal';
 
 interface ModeSelectionFormProps {
   selectedMode: string | null;
   onModeSelect: (mode: string) => void;
-  onDemoConfirm: () => void;
-  onSubscriptionConfirm: () => void;
-  showDemoModal: boolean;
-  showSubscriptionModal: boolean;
-  onCloseDemoModal: () => void;
-  onCloseSubscriptionModal: () => void;
   style?: any;
 }
 
 export const ModeSelectionForm: React.FC<ModeSelectionFormProps> = ({
   selectedMode,
   onModeSelect,
-  onDemoConfirm,
-  onSubscriptionConfirm,
-  showDemoModal,
-  showSubscriptionModal,
-  onCloseDemoModal,
-  onCloseSubscriptionModal,
   style,
 }) => {
   const demoFeatures = [
@@ -47,36 +33,27 @@ export const ModeSelectionForm: React.FC<ModeSelectionFormProps> = ({
       <ModeCard
         title="Modo Demo"
         subtitle="Prueba gratuita"
-        description="Experimenta WinUp por 7 días sin compromiso. Accede a funcionalidades limitadas y descubre todo lo que puedes hacer."
+        description="Accede a funcionalidades limitadas y descubre todo lo que puedes hacer."
         icon="play-circle"
         features={demoFeatures}
         onPress={() => onModeSelect('demo')}
         isSelected={selectedMode === 'demo'}
+        variant="demo"
       />
 
       {/* Modo Suscripción */}
       <ModeCard
         title="Suscripción Premium"
         subtitle="Acceso completo"
-        description="Desbloquea todas las funcionalidades de WinUp. Gana puntos ilimitados, accede a premios exclusivos y disfruta de la experiencia completa."
+        description="Gana puntos ilimitados, accede a premios exclusivos y disfruta de la experiencia completa."
         icon="star"
         features={subscriptionFeatures}
         onPress={() => onModeSelect('subscription')}
         isSelected={selectedMode === 'subscription'}
+        variant="subscription"
       />
 
-      {/* Modales */}
-      <DemoModal
-        visible={showDemoModal}
-        onClose={onCloseDemoModal}
-        onConfirm={onDemoConfirm}
-      />
-
-      <SubscriptionModal
-        visible={showSubscriptionModal}
-        onClose={onCloseSubscriptionModal}
-        onConfirm={onSubscriptionConfirm}
-      />
+      {/* Modales eliminados: se controlan desde ModeSelectionScreen */}
     </View>
   );
 };

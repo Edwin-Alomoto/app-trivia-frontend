@@ -3,6 +3,7 @@ import { View, Text, Modal, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@theme/colors';
 import { getVariantStyle } from '@theme/typography';
+
 import { AuthButton } from '../AuthButton';
 
 interface SubscriptionModalProps {

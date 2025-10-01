@@ -12,6 +12,7 @@ interface ModeCardProps {
   features: string[];
   onPress: () => void;
   isSelected?: boolean;
+  variant?: 'demo' | 'subscription';
   style?: any;
 }
 
@@ -23,13 +24,29 @@ export const ModeCard: React.FC<ModeCardProps> = ({
   features,
   onPress,
   isSelected = false,
+  variant = 'demo',
   style,
 }) => {
+  const isSubscription = variant === 'subscription';
+  const dynamicCardStyle = isSubscription
+    ? { backgroundColor: colors.primary600, borderColor: colors.primary600 }
+    : { backgroundColor: colors.primary100, borderColor: colors.primary200 };
+  const dynamicSelectedStyle = isSubscription
+    ? { borderColor: colors.primary800 }
+    : { borderColor: colors.primary400 };
+  const titleColor = isSubscription ? colors.onPrimary : colors.textPrimary;
+  const subtitleColor = isSubscription ? colors.onPrimary : colors.textSecondary;
+  const descriptionColor = isSubscription ? colors.onPrimary : colors.textSecondary;
+  const featureTextColor = isSubscription ? colors.onPrimary : colors.textPrimary;
+  const iconColor = colors.gold;
+  // Checks diferenciados por modo: Demo = morado fuerte, Premium = morado pálido
+  const checkColor = isSubscription ? colors.primary200 : colors.primary600;
   return (
     <TouchableOpacity
       style={[
         styles.card,
-        isSelected && styles.cardSelected,
+        dynamicCardStyle,
+        isSelected && [styles.cardSelected, dynamicSelectedStyle],
         style,
       ]}
       onPress={onPress}
@@ -37,27 +54,27 @@ export const ModeCard: React.FC<ModeCardProps> = ({
     >
       <View style={styles.header}>
         <View style={styles.iconContainer}>
-          <Ionicons name={icon as any} size={32} color={colors.primary600} />
+          <Ionicons name={icon as any} size={32} color={iconColor} />
         </View>
         <View style={styles.titleContainer}>
-          <Text style={[getVariantStyle('h3'), styles.title]}>
+          <Text style={[getVariantStyle('h3'), styles.title, { color: titleColor }]}>
             {title}
           </Text>
-          <Text style={[getVariantStyle('body'), styles.subtitle]}>
+          <Text style={[getVariantStyle('body'), styles.subtitle, { color: subtitleColor }]}>
             {subtitle}
           </Text>
         </View>
       </View>
       
-      <Text style={[getVariantStyle('body'), styles.description]}>
+      <Text style={[getVariantStyle('body'), styles.description, { color: descriptionColor }]}>
         {description}
       </Text>
       
       <View style={styles.features}>
         {features.map((feature, index) => (
           <View key={index} style={styles.featureItem}>
-            <Ionicons name="checkmark" size={16} color="#10B981" />
-            <Text style={[getVariantStyle('body'), styles.featureText]}>
+            <Ionicons name="checkmark" size={16} color={checkColor} />
+            <Text style={[getVariantStyle('body'), styles.featureText, { color: featureTextColor }]}>
               {feature}
             </Text>
           </View>
@@ -78,7 +95,6 @@ const styles = StyleSheet.create({
   },
   cardSelected: {
     borderColor: colors.primary600,
-    backgroundColor: '#f0f4ff',
   },
   header: {
     flexDirection: 'row',
@@ -92,14 +108,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    color: colors.textPrimary,
     marginBottom: 4,
   },
   subtitle: {
-    color: colors.textSecondary,
   },
   description: {
-    color: colors.textSecondary,
     marginBottom: 16,
     lineHeight: 20,
   },
@@ -112,7 +125,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   featureText: {
-    color: colors.textPrimary,
     marginLeft: 8,
     flex: 1,
   },

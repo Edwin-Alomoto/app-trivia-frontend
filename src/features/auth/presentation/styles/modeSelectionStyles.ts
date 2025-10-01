@@ -6,7 +6,7 @@ export const modeSelectionStyles = StyleSheet.create({
   // Container styles
   container: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: 'transparent',
   },
   backgroundLayer: {
     ...commonStyles.backgroundLayer,
@@ -45,13 +45,18 @@ export const modeSelectionStyles = StyleSheet.create({
 
   // Header styles
   header: {
+    alignItems: 'center',
     paddingTop: 20,
-    paddingBottom: 5,
-    paddingHorizontal: 20,
-    marginBottom: 20,
+    paddingBottom: 15,
   },
   logoContainer: {
     alignItems: 'center',
+  },
+  logoImage: {
+    marginTop: 10,
+    width: 180,
+    height: 65,
+    marginBottom: 15,
   },
   logoWrapper: {
     backgroundColor: '#e0e7ff',
@@ -74,14 +79,14 @@ export const modeSelectionStyles = StyleSheet.create({
     marginBottom: 8,
     fontWeight: '600',
   },
-  subtitle: {
-    fontSize: 14,
-    color: '#9ca3af',
+  title: {
+    color: colors.gold,
+    textAlign: 'center',
   },
 
   // Cards styles
   cardsContainer: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 32,
     marginBottom: 2,
   },
   cardWrapper: {
@@ -100,8 +105,8 @@ export const modeSelectionStyles = StyleSheet.create({
     borderColor: '#f1f5f9',
   },
   premiumCard: {
-    backgroundColor: '#f0f9ff',
-    borderColor: '#e0f2fe',
+    backgroundColor: colors.primary100, // morado pálido para demo por defecto, se aplicará en el card demo
+    borderColor: colors.primary200,
   },
   modeCardSelected: {
     shadowColor: '#6366f1',
@@ -195,16 +200,16 @@ export const modeSelectionStyles = StyleSheet.create({
     marginBottom: 32,
   },
   infoCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.primary900,
     padding: 20,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: colors.gold,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 8,
   },
   infoHeader: {
     flexDirection: 'row',
@@ -212,14 +217,14 @@ export const modeSelectionStyles = StyleSheet.create({
     marginBottom: 12,
   },
   infoTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.gold,
     marginLeft: 8,
   },
   infoText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#ffffff',
     lineHeight: 20,
   },
 
@@ -279,9 +284,11 @@ export const modeSelectionStyles = StyleSheet.create({
   },
   demoModal: {
     width: '85%',
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.primary100, // mismo color base que el card demo
     borderRadius: 16,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.primary200,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.15,
@@ -291,7 +298,8 @@ export const modeSelectionStyles = StyleSheet.create({
   demoModalHeader: {
     padding: 28,
     alignItems: 'center',
-    backgroundColor: '#e0e7ff',
+    backgroundColor: colors.primary200,
+
   },
   demoModalTitle: {
     fontSize: 24,
@@ -302,7 +310,7 @@ export const modeSelectionStyles = StyleSheet.create({
   },
   demoModalSubtitle: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: colors.onPrimary,
     textAlign: 'center',
   },
   demoModalContent: {
@@ -333,16 +341,16 @@ export const modeSelectionStyles = StyleSheet.create({
   demoWarning: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: '#fffbeb',
+    backgroundColor: 'rgba(239, 184, 16, 0.1)',
     padding: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#fcd34d',
+    borderColor: colors.gold,
     marginTop: 16,
   },
   demoWarningText: {
     fontSize: 12,
-    color: '#b45309',
+    color: colors.textPrimary,
     marginLeft: 10,
     flex: 1,
     lineHeight: 18,
@@ -354,14 +362,15 @@ export const modeSelectionStyles = StyleSheet.create({
   },
   demoCancelButton: {
     flex: 1,
-    backgroundColor: '#e2e8f0',
+    backgroundColor: colors.primary600,
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: 'center',
+    borderWidth: 0,
   },
   demoCancelButtonText: {
     fontSize: 16,
-    color: '#475569',
+    color: colors.onPrimary,
     fontWeight: '600',
   },
   demoConfirmButton: {
@@ -369,21 +378,24 @@ export const modeSelectionStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#6366f1',
+    backgroundColor: colors.primary600,
     paddingVertical: 14,
     borderRadius: 10,
+    borderWidth: 0,
   },
   demoConfirmButtonText: {
     fontSize: 16,
-    color: '#ffffff',
+    color: colors.onPrimary,
     fontWeight: '600',
     marginLeft: 8,
   },
   subscriptionModal: {
     width: '85%',
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.primary900,
     borderRadius: 16,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.gold,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.15,
@@ -393,18 +405,18 @@ export const modeSelectionStyles = StyleSheet.create({
   subscriptionModalHeader: {
     padding: 28,
     alignItems: 'center',
-    backgroundColor: '#dcfce7',
+    backgroundColor: 'transparent',
   },
   subscriptionModalTitle: {
     fontSize: 24,
     fontWeight: '600',
-    color: colors.textPrimary,
+    color: colors.gold,
     marginTop: 12,
     marginBottom: 8,
   },
   subscriptionModalSubtitle: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: colors.onPrimary,
     textAlign: 'center',
   },
   subscriptionModalContent: {
@@ -416,7 +428,7 @@ export const modeSelectionStyles = StyleSheet.create({
   subscriptionFeaturesTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.textPrimary,
+    color: colors.gold,
     marginBottom: 16,
   },
   subscriptionFeaturesList: {
@@ -429,15 +441,17 @@ export const modeSelectionStyles = StyleSheet.create({
   },
   subscriptionFeatureText: {
     fontSize: 14,
-    color: colors.textPrimary,
+    color: colors.onPrimary,
     marginLeft: 12,
   },
   subscriptionPrice: {
     alignItems: 'center',
-    backgroundColor: '#f1f5f9',
+    backgroundColor: 'rgba(255,255,255,0.06)',
     paddingVertical: 16,
     borderRadius: 10,
     marginTop: 16,
+    borderWidth: 1,
+    borderColor: colors.gold,
   },
   subscriptionPriceRow: {
     flexDirection: 'row',
@@ -447,16 +461,16 @@ export const modeSelectionStyles = StyleSheet.create({
   subscriptionPriceAmount: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: colors.textPrimary,
+    color: colors.onPrimary,
   },
   subscriptionPricePeriod: {
     fontSize: 16,
-    color: colors.textSecondary,
+    color: colors.onPrimary,
     marginLeft: 4,
   },
   subscriptionPriceRenewal: {
     fontSize: 12,
-    color: colors.textSecondary,
+    color: colors.onPrimary,
   },
   subscriptionActions: {
     flexDirection: 'row',
@@ -465,14 +479,15 @@ export const modeSelectionStyles = StyleSheet.create({
   },
   subscriptionCancelButton: {
     flex: 1,
-    backgroundColor: '#e2e8f0',
+    backgroundColor: colors.primary600,
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: 'center',
+    borderWidth: 0,
   },
   subscriptionCancelButtonText: {
     fontSize: 16,
-    color: '#475569',
+    color: colors.onPrimary,
     fontWeight: '600',
   },
   subscriptionConfirmButton: {
@@ -480,13 +495,14 @@ export const modeSelectionStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#10b981',
+    backgroundColor: colors.primary600,
     paddingVertical: 14,
     borderRadius: 10,
+    borderWidth: 0,
   },
   subscriptionConfirmButtonText: {
     fontSize: 16,
-    color: '#ffffff',
+    color: colors.onPrimary,
     fontWeight: '600',
     marginLeft: 8,
   },

@@ -15,6 +15,8 @@ export const featureToggles = {
   useAdvancedHelp: false,
   useAdvancedCategories: true,
   useAdvancedGame: true,
+  // Bypass temporal de login sin API
+  useLoginBypass: true,
   // Navigation
   useTopTabs: false,
 };

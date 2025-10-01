@@ -14,6 +14,7 @@ import {
   Text,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import * as Haptics from 'expo-haptics';
@@ -26,7 +27,7 @@ import { featureToggles } from '@config/featureToggles';
 import { ModalAlert } from '../components/ModalAlert';
 import { Background, Letter } from '../../../../assets';
 
-import { loginUser } from '../../domain/store/authSlice';
+import { loginUser, checkAuthStatus } from '../../domain/store/authSlice';
 import { useLoginViewModel } from '../../domain/hooks/useLoginViewModel';
 import { loginStyles } from '../styles/loginStyles';
 import { 
@@ -128,13 +129,44 @@ export const LoginScreen: React.FC = () => {
 
   // Manejar login
   const handleLogin = async () => {
-    if (!validateForm()) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      return;
+    if (!featureToggles.useLoginBypass) {
+      if (!validateForm()) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        return;
+      }
     }
 
     try {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      // Bypass temporal de login sin API
+      if (featureToggles.useLoginBypass) {
+        const nowIso = new Date().toISOString();
+        const mockedAccess = 'dev-access-token';
+        const mockedRefresh = 'dev-refresh-token';
+        const mockedUser = {
+          id: 'dev-user-id',
+          email: formData.email || 'dev@example.com',
+          name: 'Dev User',
+          alias: 'devuser',
+          points: 0,
+          createdAt: nowIso,
+          preferences: { notifications: true, language: 'es', sound: true, haptics: true },
+          subscriptionStatus: 'not_subscribed',
+        } as any;
+
+        await SecureStore.setItemAsync('auth_access_token', mockedAccess);
+        await SecureStore.setItemAsync('auth_refresh_token', mockedRefresh);
+        await SecureStore.setItemAsync('user_data', JSON.stringify(mockedUser));
+
+        const state = await dispatch(checkAuthStatus()).unwrap();
+        if (state?.user?.subscriptionStatus === 'not_subscribed') {
+          navigation.navigate('ModeSelection' as never);
+        } else {
+          navigation.navigate('MainTabs' as never);
+        }
+        return;
+      }
 
       if (shouldUseVM && vm) {
         vm.setField('email', formData.email);
