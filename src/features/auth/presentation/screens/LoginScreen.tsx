@@ -24,7 +24,7 @@ import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { featureToggles } from '@config/featureToggles';
 import { ModalAlert } from '../components/ModalAlert';
-import { Background, AdaptiveIcon } from '../../../../assets';
+import { Background, Letter } from '../../../../assets';
 
 import { loginUser } from '../../domain/store/authSlice';
 import { useLoginViewModel } from '../../domain/hooks/useLoginViewModel';
@@ -229,9 +229,9 @@ export const LoginScreen: React.FC = () => {
             <View style={loginStyles.header}>
               <View style={loginStyles.logoContainer}>
                 <Image 
-                  source={AdaptiveIcon}
+                  source={Letter}
                   style={loginStyles.logoImage}
-                  resizeMode="contain"
+                  resizeMode="stretch"
                 />
                 <Text style={[getVariantStyle('h1'), loginStyles.title]}>
                   ¡Bienvenido a WinUp!

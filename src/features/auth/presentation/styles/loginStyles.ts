@@ -52,9 +52,10 @@ export const loginStyles = StyleSheet.create({
     fontSize: 36,
   },
   logoImage: {
-    width: 96,
-    height: 96,
-    marginBottom: 16,
+    marginTop: 30,
+    width: 180,
+    height: 65,
+    marginBottom: 15,
   },
   title: {
     color: colors.gold,

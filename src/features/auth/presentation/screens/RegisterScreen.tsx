@@ -33,6 +33,7 @@ import {
   RegisterHeader,
   VerificationModal
 } from '../components/register';
+import { ModalAlert } from '../components';
 
 
 
@@ -86,6 +87,7 @@ export const RegisterScreen: React.FC = () => {
   const [isGenderFocused, setIsGenderFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [isGenderPickerOpen, setIsGenderPickerOpen] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   // Referencias para animaciones
   const firstNameInputRef = useRef<TextInput>(null);
@@ -297,10 +299,7 @@ export const RegisterScreen: React.FC = () => {
       navigation.navigate('ModeSelection' as never);
       
     } catch (registerError) {
-      Alert.alert(
-        'Error',
-        'No pudimos crear tu cuenta. Inténtalo nuevamente.'
-      );
+      setShowErrorModal(true);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
   };
@@ -463,6 +462,15 @@ export const RegisterScreen: React.FC = () => {
           onVerify={handleVerification}
           onResend={handleResendVerification}
           resendTimer={resendTimer}
+        />
+
+        {/* Modal de Error */}
+        <ModalAlert
+          visible={showErrorModal}
+          title="Error"
+          message="No pudimos crear tu cuenta. Inténtalo nuevamente."
+          onClose={() => setShowErrorModal(false)}
+          confirmText="Entendido"
         />
 
       </KeyboardAvoidingView>
