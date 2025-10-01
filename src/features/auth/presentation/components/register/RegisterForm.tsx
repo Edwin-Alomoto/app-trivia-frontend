@@ -141,17 +141,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
   return (
     <View style={[styles.form, style]}>
-      {/* Campo Username */}
-      <AuthInput
-        placeholder="Nombre de usuario"
-        value={formData.username || ''}
-        onChangeText={(value) => onFormDataChange('username', value)}
-        error={errors.username || ''}
-        autoCapitalize="none"
-        returnKeyType="next"
-        onSubmitEditing={() => {}}
-      />
-
       {/* Campo Nombre */}
       <AuthInput
         placeholder="Nombre"
@@ -167,26 +156,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         onSubmitEditing={() => lastNameInputRef.current?.focus()}
         autoComplete="name"
         textContentType="name"
-      />
-
-      {/* Campo Dirección */}
-      <AuthInput
-        placeholder="Dirección"
-        value={formData.address || ''}
-        onChangeText={(value) => onFormDataChange('address', value)}
-        error={errors.address || ''}
-        autoCapitalize="sentences"
-        returnKeyType="next"
-      />
-
-      {/* Campo Teléfono */}
-      <AuthInput
-        placeholder="Teléfono"
-        value={formData.phone || ''}
-        onChangeText={(value) => onFormDataChange('phone', value)}
-        error={errors.phone || ''}
-        keyboardType="phone-pad"
-        returnKeyType="next"
       />
 
       {/* Campo Apellido */}
@@ -221,9 +190,23 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         isFocused={isEmailFocused}
         blurOnSubmit={false}
         returnKeyType="next"
-        onSubmitEditing={onToggleBirthdatePicker}
+        onSubmitEditing={() => passwordInputRef.current?.focus()}
         autoComplete="email"
         textContentType="emailAddress"
+      />
+
+      {/* Campo Contraseña */}
+      <PasswordInput
+        placeholder="Contraseña"
+        value={formData.password}
+        onChangeText={(value) => onFormDataChange('password', value)}
+        error={errors.password}
+        onFocus={onPasswordFocus}
+        onBlur={onPasswordBlur}
+        inputRef={passwordInputRef}
+        isFocused={isPasswordFocused}
+        returnKeyType="next"
+        onSubmitEditing={onToggleBirthdatePicker}
       />
 
       {/* Campo Fecha de nacimiento */}
@@ -257,20 +240,35 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         onToggle={onGenderToggle}
       />
 
-      {/* Campo Contraseña */}
-      <PasswordInput
-        placeholder="Contraseña"
-        value={formData.password}
-        onChangeText={(value) => onFormDataChange('password', value)}
-        error={errors.password}
-        onFocus={onPasswordFocus}
-        onBlur={onPasswordBlur}
-        inputRef={passwordInputRef}
-        isFocused={isPasswordFocused}
+      {/* Campo Username */}
+      <AuthInput
+        placeholder="Nombre de usuario"
+        value={formData.username || ''}
+        onChangeText={(value) => onFormDataChange('username', value)}
+        error={errors.username || ''}
+        autoCapitalize="none"
+        returnKeyType="next"
+        onSubmitEditing={() => {}}
+      />
+
+      {/* Campo Teléfono */}
+      <AuthInput
+        placeholder="Teléfono"
+        value={formData.phone || ''}
+        onChangeText={(value) => onFormDataChange('phone', value)}
+        error={errors.phone || ''}
+        keyboardType="phone-pad"
+        returnKeyType="next"
+      />
+
+      {/* Campo Dirección */}
+      <AuthInput
+        placeholder="Dirección"
+        value={formData.address || ''}
+        onChangeText={(value) => onFormDataChange('address', value)}
+        error={errors.address || ''}
+        autoCapitalize="sentences"
         returnKeyType="done"
-        onSubmitEditing={onRegister}
-        autoComplete="new-password"
-        textContentType="newPassword"
       />
 
       {/* Términos y Privacidad */}

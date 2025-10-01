@@ -1,11 +1,13 @@
 import { StyleSheet } from 'react-native';
 import { colors } from '@theme/colors';
+
 import { commonStyles } from './common';
 
 export const forgotPasswordStyles = StyleSheet.create({
   // Container styles
   container: {
     ...commonStyles.container,
+    backgroundColor: 'transparent',
   },
   keyboardAvoidingView: {
     ...commonStyles.keyboardAvoidingView,
@@ -14,60 +16,30 @@ export const forgotPasswordStyles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: 24,
   },
-  backgroundLayer: {
-    ...commonStyles.backgroundLayer,
-  },
-  blobTop: {
-    position: 'absolute',
-    width: 600,
-    height: 600,
-    borderRadius: 300,
-    top: -200,
-    left: -150,
-    backgroundColor: 'rgba(210, 180, 254, 0.08)',
-  },
-  blobCenter: {
-    position: 'absolute',
-    width: 450,
-    height: 450,
-    borderRadius: 225,
-    top: 180,
-    alignSelf: 'center',
-    backgroundColor: 'rgba(230, 213, 255, 0.06)',
-  },
-  blobBottom: {
-    position: 'absolute',
-    width: 700,
-    height: 700,
-    borderRadius: 350,
-    bottom: -300,
-    right: -200,
-    backgroundColor: 'rgba(230, 213, 255, 0.06)',
-  },
 
   // Header styles
   header: {
     alignItems: 'center',
-    paddingTop: 80,
-    paddingBottom: 40,
+    paddingTop: 40,
+    paddingBottom: 10,
   },
   logoContainer: {
     alignItems: 'center',
   },
   logoImage: {
-    width: 72,
-    height: 72,
-    marginBottom: 16,
+    marginTop: 30,
+    width: 180,
+    height: 65,
+    marginBottom: 15,
   },
   title: {
-    color: colors.textPrimary,
+    color: colors.gold,
     textAlign: 'center',
   },
   subtitle: {
-    color: colors.textSecondary,
+    color: '#ffffff',
     textAlign: 'center',
     marginTop: 8,
-    marginBottom: 28,
   },
 
   // Form styles
@@ -132,10 +104,10 @@ export const forgotPasswordStyles = StyleSheet.create({
     ...commonStyles.footer,
   },
   footerText: {
-    color: colors.textSecondary,
+    color: '#ffffff',
   },
   linkText: {
-    color: colors.primary600,
+    color: colors.gold,
     fontWeight: '600',
   },
   successContainer: {
