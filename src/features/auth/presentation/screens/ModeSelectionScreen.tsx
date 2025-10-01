@@ -46,11 +46,12 @@ export const ModeSelectionScreen: React.FC = () => {
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showDemoSuccess, setShowDemoSuccess] = useState(false);
+  const [showSubscriptionSuccess, setShowSubscriptionSuccess] = useState(false);
 
   // Animaciones
   const fadeAnim = useState(new Animated.Value(0))[0];
-  const slideAnim = useState(new Animated.Value(30))[0];
-  const scaleAnim = useState(new Animated.Value(0.95))[0];
+  const slideAnim = useState(new Animated.Value(20))[0];
+  const scaleAnim = useState(new Animated.Value(0.98))[0];
   const cardAnimDemo = useState(new Animated.Value(1))[0];
   const cardAnimSub = useState(new Animated.Value(1))[0];
 
@@ -131,17 +132,7 @@ export const ModeSelectionScreen: React.FC = () => {
       await dispatch(activateSubscription()).unwrap();
       
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      
-      Alert.alert(
-        '¡Suscripción Premium Exitosa!',
-        'Tu suscripción mensual de $9.99 USD está activa. Se renovará automáticamente cada mes. Ahora tienes acceso completo a todas las funciones de WinUp.',
-        [
-          {
-            text: '¡Empezar!',
-            onPress: () => navigation.navigate('MainTabs' as never)
-          }
-        ]
-      );
+      setShowSubscriptionSuccess(true);
       
     } catch (error) {
       Alert.alert(
@@ -315,6 +306,18 @@ export const ModeSelectionScreen: React.FC = () => {
         message="Tienes 7 días para probar WinUp. Al suscribirte, tus puntos demo se convierten en reales."
         onClose={() => {
           setShowDemoSuccess(false);
+          navigation.navigate('MainTabs' as never);
+        }}
+        confirmText="Empezar"
+      />
+
+      {/* Modal de éxito Suscripción Premium (diseño Login) */}
+      <ModalAlert
+        visible={showSubscriptionSuccess}
+        title="¡Suscripción Premium Exitosa!"
+        message="Tu suscripción está activa. Accede a todas las funciones y beneficios premium."
+        onClose={() => {
+          setShowSubscriptionSuccess(false);
           navigation.navigate('MainTabs' as never);
         }}
         confirmText="Empezar"
