@@ -29,6 +29,7 @@ import { activateDemoMode, activateSubscription } from '../../domain/store/authS
 import { 
   ModeSelectionForm
 } from '../components';
+import { ModalAlert } from '../components';
 
 type ModeSelectionScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ModeSelection'>;
 
@@ -44,6 +45,7 @@ export const ModeSelectionScreen: React.FC = () => {
   const [showDemoModal, setShowDemoModal] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showDemoSuccess, setShowDemoSuccess] = useState(false);
 
   // Animaciones
   const fadeAnim = useState(new Animated.Value(0))[0];
@@ -111,17 +113,7 @@ export const ModeSelectionScreen: React.FC = () => {
       await dispatch(activateDemoMode()).unwrap();
       
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      
-      Alert.alert(
-        '¡Modo Demo Activado!',
-        'Tienes 7 días para probar todas las funciones. Tus puntos se convertirán en canjeables al suscribirte.',
-        [
-          {
-            text: '¡Empezar!',
-            onPress: () => navigation.navigate('MainTabs' as never)
-          }
-        ]
-      );
+      setShowDemoSuccess(true);
       
     } catch (error) {
       Alert.alert('Error', 'No se pudo activar el modo demo. Inténtalo de nuevo.');
@@ -315,6 +307,18 @@ export const ModeSelectionScreen: React.FC = () => {
           </View>
         </View>
       </Modal>
+
+      {/* Modal de éxito Modo Demo (diseño Login) */}
+      <ModalAlert
+        visible={showDemoSuccess}
+        title="¡Modo Demo Activado!"
+        message="Tienes 7 días para probar WinUp. Al suscribirte, tus puntos demo se convierten en reales."
+        onClose={() => {
+          setShowDemoSuccess(false);
+          navigation.navigate('MainTabs' as never);
+        }}
+        confirmText="Empezar"
+      />
 
       {/* Modal de confirmación Suscripción */}
       <Modal
