@@ -14,16 +14,17 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
+  ImageBackground,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { gradients } from "@theme/gradients";
 import { getVariantStyle } from "@theme/typography";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-
 import { useAppNavigation } from "@app/navigation/types";
 import { featureToggles } from "@config/featureToggles";
+
 import { useHomeViewModel } from "../../domain/hooks/useHomeViewModel";
 import { Card } from "@shared/presentation/components/ui/Card";
 import { DemoRestrictionBanner } from "@shared/presentation/components/ui/DemoRestrictionBanner";
@@ -44,6 +45,8 @@ import { fetchSurveys } from "@store/slices/surveysSlice";
 import { CredibilityBanner } from "@shared/presentation/components/ui/CredibilityBanner";
 import { PointPackage } from "@shared/domain/types";
 
+import { Background } from "../../../../assets";
+
 const { width, height } = Dimensions.get("window");
 const CONTROL_HEIGHT = 52;
 
@@ -51,6 +54,7 @@ export const HomeScreen: React.FC = () => {
   const navigation = useAppNavigation();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+  const insets = useSafeAreaInsets();
   const { balance, isLoading: pointsLoading } = useAppSelector((state) => state.points);
   const { unreadCount } = useAppSelector((state) => state.notifications);
   const { categories } = useAppSelector((state) => state.trivia);
@@ -550,17 +554,18 @@ export const HomeScreen: React.FC = () => {
   
 
   return (
+    <ImageBackground source={Background} style={{ flex: 1, width: '100%', height: '100%' }} resizeMode="cover">
     <SafeAreaView style={styles.container}>
       <ScrollView
-        style={styles.scrollView}
+        style={[styles.scrollView, { paddingBottom: Math.max(insets.bottom + 80, 100) }]}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         showsVerticalScrollIndicator={false}
       >
-        {/* Header Mejorado */}
+        {/* Header Unificado con Puntos */}
         <LinearGradient
-          colors={['#4F46E5', '#22D3EE']}
+          colors={['#efb810', '#d2be74']}
           style={styles.header}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -580,123 +585,77 @@ export const HomeScreen: React.FC = () => {
               },
             ]}
           >
-            <View style={styles.userInfo}>
-              <View style={styles.greetingContainer}>
-                <Text style={[getVariantStyle('h2'), styles.greeting, { fontSize: 18, lineHeight: 28 }]}>¡Hola, Edwin Alomoto!</Text>
-                <Text style={[getVariantStyle('subtitle'), styles.subtitle]}>¿Qué te gustaría hacer ahora?</Text>
+            {/* Sección superior: saludo + acciones */}
+            <View style={styles.headerTopSection}>
+              <View style={styles.userInfo}>
+                <View style={styles.greetingContainer}>
+                  <Text style={[getVariantStyle('h2'), styles.greeting]}>¡Hola, Alejandra!</Text>
+                  <Text style={[getVariantStyle('body'), styles.subtitle]}>¡Comienza a ganar puntos!</Text>
+                </View>
+              </View>
+              <View style={styles.headerActions}>
+                <TouchableOpacity
+                  style={styles.notificationButton}
+                  onPress={handleViewNotifications}
+                >
+                  <Ionicons name="notifications-outline" size={24} color="#1f2937" />
+                  {safeUnreadCount > 0 && (
+                    <Animated.View 
+                      style={[
+                        styles.notificationBadge,
+                        {
+                          transform: [{ scale: pulseAnim }],
+                        },
+                      ]}
+                    >
+                      <Text style={styles.notificationBadgeText}>
+                        {safeUnreadCount > 9 ? "9+" : safeUnreadCount}
+                      </Text>
+                    </Animated.View>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.profileButton}
+                  onPress={handleViewProfile}
+                >
+                  <LinearGradient
+                    colors={["rgba(255,255,255,0.2)", "rgba(255,255,255,0.1)"]}
+                    style={styles.profileGradient}
+                  >
+                    <Ionicons
+                      name="person-circle-outline"
+                      size={32}
+                      color="#1f2937"
+                    />
+                  </LinearGradient>
+                </TouchableOpacity>
               </View>
             </View>
-            <View style={styles.headerActions}>
-              <TouchableOpacity
-                style={styles.notificationButton}
-                onPress={handleViewNotifications}
-              >
-                <Ionicons name="notifications-outline" size={24} color="#fff" />
-                {safeUnreadCount > 0 && (
-                  <Animated.View 
-                    style={[
-                      styles.notificationBadge,
-                      {
-                        transform: [{ scale: pulseAnim }],
-                      },
-                    ]}
-                  >
-                    <Text style={styles.notificationBadgeText}>
-                      {safeUnreadCount > 9 ? "9+" : safeUnreadCount}
-                    </Text>
-                  </Animated.View>
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.profileButton}
-                onPress={handleViewProfile}
-              >
-                <LinearGradient
-                  colors={["rgba(255,255,255,0.2)", "rgba(255,255,255,0.1)"]}
-                  style={styles.profileGradient}
-                >
-                  <Ionicons
-                    name="person-circle-outline"
-                    size={32}
-                    color="#fff"
-                  />
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
-        </LinearGradient>
 
-        {/* Banner de Demo si aplica */}
-        {isDemoUser && (
-          <DemoRestrictionBanner type="rewards" />
-        )}
-
-        {/* Banner de Caducidad del Demo */}
-        <DemoExpirationBanner 
-          onSubscribe={() => navigation.navigate('ModeSelection' as never)}
-        />
-
-        {/* Points Balance - Nuevo Diseño */}
-        <Animated.View
-          style={[
-            styles.pointsCardContainer,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }, { scale: scaleAnim }],
-            },
-          ]}
-        >
-          <Card style={styles.pointsCard}>
-            <LinearGradient
-              colors={['#1F2937', '#0F172A']}
-              style={styles.pointsGradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-            >
-              {/* Header principal */}
+            {/* Sección inferior: puntos + progreso + acciones */}
+            <View style={styles.pointsSection}>
               <View style={styles.pointsMainHeader}>
                 <View style={styles.pointsMainInfo}>
-                  <Text style={[getVariantStyle('subtitle'), styles.pointsMainTitle]}>Mis puntos acumulados</Text>
-                  <Text style={[getVariantStyle('h1'), styles.pointsMainAmount]}>
-                    {balance.total.toLocaleString()}
-                  </Text>
+                  <Text style={[getVariantStyle('caption'), styles.pointsMainTitle]}>Mis puntos acumulados</Text>
+                  <View style={styles.pointsAmountContainer}>
+                    <Text style={[getVariantStyle('h1'), styles.pointsMainAmount]}>
+                      {balance.total.toLocaleString()}
+                    </Text>
+                    <View style={styles.pointsIconBadge}>
+                      <LinearGradient
+                        colors={["#6b46c1", "#5b21b6"]}
+                        style={styles.pointsIconBadgeGradient}
+                      >
+                        <Ionicons name="star" size={16} color="#ffffff" />
+                      </LinearGradient>
+                    </View>
+                  </View>
                   <Text style={[getVariantStyle('caption'), styles.pointsMainLabel]}>puntos</Text>
-              </View>
-                <View style={styles.pointsMainIcon}>
-                  <LinearGradient
-                    colors={["#F59E0B", "#F97316"]}
-                    style={styles.pointsMainIconGradient}
-                  >
-                    <Ionicons name="wallet" size={28} color="#fff" />
-                  </LinearGradient>
                 </View>
               </View>
 
-              {/* Barra de progreso moderna */}
-              <View style={styles.pointsProgressContainer}>
-                <View style={styles.pointsProgressHeader}>
-                  <Text style={[getVariantStyle('body'), styles.pointsProgressText]}>
-                    Nivel {Math.floor(balance.total / 500) + 1}
-                  </Text>
-                  <Text style={[getVariantStyle('body'), styles.pointsProgressPercent]}>
-                    {Math.min((balance.total / 2000) * 100, 100).toFixed(0)}%
-                  </Text>
-                </View>
-                <View style={styles.pointsProgressBar}>
-                  <Animated.View 
-                    style={[
-                      styles.pointsProgressFill,
-                      {
-                        width: `${Math.min((balance.total / 2000) * 100, 100)}%`,
-                      },
-                    ]}
-                  />
-                </View>
-              </View>
-              
 
-
-              {/* Botones de acción modernos */}
+              {/* Botones de acción */}
               <View style={styles.pointsActionButtons}>
                 <TouchableOpacity 
                   style={styles.pointsActionBtn}
@@ -727,9 +686,19 @@ export const HomeScreen: React.FC = () => {
                   </LinearGradient>
                 </TouchableOpacity>
               </View>
-            </LinearGradient>
-          </Card>
-        </Animated.View>
+            </View>
+          </Animated.View>
+        </LinearGradient>
+
+        {/* Banner de Demo si aplica */}
+        {isDemoUser && (
+          <DemoRestrictionBanner type="rewards" />
+        )}
+
+        {/* Banner de Caducidad del Demo */}
+        <DemoExpirationBanner 
+          onSubscribe={() => navigation.navigate('ModeSelection' as never)}
+        />
 
         {/* Banner de Credibilidad */}
         <CredibilityBanner type="testimonial" maxItems={2} showViewAll={true} />
@@ -1267,24 +1236,30 @@ export const HomeScreen: React.FC = () => {
         </TouchableWithoutFeedback>
       </Modal>
     </SafeAreaView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F1F5F9",
+    backgroundColor: "transparent",
+    width: '100%',
+    height: '100%',
   },
   scrollView: {
     flex: 1,
+    backgroundColor: 'red',
+    width: '100%',
   },
   header: {
+    marginTop: 10,
+    marginBottom: 2,
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: 16,
-    marginBottom: 20,
-    marginStart: 15,
-    marginEnd: 15,
+    marginStart: 20,
+    marginEnd: 20,
     paddingTop: 10,
     paddingBottom: 10,
     paddingHorizontal: 20,
@@ -1326,10 +1301,15 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   headerContent: {
+    zIndex: 1,
+  },
+  headerTopSection: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    zIndex: 1,
+  },
+  pointsSection: {
+    marginTop: 0,
   },
   userInfo: {
     flex: 1,
@@ -1338,25 +1318,23 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: 12,
     paddingVertical: 6,
-    marginBottom: 3,
+    marginBottom: 0,
     alignSelf: "flex-start",
   },
   greeting: {
-    // La tipografía viene desde getVariantStyle('h2')
     marginTop: 5,
-    color: "#fff",
+    color: "#1f2937",
     textAlign: "left",
-    textShadowColor: "rgba(0, 0, 0, 0.4)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "#fff",
-    opacity: 0.9,
-    textShadowColor: "rgba(0, 0, 0, 0.2)",
+    textShadowColor: "rgba(255, 255, 255, 0.3)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+  },
+  subtitle: {
+    color: "#374151",
+    opacity: 0.9,
+    textShadowColor: "rgba(255, 255, 255, 0.2)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
   headerActions: {
     flexDirection: "row",
@@ -1428,21 +1406,37 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   pointsMainTitle: {
-    fontSize: 14,
-    color: '#94A3B8',
+    color: '#374151',
     marginBottom: 3,
     fontWeight: '500',
   },
   pointsMainAmount: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fff',
+    color: '#1f2937',
     marginBottom: 2,
   },
   pointsMainLabel: {
-    fontSize: 14,
-    color: '#94A3B8',
+    color: '#374151',
     fontWeight: '500',
+  },
+  pointsAmountContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 2,
+  },
+  pointsIcon: {
+    marginLeft: 8,
+  },
+  pointsIconBadge: {
+    marginLeft: 8,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    overflow: 'hidden',
+  },
+  pointsIconBadgeGradient: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   pointsMainIcon: {
     width: 48,
@@ -1467,23 +1461,23 @@ const styles = StyleSheet.create({
   },
   pointsProgressText: {
     fontSize: 14,
-    color: '#94A3B8',
+    color: '#374151',
     fontWeight: '500',
   },
   pointsProgressPercent: {
     fontSize: 14,
-    color: '#F59E0B',
+    color: '#cfae0e',
     fontWeight: 'bold',
   },
   pointsProgressBar: {
     height: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(31, 41, 55, 0.2)',
     borderRadius: 3,
     overflow: 'hidden',
   },
   pointsProgressFill: {
     height: '100%',
-    backgroundColor: '#F59E0B',
+    backgroundColor: '#cfae0e',
     borderRadius: 3,
   },
   pointsStatsGrid: {
@@ -1747,11 +1741,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     fontFamily: 'Inter_700Bold',
-    color: '#1f2937',
+    color: '#ffffff',
   },
   sectionSubtitle: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#ffffff',
     fontFamily: 'Inter_500Medium',
   },
   sectionHeaderRow: {
@@ -1760,7 +1754,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   seeAllText: {
-    color: "#667eea",
+    color: "#efb810",
     fontSize: 16,
     fontWeight: "600",
   },

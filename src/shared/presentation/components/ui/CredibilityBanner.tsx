@@ -185,12 +185,6 @@ export const CredibilityBanner: React.FC<CredibilityBannerProps> = ({
         </LinearGradient>
       </TouchableOpacity>
       
-      {showViewAll && filteredContent.length > 1 && (
-        <TouchableOpacity style={styles.viewAllButton} onPress={handleViewAll}>
-          <Text style={styles.viewAllText}>Ver todos los testimonios</Text>
-          <Ionicons name="chevron-forward" size={16} color="#667eea" />
-        </TouchableOpacity>
-      )}
       
       {filteredContent.length > 1 && (
         <View style={styles.indicators}>
@@ -212,10 +206,10 @@ export const CredibilityBanner: React.FC<CredibilityBannerProps> = ({
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 20,
-    marginVertical: 10,
+    marginTop: 10,
   },
   banner: {
-    borderRadius: 12,
+    borderRadius: 16,
     overflow: 'hidden',
   },
   bannerContent: {

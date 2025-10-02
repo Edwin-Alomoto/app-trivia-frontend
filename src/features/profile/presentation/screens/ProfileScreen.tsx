@@ -8,8 +8,9 @@ import {
   Animated,
   Dimensions,
   Alert,
+  ImageBackground,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,6 +24,7 @@ import { logoutUser } from '@features/auth/domain/store/authSlice';
 import { fetchPointBalance } from '@store/slices/pointsSlice';
 import { featureToggles } from '@config/featureToggles';
 import { useProfileViewModel } from '../../domain/hooks/useProfileViewModel';
+import { Background } from '../../../../assets';
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,6 +32,7 @@ export const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+  const insets = useSafeAreaInsets();
   const { balance } = useAppSelector((state) => state.points);
   const vm = featureToggles.useAdvancedProfile ? useProfileViewModel() : null;
 
@@ -173,33 +176,34 @@ export const ProfileScreen: React.FC = () => {
         ],
       }}
     >
-      <TouchableOpacity onPress={item.onPress}>
-        <Card style={styles.menuItem}>
-          <LinearGradient
-            colors={item.color}
-            style={styles.menuItemGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
+        <TouchableOpacity onPress={item.onPress}>
+          <View style={styles.menuItem}>
+          <View style={styles.menuItemGradient}>
             <View style={styles.menuItemContent}>
               <View style={styles.menuItemIcon}>
-                <Ionicons name={item.icon as any} size={24} color="#fff" />
+                <View style={styles.menuItemIconInner}>
+                  <Ionicons name={item.icon as any} size={24} color="#efb810" />
+                </View>
               </View>
               <View style={styles.menuItemText}>
                 <Text style={styles.menuItemTitle}>{item.title}</Text>
                 <Text style={styles.menuItemSubtitle}>{item.subtitle}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={20} color="#fff" />
+              <Ionicons name="chevron-forward" size={20} color="#efb810" />
             </View>
-          </LinearGradient>
-        </Card>
+          </View>
+        </View>
       </TouchableOpacity>
     </Animated.View>
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+    <ImageBackground source={Background} style={{ flex: 1 }} resizeMode="cover">
+      <SafeAreaView style={styles.container}>
+        <ScrollView 
+          style={[styles.scrollView, { paddingBottom: Math.max(insets.bottom, 20) }]} 
+          showsVerticalScrollIndicator={false}
+        >
         {/* Header - Igual que CategoriesScreen */}
         <Animated.View 
           style={[
@@ -218,7 +222,7 @@ export const ProfileScreen: React.FC = () => {
                 accessibilityRole="button"
                 accessibilityLabel="Volver"
               >
-                <Ionicons name="arrow-back" size={24} color="#000" />
+                <Ionicons name="arrow-back" size={28} color="#efb810" />
               </TouchableOpacity>
               <View style={styles.headerInfo}>
                 <Text style={[getVariantStyle('h1'), styles.title]}>Perfil</Text>
@@ -238,15 +242,14 @@ export const ProfileScreen: React.FC = () => {
             },
           ]}
         >
-          <Card style={styles.userCard}>
+          <View style={styles.userCard}>
             <View style={styles.profileSection}>
               <View style={styles.avatarContainer}>
-                <LinearGradient
-                  colors={['rgba(255,255,255,0.8)', 'rgba(255,255,255,0.6)']}
-                  style={styles.avatar}
-                >
-                  <Ionicons name="person" size={40} color="#667eea" />
-                </LinearGradient>
+                <View style={styles.avatar}>
+                  <View style={styles.avatarInner}>
+                    <Ionicons name="person" size={40} color="#efb810" />
+                  </View>
+                </View>
               </View>
               <View style={styles.userInfo}>
                 <Text style={[getVariantStyle('h2'), styles.userNameText]}>{(vm ? vm.user : user)?.name || 'Usuario'}</Text>
@@ -257,7 +260,7 @@ export const ProfileScreen: React.FC = () => {
                 </View>
               </View>
             </View>
-          </Card>
+          </View>
         </Animated.View>
 
         {/* Stats Section */}
@@ -272,16 +275,18 @@ export const ProfileScreen: React.FC = () => {
         >
           <Text style={styles.sectionTitle}>📊 Estadísticas</Text>
           <View style={styles.statsGrid}>
-            {stats.map((stat, index) => (
-              <Card key={index} style={styles.statCard}>
+              {stats.map((stat, index) => (
+                <View key={index} style={styles.statCard}>
                 <View style={styles.statContent}>
-                  <View style={[styles.statIcon, { backgroundColor: stat.color + '20' }]}>
-                    <Ionicons name={stat.icon as any} size={20} color={stat.color} />
+                  <View style={styles.statIcon}>
+                    <View style={styles.statIconInner}>
+                      <Ionicons name={stat.icon as any} size={20} color={stat.color} />
+                    </View>
                   </View>
                   <Text style={styles.statValue}>{stat.value}</Text>
                   <Text style={styles.statLabel}>{stat.label}</Text>
                 </View>
-              </Card>
+              </View>
             ))}
           </View>
         </Animated.View>
@@ -336,15 +341,16 @@ export const ProfileScreen: React.FC = () => {
             La mejor app de trivia con premios increíbles
           </Text>
         </Animated.View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
+        </ScrollView>
+      </SafeAreaView>
+    </ImageBackground>
+    );
+  };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: 'transparent',
   },
   scrollView: {
     flex: 1,
@@ -371,7 +377,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#ffffff',
     marginBottom: 3,
     textShadowColor: 'transparent',
     textShadowOffset: { width: 0, height: 0 },
@@ -381,7 +387,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#000',
+    color: '#ffffff',
     opacity: 1,
     textAlign: 'left',
     textShadowColor: 'transparent',
@@ -401,14 +407,16 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    backgroundColor: 'transparent',
+  },
+  avatarInner: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
   },
   userInfo: {
     flex: 1,
@@ -451,26 +459,29 @@ const styles = StyleSheet.create({
   },
   userCard: {
     padding: 16,
-    borderRadius: 16,
+    borderRadius: 12,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#efb810',
   },
   userNameText: {
-    color: '#2d3748',
+    color: '#ffffff',
     marginBottom: 4,
   },
   userEmailText: {
-    color: '#6b7280',
+    color: '#ffffff',
     marginBottom: 8,
   },
   userLevelTextDark: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#ffffff',
     marginLeft: 6,
     fontWeight: '600',
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2d3748',
+    color: '#ffffff',
     marginBottom: 20,
   },
   statsGrid: {
@@ -483,14 +494,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     padding: 16,
     borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#efb810',
   },
   statContent: {
     alignItems: 'center',
@@ -499,19 +505,29 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
   },
+  statIconInner: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
   statValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2d3748',
+    color: '#efb810',
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: '#718096',
+    color: '#ffffff',
     textAlign: 'center',
   },
   menuContainer: {
@@ -525,17 +541,12 @@ const styles = StyleSheet.create({
     padding: 0,
     borderRadius: 12,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#efb810',
   },
   menuItemGradient: {
     padding: 16,
+    backgroundColor: 'transparent',
   },
   menuItemContent: {
     flexDirection: 'row',
@@ -545,10 +556,19 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+  },
+  menuItemIconInner: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
   },
   menuItemText: {
     flex: 1,
@@ -585,12 +605,12 @@ const styles = StyleSheet.create({
   },
   appVersion: {
     fontSize: 14,
-    color: '#718096',
+    color: '#efb810',
     marginBottom: 4,
   },
   appDescription: {
     fontSize: 12,
-    color: '#a0aec0',
+    color: '#ffffff',
     textAlign: 'center',
   },
 });
