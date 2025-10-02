@@ -1233,7 +1233,7 @@ export const HomeScreen: React.FC = () => {
               </KeyboardAvoidingView>
             </TouchableWithoutFeedback>
           </View>
-        </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>r
       </Modal>
     </SafeAreaView>
     </ImageBackground>
@@ -1249,7 +1249,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    backgroundColor: 'red',
     width: '100%',
   },
   header: {

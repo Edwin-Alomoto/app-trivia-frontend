@@ -4,6 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 import { AuthState, LoginCredentials } from '../types';
 import { User } from '@shared/domain/types';
 import { RootState } from '@app/store';
+
 import { apiLogin, apiRegister, apiForgotPassword, apiLogout } from '../services/authApi';
 
 const initialState: AuthState = {

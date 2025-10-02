@@ -506,4 +506,30 @@ export const modeSelectionStyles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 8,
   },
+  // Loader styles
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+  },
+  loaderContent: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    padding: 30,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.gold,
+  },
+  loaderText: {
+    color: colors.gold,
+    marginTop: 16,
+    textAlign: 'center',
+  },
+  loaderSubtext: {
+    color: colors.onPrimary,
+    marginTop: 8,
+    textAlign: 'center',
+    opacity: 0.8,
+  },
 });

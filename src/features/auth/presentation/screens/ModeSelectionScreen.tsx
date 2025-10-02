@@ -26,6 +26,7 @@ import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { modeSelectionStyles } from '../styles/modeSelectionStyles';
 import { Background, Letter } from '../../../../assets';
 import { activateDemoMode, activateSubscription } from '../../domain/store/authSlice';
+import { createProfile } from '@features/profile/domain/store/profileSlice';
 import { 
   ModeSelectionForm
 } from '../components';
@@ -47,6 +48,7 @@ export const ModeSelectionScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showDemoSuccess, setShowDemoSuccess] = useState(false);
   const [showSubscriptionSuccess, setShowSubscriptionSuccess] = useState(false);
+  const [isCheckingProfile, setIsCheckingProfile] = useState(true);
 
   // Animaciones
   const fadeAnim = useState(new Animated.Value(0))[0];
@@ -56,6 +58,15 @@ export const ModeSelectionScreen: React.FC = () => {
   const cardAnimSub = useState(new Animated.Value(1))[0];
 
   useEffect(() => {
+    // Verificar si el usuario ya tiene suscripción activa
+    if (user && (user.subscriptionStatus === 'demo' || user.subscriptionStatus === 'subscribed')) {
+      navigation.navigate('MainTabs' as never);
+      return;
+    }
+    
+    // Si no tiene suscripción, mostrar selección
+    setIsCheckingProfile(false);
+
     // Animaciones de entrada suaves
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -111,6 +122,17 @@ export const ModeSelectionScreen: React.FC = () => {
     setShowDemoModal(false);
     
     try {
+      // Crear perfil con puntos por defecto para DEMO
+      await dispatch(createProfile({
+        user_type: 'DEMO',
+        total_points: 0,
+        earned_points: 0,
+        spent_points: 0,
+        sale_points: 0,
+        demo_points: 0,
+        real_points: 0,
+      })).unwrap();
+      
       await dispatch(activateDemoMode()).unwrap();
       
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -129,6 +151,17 @@ export const ModeSelectionScreen: React.FC = () => {
     setShowSubscriptionModal(false);
     
     try {
+      // Crear perfil con puntos por defecto para PREMIUM
+      await dispatch(createProfile({
+        user_type: 'PREMIUM',
+        total_points: 0,
+        earned_points: 0,
+        spent_points: 0,
+        sale_points: 0,
+        demo_points: 0,
+        real_points: 0,
+      })).unwrap();
+      
       await dispatch(activateSubscription()).unwrap();
       
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -154,6 +187,28 @@ export const ModeSelectionScreen: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  // Mostrar loader mientras se verifica el perfil
+  if (isCheckingProfile) {
+    return (
+      <ImageBackground source={Background} style={{ flex: 1 }} resizeMode="cover">
+        <SafeAreaView style={modeSelectionStyles.container}>
+          <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+          <View style={modeSelectionStyles.loaderContainer}>
+            <View style={modeSelectionStyles.loaderContent}>
+              <Ionicons name="hourglass" size={48} color={colors.gold} />
+              <Text style={[getVariantStyle('h2'), modeSelectionStyles.loaderText]}>
+                Verificando tu cuenta...
+              </Text>
+              <Text style={[getVariantStyle('body'), modeSelectionStyles.loaderSubtext]}>
+                Un momento mientras verificamos tu estado de suscripción
+              </Text>
+            </View>
+          </View>
+        </SafeAreaView>
+      </ImageBackground>
+    );
+  }
 
   return (
     <ImageBackground source={Background} style={{ flex: 1 }} resizeMode="cover">

@@ -113,5 +113,9 @@ export function httpPost<T>(path: string, body?: unknown): Promise<T> {
   return request<T>('POST', path, body);
 }
 
+export function httpGet<T>(path: string): Promise<T> {
+  return request<T>('GET', path);
+}
+
 
 

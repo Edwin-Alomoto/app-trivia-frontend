@@ -27,7 +27,8 @@ import { featureToggles } from '@config/featureToggles';
 import { ModalAlert } from '../components/ModalAlert';
 import { Background, Letter } from '../../../../assets';
 
-import { loginUser, checkAuthStatus } from '../../domain/store/authSlice';
+import { loginUser, checkAuthStatus, updateUserProfile } from '../../domain/store/authSlice';
+import { fetchUserProfile } from '@features/profile/domain/store/profileSlice';
 import { useLoginViewModel } from '../../domain/hooks/useLoginViewModel';
 import { loginStyles } from '../styles/loginStyles';
 import { 
@@ -187,14 +188,40 @@ export const LoginScreen: React.FC = () => {
         password: formData.password,
       })).unwrap();
 
-      if (result.user.subscriptionStatus === 'not_subscribed') {
-        navigation.navigate('ModeSelection' as never);
-      } else {
-        navigation.navigate('MainTabs' as never);
+      // Verificar perfil del usuario para decidir navegación inmediata
+      try {
+        const profile = await dispatch(fetchUserProfile()).unwrap();
+        const userType = String(profile?.user_type || '').toUpperCase();
+        
+        // Sincronizar estado de suscripción con el perfil
+        const subscriptionStatus = userType === 'PREMIUM' ? 'subscribed' : 
+                                 userType === 'DEMO' ? 'demo' : 'not_subscribed';
+        dispatch(updateUserProfile({ subscriptionStatus } as any));
+        
+        // Guardar user_type en SecureStore
+        await SecureStore.setItemAsync('user_type', userType);
+        
+        // Navegar según el tipo de usuario
+        if (userType === 'DEMO' || userType === 'PREMIUM') {
+          navigation.navigate('MainTabs' as never);
+        } else {
+          navigation.navigate('ModeSelection' as never);
+        }
+      } catch (error) {
+        // Si falla la consulta del perfil, usar el estado local
+        if (result.user.subscriptionStatus === 'not_subscribed') {
+          navigation.navigate('ModeSelection' as never);
+        } else {
+          navigation.navigate('MainTabs' as never);
+        }
       }
       
     } catch (loginError: any) {
-      Alert.alert('Error', loginError?.message || 'Credenciales incorrectas');
+      setModal({
+        visible: true,
+        title: 'Error',
+        message: loginError?.message ?? 'Credenciales incorrectas',
+      });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
   };

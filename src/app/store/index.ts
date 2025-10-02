@@ -9,6 +9,7 @@ import notificationsReducer from './slices/notificationsSlice';
 import purchasesReducer from './slices/purchasesSlice';
 import surveysReducer from './slices/surveysSlice';
 import testimonialsReducer from './slices/testimonialsSlice';
+import profileReducer from '@features/profile/domain/store/profileSlice';
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     purchases: purchasesReducer,
     surveys: surveysReducer,
     testimonials: testimonialsReducer,
+    profile: profileReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
