@@ -4,6 +4,7 @@ import { AuthInput } from '../AuthInput';
 import { AuthButton } from '../AuthButton';
 import { colors } from '@theme/colors';
 import { getVariantStyle } from '@theme/typography';
+import { useLanguage } from '@shared/domain/contexts/LanguageContext';
 
 interface ForgotPasswordFormProps {
   // Form data
@@ -42,11 +43,12 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
   emailInputRef,
   style,
 }) => {
+  const { t } = useLanguage();
   return (
     <View style={[styles.form, style]}>
       {/* Campo Email */}
       <AuthInput
-        placeholder="Correo electrónico"
+        placeholder={t('auth.email')}
         value={email}
         onChangeText={onEmailChange}
         error={error}
@@ -65,7 +67,7 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
 
       {/* Botón de envío */}
       <AuthButton
-        title={isLoading ? "Enviando..." : "Enviar enlace de recuperación"}
+        title={isLoading ? t('auth.sendResetEmail') + "..." : t('auth.sendResetEmail')}
         onPress={onSendReset}
         disabled={isLoading}
         loading={isLoading}
@@ -74,9 +76,9 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
 
       {/* Footer */}
       <View style={styles.footerContainer}>
-        <Text style={[getVariantStyle('body'), styles.footerText]}>¿Recordaste tu contraseña?</Text>
+        <Text style={[getVariantStyle('body'), styles.footerText]}>{t('auth.rememberPassword')}</Text>
         <TouchableOpacity onPress={onBackToLogin}>
-          <Text style={[getVariantStyle('body'), styles.linkText]}>Volver al login</Text>
+          <Text style={[getVariantStyle('body'), styles.linkText]}>{t('auth.backToLogin')}</Text>
         </TouchableOpacity>
       </View>
     </View>

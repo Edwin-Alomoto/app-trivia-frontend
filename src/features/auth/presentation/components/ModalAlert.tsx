@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { colors } from '@theme/colors';
 import { getVariantStyle } from '@theme/typography';
+import { useLanguage } from '@shared/domain/contexts/LanguageContext';
 
 interface ModalAlertProps {
   visible: boolean;
@@ -16,8 +17,9 @@ export const ModalAlert: React.FC<ModalAlertProps> = ({
   title,
   message,
   onClose,
-  confirmText = 'Entendido',
+  confirmText,
 }) => {
+  const { t } = useLanguage();
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
@@ -25,7 +27,7 @@ export const ModalAlert: React.FC<ModalAlertProps> = ({
           <Text style={[getVariantStyle('h3'), styles.title]}>{title}</Text>
           <Text style={[getVariantStyle('body'), styles.message]}>{message}</Text>
           <TouchableOpacity style={styles.button} onPress={onClose}>
-            <Text style={[getVariantStyle('body'), styles.buttonText]}>{confirmText}</Text>
+            <Text style={[getVariantStyle('body'), styles.buttonText]}>{confirmText || t('button.confirm')}</Text>
           </TouchableOpacity>
         </View>
       </View>

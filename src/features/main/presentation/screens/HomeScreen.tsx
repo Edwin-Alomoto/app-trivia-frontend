@@ -32,6 +32,7 @@ import { DemoExpirationBanner } from "@shared/presentation/components/ui/DemoExp
 import { useAppDispatch } from "@shared/domain/hooks/useAppDispatch";
 import { useAppSelector } from "@shared/domain/hooks/useAppSelector";
 import { useDemoStatus } from "@shared/domain/hooks/useDemoStatus";
+import { useLanguage } from "@shared/domain/contexts/LanguageContext";
 import { PointsCounter } from "@shared/presentation/animations/PointsCounter";
 import { PointsParticles } from "@shared/presentation/animations/PointsParticles";
 import { fetchPointBalance, fetchTransactions } from "@store/slices/pointsSlice";
@@ -53,6 +54,7 @@ const CONTROL_HEIGHT = 52;
 export const HomeScreen: React.FC = () => {
   const navigation = useAppNavigation();
   const dispatch = useAppDispatch();
+  const { t } = useLanguage();
   const { user } = useAppSelector((state) => state.auth);
   const insets = useSafeAreaInsets();
   const { balance, isLoading: pointsLoading } = useAppSelector((state) => state.points);
@@ -398,8 +400,8 @@ export const HomeScreen: React.FC = () => {
       ]}
     >
       <View style={styles.sectionHeader}>
-        <Text style={[getVariantStyle('h2'), styles.sectionTitle]}>Comienza aquí</Text>
-        <Text style={[getVariantStyle('subtitle'), styles.sectionSubtitle]}>¿Qué te gustaría hacer ahora?</Text>
+        <Text style={[getVariantStyle('h2'), styles.sectionTitle]}>{t('home.whatToDo')}</Text>
+        <Text style={[getVariantStyle('subtitle'), styles.sectionSubtitle]}>{t('home.whatToDo')}</Text>
       </View>
 
       <View style={styles.quickActionsGrid}>
@@ -413,7 +415,7 @@ export const HomeScreen: React.FC = () => {
             style={styles.quickActionGradient}
           >
             <Ionicons name="game-controller" size={32} color="#fff" />
-            <Text style={[getVariantStyle('body'), styles.quickActionTitle]}>Jugar trivia</Text>
+            <Text style={[getVariantStyle('body'), styles.quickActionTitle]}>{t('home.playTrivia')}</Text>
             <Text style={[getVariantStyle('caption'), styles.quickActionSubtitle]}>
               {safeCategories.length} categorías disponibles
             </Text>
@@ -434,7 +436,7 @@ export const HomeScreen: React.FC = () => {
             style={styles.quickActionGradient}
           >
             <Ionicons name="gift" size={32} color="#fff" />
-            <Text style={[getVariantStyle('body'), styles.quickActionTitle]}>Sorteos</Text>
+            <Text style={[getVariantStyle('body'), styles.quickActionTitle]}>{t('home.raffles')}</Text>
             <Text style={[getVariantStyle('caption'), styles.quickActionSubtitle]}>
               {safeRaffles.length} sorteos activos
             </Text>
@@ -462,7 +464,7 @@ export const HomeScreen: React.FC = () => {
             style={styles.quickActionGradient}
           >
             <Ionicons name="star" size={32} color="#fff" />
-            <Text style={[getVariantStyle('body'), styles.quickActionTitle]}>Premios</Text>
+            <Text style={[getVariantStyle('body'), styles.quickActionTitle]}>{t('home.rewards')}</Text>
             <Text style={[getVariantStyle('caption'), styles.quickActionSubtitle]}>
               {safeRewards.length} premios disponibles
             </Text>
@@ -484,7 +486,7 @@ export const HomeScreen: React.FC = () => {
             style={styles.quickActionGradient}
           >
             <Ionicons name="chatbubbles" size={32} color="#fff" />
-            <Text style={[getVariantStyle('body'), styles.quickActionTitle]}>Encuestas</Text>
+            <Text style={[getVariantStyle('body'), styles.quickActionTitle]}>{t('home.surveys')}</Text>
             <Text style={[getVariantStyle('caption'), styles.quickActionSubtitle]}>
               {safeSurveys.length} encuestas activas
             </Text>
@@ -589,8 +591,8 @@ export const HomeScreen: React.FC = () => {
             <View style={styles.headerTopSection}>
               <View style={styles.userInfo}>
                 <View style={styles.greetingContainer}>
-                  <Text style={[getVariantStyle('h2'), styles.greeting]}>¡Hola, Alejandra!</Text>
-                  <Text style={[getVariantStyle('body'), styles.subtitle]}>¡Comienza a ganar puntos!</Text>
+                  <Text style={[getVariantStyle('h2'), styles.greeting]}>{t('home.welcome')}</Text>
+                  <Text style={[getVariantStyle('body'), styles.subtitle]}>{t('home.subtitle')}</Text>
                 </View>
               </View>
               <View style={styles.headerActions}>
@@ -650,7 +652,7 @@ export const HomeScreen: React.FC = () => {
                       </LinearGradient>
                     </View>
                   </View>
-                  <Text style={[getVariantStyle('caption'), styles.pointsMainLabel]}>puntos</Text>
+                  <Text style={[getVariantStyle('caption'), styles.pointsMainLabel]}>{t('home.points')}</Text>
                 </View>
               </View>
 
@@ -728,7 +730,7 @@ export const HomeScreen: React.FC = () => {
               <View style={styles.triviaModalHeaderContent}>
                 <View style={styles.triviaModalTitleContainer}>
                   <Ionicons name="game-controller" size={32} color="#fff" style={styles.triviaModalTitleIcon} />
-                  <Text style={[getVariantStyle('h2'), styles.triviaModalTitle]}>¡A jugar!</Text>
+                  <Text style={[getVariantStyle('h2'), styles.triviaModalTitle]}>{t('home.playTrivia')}</Text>
                 </View>
                 <TouchableOpacity
                   style={styles.triviaModalCloseButton}
@@ -737,7 +739,7 @@ export const HomeScreen: React.FC = () => {
                   <Ionicons name="close-circle" size={32} color="#fff" />
                 </TouchableOpacity>
               </View>
-              <Text style={[getVariantStyle('subtitle'), styles.triviaModalSubtitle]}>¡Listo para poner a prueba tu conocimiento!</Text>
+              <Text style={[getVariantStyle('subtitle'), styles.triviaModalSubtitle]}>{t('home.playTriviaSubtitle')}</Text>
             </LinearGradient>
 
             <ScrollView style={styles.triviaModalContent} showsVerticalScrollIndicator={false}>

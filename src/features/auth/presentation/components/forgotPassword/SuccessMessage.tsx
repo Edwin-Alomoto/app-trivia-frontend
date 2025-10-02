@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@theme/colors';
 import { getVariantStyle } from '@theme/typography';
+import { useLanguage } from '@shared/domain/contexts/LanguageContext';
 
 interface SuccessMessageProps {
   email: string;
@@ -15,6 +16,7 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({
   onBackToLogin,
   style,
 }) => {
+  const { t } = useLanguage();
   return (
     <View style={[styles.container, style]}>
       <View style={styles.iconContainer}>
@@ -22,11 +24,11 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({
       </View>
       
       <Text style={[getVariantStyle('h2'), styles.title]}>
-        ¡Correo enviado!
+        {t('auth.resetEmailSent')}
       </Text>
       
       <Text style={[getVariantStyle('body'), styles.subtitle]}>
-        Hemos enviado un enlace de recuperación a:
+        {t('auth.resetEmailInstructions')}
       </Text>
       
       <Text style={[getVariantStyle('body'), styles.email]}>
@@ -34,12 +36,12 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({
       </Text>
       
       <Text style={[getVariantStyle('body'), styles.instructions]}>
-        Revisa tu bandeja de entrada y sigue las instrucciones para restablecer tu contraseña.
+        {t('auth.resetEmailInstructions')}
       </Text>
       
       <TouchableOpacity style={styles.backButton} onPress={onBackToLogin}>
         <Text style={[getVariantStyle('body'), styles.backButtonText]}>
-          Volver al login
+          {t('auth.backToLogin')}
         </Text>
       </TouchableOpacity>
     </View>

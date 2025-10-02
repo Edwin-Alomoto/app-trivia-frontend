@@ -24,6 +24,7 @@ import { RootStackParamList } from '@shared/domain/types';
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { featureToggles } from '@config/featureToggles';
+import { useLanguage } from '@shared/domain/contexts/LanguageContext';
 import { ModalAlert } from '../components/ModalAlert';
 import { Background, Letter } from '../../../../assets';
 
@@ -43,6 +44,7 @@ const { width: _width, height: _height } = Dimensions.get('window');
 export const LoginScreen: React.FC = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const dispatch = useAppDispatch();
+  const { t } = useLanguage();
   const { isLoading } = useAppSelector((state) => state.auth);
 
   // MVVM (desactivado por defecto)
@@ -115,13 +117,13 @@ export const LoginScreen: React.FC = () => {
     };
 
     if (!formData.email) {
-      newErrors.email = 'Ingresa tu correo electrónico.';
+      newErrors.email = t('auth.error.emailRequired');
     } else if (!validateEmail(formData.email)) {
-      newErrors.email = 'El correo electrónico no es válido.';
+      newErrors.email = t('auth.error.invalidEmail');
     }
 
     if (!formData.password) {
-      newErrors.password = 'Ingresa tu contraseña.';
+      newErrors.password = t('auth.error.passwordRequired');
     }
 
     setErrors(newErrors);
@@ -219,8 +221,8 @@ export const LoginScreen: React.FC = () => {
     } catch (loginError: any) {
       setModal({
         visible: true,
-        title: 'Error',
-        message: loginError?.message ?? 'Credenciales incorrectas',
+        title: t('auth.error.invalidCredentials'),
+        message: loginError?.message ?? t('auth.error.invalidCredentials'),
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
@@ -293,7 +295,7 @@ export const LoginScreen: React.FC = () => {
                   resizeMode="stretch"
                 />
                 <Text style={[getVariantStyle('h1'), loginStyles.title]}>
-                  ¡Bienvenido a WinUp!
+                  {t('auth.login')}
                 </Text>
                 <Text style={[getVariantStyle('subtitle'), loginStyles.subtitle]}>
                   Acumula puntos y gana premios.

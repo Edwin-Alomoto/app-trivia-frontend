@@ -8,22 +8,31 @@ import {
   Animated,
   Switch,
   Alert,
+  ImageBackground,
+  Modal,
+  TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Card } from '@shared/presentation/components/ui/Card';
-import { Button } from '@shared/presentation/components/ui/Button';
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
+import { updateProfile } from '../../domain/store/profileSlice';
 import { featureToggles } from '@config/featureToggles';
 import { useProfileViewModel } from '../../domain/hooks/useProfileViewModel';
+import { Background } from '../../../../assets';
+import { colors } from '@theme/colors';
+import { getVariantStyle } from '@theme/typography';
+import { useLanguage } from '@shared/domain/contexts/LanguageContext';
 
 export const SettingsScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
+  const insets = useSafeAreaInsets();
+  const { language, setLanguage, t } = useLanguage();
   const useAdvanced = featureToggles.useAdvancedSettings;
   const vm = useAdvanced ? useProfileViewModel() : null;
   const { user } = useAdvanced ? { user: vm!.user } : useAppSelector((state) => state.auth);
@@ -32,9 +41,26 @@ export const SettingsScreen: React.FC = () => {
   const [notifications, setNotifications] = useState(true);
   const [sound, setSound] = useState(true);
   const [haptics, setHaptics] = useState(true);
-  const [language, setLanguage] = useState<'es' | 'en'>('es');
-  const [darkMode, setDarkMode] = useState(false);
-  const [autoPlay, setAutoPlay] = useState(true);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+  
+  // Estados del formulario de editar perfil
+  const [profileForm, setProfileForm] = useState({
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
+    email: user?.email || '',
+    username: user?.username || '',
+    phone: user?.phone || '',
+    address: user?.address || '',
+  });
+  const [profileErrors, setProfileErrors] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    username: '',
+    phone: '',
+    address: '',
+  });
 
   // Animaciones
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -108,34 +134,110 @@ export const SettingsScreen: React.FC = () => {
 
   const handleDeleteAccount = () => {
     Alert.alert(
-      'Eliminar Cuenta',
-      '¿Estás seguro de que quieres eliminar tu cuenta? Esta acción es permanente y no se puede deshacer.',
+      t('button.deleteAccount'),
+      t('message.deleteConfirm'),
       [
         {
-          text: 'Cancelar',
+          text: t('button.cancel'),
           style: 'cancel',
         },
         {
-          text: 'Eliminar',
+          text: t('button.deleteAccount'),
           style: 'destructive',
           onPress: () => {
-            Alert.alert('Cuenta eliminada', 'Tu cuenta ha sido eliminada exitosamente');
+            Alert.alert(t('message.accountDeleted'), t('message.accountDeleted'));
           },
         },
       ]
     );
   };
 
+  const handleLanguageChange = (newLanguage: 'es' | 'en') => {
+    setLanguage(newLanguage);
+    setShowLanguageModal(false);
+  };
+
+  // Funciones para el modal de editar perfil
+  const handleEditProfile = () => {
+    setShowEditProfileModal(true);
+  };
+
+  const handleProfileFormChange = (field: keyof typeof profileForm, value: string) => {
+    setProfileForm(prev => ({ ...prev, [field]: value }));
+    if (profileErrors[field as keyof typeof profileErrors]) {
+      setProfileErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const validateProfileForm = () => {
+    const newErrors = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      username: '',
+      phone: '',
+      address: '',
+    };
+
+    if (!profileForm.firstName.trim()) {
+      newErrors.firstName = t('auth.error.firstNameRequired') || 'El nombre es requerido';
+    }
+
+    if (!profileForm.lastName.trim()) {
+      newErrors.lastName = t('auth.error.lastNameRequired') || 'El apellido es requerido';
+    }
+
+    if (!profileForm.email.trim()) {
+      newErrors.email = t('auth.error.emailRequired');
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profileForm.email)) {
+      newErrors.email = t('auth.error.invalidEmail');
+    }
+
+    if (!profileForm.username.trim()) {
+      newErrors.username = t('auth.error.usernameRequired') || 'El nombre de usuario es requerido';
+    }
+
+    setProfileErrors(newErrors);
+    return !Object.values(newErrors).some(error => error !== '');
+  };
+
+  const handleSaveProfile = async () => {
+    if (!validateProfileForm()) {
+      return;
+    }
+
+    try {
+      // Preparar datos para la API (mapear campos del formulario a la API)
+      const apiData = {
+        email: profileForm.email,
+        first_name: profileForm.firstName,
+        last_name: profileForm.lastName,
+        address: profileForm.address,
+        username: profileForm.username,
+        phone: profileForm.phone,
+      };
+
+      // Llamar a la API de actualización
+      await dispatch(updateProfile(apiData)).unwrap();
+      
+      setShowEditProfileModal(false);
+      Alert.alert(t('button.save'), 'Perfil actualizado exitosamente');
+    } catch (error: any) {
+      console.error('Error updating profile:', error);
+      Alert.alert('Error', error?.message || 'No se pudo actualizar el perfil');
+    }
+  };
+
   const settingsSections = [
     {
-      title: 'Notificaciones',
+      title: t('settings.notifications'),
       icon: 'notifications',
       color: ['#ff6b6b', '#ee5a52'],
       items: [
         {
           id: 'notifications',
-          title: 'Notificaciones Push',
-          subtitle: 'Recibe notificaciones de nuevos sorteos y premios',
+          title: t('settings.notifications.push'),
+          subtitle: t('settings.notifications.subtitle'),
           type: 'switch',
           value: notifications,
           onValueChange: setNotifications,
@@ -143,134 +245,88 @@ export const SettingsScreen: React.FC = () => {
       ],
     },
     {
-      title: 'Audio y Vibración',
-      icon: 'volume-high',
-      color: ['#42a5f5', '#2196f3'],
+      title: t('settings.preferences'),
+      icon: 'settings',
+      color: ['#66bb6a', '#4caf50'],
       items: [
         {
           id: 'sound',
-          title: 'Efectos de Sonido',
-          subtitle: 'Reproducir sonidos en la aplicación',
+          title: t('settings.sound'),
+          subtitle: t('settings.sound.subtitle'),
           type: 'switch',
           value: sound,
           onValueChange: setSound,
         },
         {
           id: 'haptics',
-          title: 'Vibración',
-          subtitle: 'Vibración al tocar botones',
+          title: t('settings.haptics'),
+          subtitle: t('settings.haptics.subtitle'),
           type: 'switch',
           value: haptics,
           onValueChange: setHaptics,
         },
-      ],
-    },
-    {
-      title: 'Preferencias',
-      icon: 'settings',
-      color: ['#66bb6a', '#4caf50'],
-      items: [
         {
           id: 'language',
-          title: 'Idioma',
-          subtitle: language === 'es' ? 'Español' : 'English',
+          title: t('settings.language'),
+          subtitle: language === 'es' ? t('language.spanish') : t('language.english'),
           type: 'select',
-          onPress: () => {
-            setLanguage(language === 'es' ? 'en' : 'es');
-          },
-        },
-        {
-          id: 'darkMode',
-          title: 'Modo Oscuro',
-          subtitle: 'Cambiar tema de la aplicación',
-          type: 'switch',
-          value: darkMode,
-          onValueChange: setDarkMode,
-        },
-        {
-          id: 'autoPlay',
-          title: 'Reproducción Automática',
-          subtitle: 'Reproducir videos automáticamente',
-          type: 'switch',
-          value: autoPlay,
-          onValueChange: setAutoPlay,
+          onPress: () => setShowLanguageModal(true),
         },
       ],
     },
     {
-      title: 'Cuenta',
+      title: t('settings.account'),
       icon: 'person',
       color: ['#ab47bc', '#9c27b0'],
       items: [
         {
           id: 'profile',
-          title: 'Editar Perfil',
-          subtitle: 'Cambiar información personal',
+          title: t('settings.editProfile'),
+          subtitle: t('settings.editProfile.subtitle'),
           type: 'navigate',
-          onPress: () => Alert.alert('Editar Perfil', 'Función próximamente'),
+          onPress: handleEditProfile,
         },
         {
           id: 'password',
-          title: 'Cambiar Contraseña',
-          subtitle: 'Actualizar contraseña de seguridad',
+          title: t('settings.changePassword'),
+          subtitle: t('settings.changePassword.subtitle'),
           type: 'navigate',
-          onPress: () => Alert.alert('Cambiar Contraseña', 'Función próximamente'),
+          onPress: () => Alert.alert(t('settings.changePassword'), t('message.comingSoon')),
         },
         {
           id: 'privacy',
-          title: 'Privacidad',
-          subtitle: 'Configurar privacidad de datos',
+          title: t('settings.privacy'),
+          subtitle: t('settings.privacy.subtitle'),
           type: 'navigate',
-          onPress: () => Alert.alert('Privacidad', 'Función próximamente'),
+          onPress: () => Alert.alert(t('settings.privacy'), t('message.comingSoon')),
         },
       ],
     },
     {
-      title: 'Datos',
-      icon: 'folder',
-      color: ['#ffa726', '#ff9800'],
-      items: [
-        {
-          id: 'export',
-          title: 'Exportar Datos',
-          subtitle: 'Descargar mis datos personales',
-          type: 'navigate',
-          onPress: () => Alert.alert('Exportar Datos', 'Función próximamente'),
-        },
-        {
-          id: 'clear',
-          title: 'Limpiar Datos',
-          subtitle: 'Eliminar datos locales de la app',
-          type: 'action',
-          onPress: handleClearData,
-        },
-      ],
-    },
-    {
-      title: 'Información',
+      title: t('settings.information'),
       icon: 'information-circle',
       color: ['#26a69a', '#009688'],
       items: [
         {
           id: 'about',
-          title: 'Acerca de',
-          subtitle: 'Información de la aplicación',
+          title: t('settings.about'),
+          subtitle: t('settings.about.subtitle'),
           type: 'navigate',
-          onPress: () => Alert.alert('Acerca de', 'TriviaMaster v1.0.0\nDesarrollado con ❤️'),
+          onPress: () => Alert.alert(t('settings.about'), 'TriviaMaster v1.0.0\nDesarrollado con ❤️'),
         },
         {
           id: 'terms',
-          title: 'Términos y Condiciones',
-          subtitle: 'Leer términos de uso',
+          title: t('settings.terms'),
+          subtitle: t('settings.terms.subtitle'),
           type: 'navigate',
-          onPress: () => Alert.alert('Términos y Condiciones', 'Función próximamente'),
+          onPress: () => Alert.alert(t('settings.terms'), t('message.comingSoon')),
         },
         {
           id: 'privacy-policy',
-          title: 'Política de Privacidad',
-          subtitle: 'Leer política de privacidad',
+          title: t('settings.privacyPolicy'),
+          subtitle: t('settings.privacyPolicy.subtitle'),
           type: 'navigate',
-          onPress: () => Alert.alert('Política de Privacidad', 'Función próximamente'),
+          onPress: () => Alert.alert(t('settings.privacyPolicy'), t('message.comingSoon')),
         },
       ],
     },
@@ -287,9 +343,9 @@ export const SettingsScreen: React.FC = () => {
         <Switch
           value={item.value}
           onValueChange={item.onValueChange}
-          trackColor={{ false: '#e5e7eb', true: '#667eea' }}
-          thumbColor={item.value ? '#fff' : '#f3f4f6'}
-          ios_backgroundColor="#e5e7eb"
+          trackColor={{ false: colors.primary050, true: colors.primary400 }}
+          thumbColor={item.value ? colors.primary400 : colors.primary100}
+          ios_backgroundColor={colors.primary050}
         />
       )}
       
@@ -324,138 +380,278 @@ export const SettingsScreen: React.FC = () => {
         transform: [{ translateY: slideAnim }, { scale: scaleAnim }],
       }}
     >
-      <Card style={styles.sectionCard}>
-        <LinearGradient
-          colors={section.color}
-          style={styles.sectionHeader}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
+      <View style={styles.sectionCard}>
+        <View style={styles.sectionHeader}>
           <View style={styles.sectionHeaderContent}>
             <Ionicons name={section.icon as any} size={24} color="#fff" />
             <Text style={styles.sectionTitle}>{section.title}</Text>
           </View>
-        </LinearGradient>
+        </View>
         
         <View style={styles.sectionContent}>
           {section.items.map(renderSettingItem)}
         </View>
-      </Card>
+      </View>
     </Animated.View>
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <Animated.View
-          style={[
-            styles.header,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }],
-            },
-          ]}
+    <ImageBackground source={Background} style={styles.container} resizeMode="cover">
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView 
+          style={styles.scrollView} 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 20) }}
         >
-          <View style={styles.headerContent}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
-            >
-              <Ionicons name="arrow-back" size={24} color="#fff" />
-            </TouchableOpacity>
-            <View style={styles.titleContainer}>
-              <Ionicons name="settings" size={32} color="#fff" />
-              <Text style={styles.title}>Configuración</Text>
+          {/* Header */}
+          <Animated.View
+            style={[
+              styles.header,
+              {
+                opacity: fadeAnim,
+                transform: [{ translateY: slideAnim }],
+              },
+            ]}
+          >
+            <View style={styles.headerGradient}>
+              <View style={styles.headerContent}>
+                <TouchableOpacity
+                  style={styles.backButton}
+                  onPress={() => navigation.goBack()}
+                >
+                  <Ionicons name="arrow-back" size={28} color={colors.gold} />
+                </TouchableOpacity>
+                <View style={styles.headerInfo}>
+                  <Text style={[getVariantStyle('h1'), styles.title]}>{t('settings.title')}</Text>
+                  <Text style={[getVariantStyle('subtitle'), styles.subtitle]}>{t('settings.subtitle')}</Text>
+                </View>
+              </View>
             </View>
-            <View style={styles.headerInfo}>
-              <Text style={styles.userName}>{user?.name}</Text>
-              <Text style={styles.userEmail}>{user?.email}</Text>
+          </Animated.View>
+
+          {/* Secciones de Configuración */}
+          <View style={styles.sectionsContainer}>
+            {settingsSections.map(renderSection)}
+          </View>
+
+          {/* Botones de Acción */}
+          <Animated.View
+            style={[
+              styles.actionsContainer,
+              {
+                opacity: fadeAnim,
+                transform: [{ translateY: slideAnim }],
+              },
+            ]}
+          >
+
+            <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount}>
+              <Text style={styles.deleteButtonText}>{t('button.deleteAccount')}</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        </ScrollView>
+      </SafeAreaView>
+
+      {/* Modal de Selección de Idioma */}
+      <Modal visible={showLanguageModal} transparent animationType="fade" onRequestClose={() => setShowLanguageModal(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.languageModal}>
+            <Text style={[getVariantStyle('h2'), styles.modalTitle]}>{t('language.title')}</Text>
+            
+            <TouchableOpacity 
+              style={[styles.languageOption, language === 'es' && styles.selectedOption]}
+              onPress={() => handleLanguageChange('es')}
+            >
+              <Text style={[getVariantStyle('body'), styles.languageText]}>🇪🇸 {t('language.spanish')}</Text>
+              {language === 'es' && <Ionicons name="checkmark" size={20} color={colors.gold} />}
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[styles.languageOption, language === 'en' && styles.selectedOption]}
+              onPress={() => handleLanguageChange('en')}
+            >
+              <Text style={[getVariantStyle('body'), styles.languageText]}>🇺🇸 {t('language.english')}</Text>
+              {language === 'en' && <Ionicons name="checkmark" size={20} color={colors.gold} />}
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.cancelButton}
+              onPress={() => setShowLanguageModal(false)}
+            >
+              <Text style={[getVariantStyle('body'), styles.cancelText]}>{t('language.cancel')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de Editar Perfil */}
+      <Modal visible={showEditProfileModal} transparent animationType="fade" onRequestClose={() => setShowEditProfileModal(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.editProfileModal}>
+            <Text style={[getVariantStyle('h2'), styles.modalTitle]}>{t('settings.editProfile')}</Text>
+            
+            <ScrollView style={styles.editProfileForm} showsVerticalScrollIndicator={false}>
+              {/* Nombre */}
+              <View style={styles.formField}>
+                <Text style={[getVariantStyle('body'), styles.fieldLabel]}>{t('auth.firstName')}</Text>
+                <TextInput
+                  style={[styles.textInput, profileErrors.firstName && styles.inputError]}
+                  value={profileForm.firstName}
+                  onChangeText={(value) => handleProfileFormChange('firstName', value)}
+                  placeholder={t('auth.firstName')}
+                  placeholderTextColor="rgba(255, 255, 255, 0.6)"
+                />
+                {profileErrors.firstName && (
+                  <Text style={styles.errorText}>{profileErrors.firstName}</Text>
+                )}
+              </View>
+
+              {/* Apellido */}
+              <View style={styles.formField}>
+                <Text style={[getVariantStyle('body'), styles.fieldLabel]}>{t('auth.lastName')}</Text>
+                <TextInput
+                  style={[styles.textInput, profileErrors.lastName && styles.inputError]}
+                  value={profileForm.lastName}
+                  onChangeText={(value) => handleProfileFormChange('lastName', value)}
+                  placeholder={t('auth.lastName')}
+                  placeholderTextColor="rgba(255, 255, 255, 0.6)"
+                />
+                {profileErrors.lastName && (
+                  <Text style={styles.errorText}>{profileErrors.lastName}</Text>
+                )}
+              </View>
+
+              {/* Email */}
+              <View style={styles.formField}>
+                <Text style={[getVariantStyle('body'), styles.fieldLabel]}>{t('auth.email')}</Text>
+                <TextInput
+                  style={[styles.textInput, profileErrors.email && styles.inputError]}
+                  value={profileForm.email}
+                  onChangeText={(value) => handleProfileFormChange('email', value)}
+                  placeholder={t('auth.email')}
+                  placeholderTextColor="rgba(255, 255, 255, 0.6)"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+                {profileErrors.email && (
+                  <Text style={styles.errorText}>{profileErrors.email}</Text>
+                )}
+              </View>
+
+              {/* Username */}
+              <View style={styles.formField}>
+                <Text style={[getVariantStyle('body'), styles.fieldLabel]}>{t('auth.username')}</Text>
+                <TextInput
+                  style={[styles.textInput, profileErrors.username && styles.inputError]}
+                  value={profileForm.username}
+                  onChangeText={(value) => handleProfileFormChange('username', value)}
+                  placeholder={t('auth.username')}
+                  placeholderTextColor="rgba(255, 255, 255, 0.6)"
+                  autoCapitalize="none"
+                />
+                {profileErrors.username && (
+                  <Text style={styles.errorText}>{profileErrors.username}</Text>
+                )}
+              </View>
+
+              {/* Teléfono */}
+              <View style={styles.formField}>
+                <Text style={[getVariantStyle('body'), styles.fieldLabel]}>{t('auth.phone')}</Text>
+                <TextInput
+                  style={styles.textInput}
+                  value={profileForm.phone}
+                  onChangeText={(value) => handleProfileFormChange('phone', value)}
+                  placeholder={t('auth.phone')}
+                  placeholderTextColor="rgba(255, 255, 255, 0.6)"
+                  keyboardType="phone-pad"
+                />
+              </View>
+
+              {/* Dirección */}
+              <View style={styles.formField}>
+                <Text style={[getVariantStyle('body'), styles.fieldLabel]}>{t('auth.address')}</Text>
+                <TextInput
+                  style={styles.textInput}
+                  value={profileForm.address}
+                  onChangeText={(value) => handleProfileFormChange('address', value)}
+                  placeholder={t('auth.address')}
+                  placeholderTextColor="rgba(255, 255, 255, 0.6)"
+                  multiline
+                  numberOfLines={3}
+                />
+              </View>
+            </ScrollView>
+
+            {/* Botones */}
+            <View style={styles.modalButtons}>
+              <TouchableOpacity 
+                style={styles.cancelButton}
+                onPress={() => setShowEditProfileModal(false)}
+              >
+                <Text style={[getVariantStyle('body'), styles.cancelText]}>{t('button.cancel')}</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.saveButton}
+                onPress={handleSaveProfile}
+              >
+                <Text style={[getVariantStyle('body'), styles.saveText]}>{t('button.save')}</Text>
+              </TouchableOpacity>
             </View>
           </View>
-        </Animated.View>
-
-        {/* Secciones de Configuración */}
-        <View style={styles.sectionsContainer}>
-          {settingsSections.map(renderSection)}
         </View>
-
-        {/* Botones de Acción */}
-        <Animated.View
-          style={[
-            styles.actionsContainer,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }],
-            },
-          ]}
-        >
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <LinearGradient
-              colors={['#ef4444', '#dc2626']}
-              style={styles.logoutButtonGradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-            >
-              <Ionicons name="log-out" size={20} color="#fff" />
-              <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount}>
-            <Text style={styles.deleteButtonText}>Eliminar Cuenta</Text>
-          </TouchableOpacity>
-        </Animated.View>
-      </ScrollView>
-    </SafeAreaView>
+      </Modal>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    width: '100%',
+    height: '100%',
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: 'transparent',
   },
   scrollView: {
     flex: 1,
+    width: '100%',
   },
   header: {
-    backgroundColor: '#667eea',
+    backgroundColor: 'transparent',
     paddingTop: 20,
-    paddingBottom: 30,
+    paddingBottom: 4,
     paddingHorizontal: 20,
+  },
+  headerGradient: {
+    paddingHorizontal: 2,
+    alignItems: 'center',
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
   backButton: {
     padding: 8,
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginLeft: 12,
+    marginRight: 12,
   },
   headerInfo: {
-    alignItems: 'flex-end',
+    flex: 1,
+    alignItems: 'flex-start',
   },
-  userName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 3,
+    textShadowColor: 'transparent',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 0,
   },
-  userEmail: {
-    fontSize: 12,
-    color: '#fff',
+  subtitle: {
+    color: '#ffffff',
     opacity: 0.8,
   },
   sectionsContainer: {
@@ -463,17 +659,15 @@ const styles = StyleSheet.create({
   },
   sectionCard: {
     marginBottom: 20,
-    padding: 0,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.gold,
     borderRadius: 16,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 5,
   },
   sectionHeader: {
     padding: 16,
+    backgroundColor: 'rgba(239, 184, 16, 0.5)',
   },
   sectionHeaderContent: {
     flexDirection: 'row',
@@ -487,6 +681,7 @@ const styles = StyleSheet.create({
   },
   sectionContent: {
     padding: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   settingItem: {
     flexDirection: 'row',
@@ -494,7 +689,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f1f5f9',
+    borderBottomColor: 'rgba(255, 255, 255, 0.2)',
   },
   settingInfo: {
     flex: 1,
@@ -502,12 +697,13 @@ const styles = StyleSheet.create({
   settingTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1f2937',
+    color: '#ffffff',
     marginBottom: 2,
   },
   settingSubtitle: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#ffffff',
+    opacity: 0.8,
   },
   selectButton: {
     flexDirection: 'row',
@@ -552,5 +748,115 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#ef4444',
     fontWeight: '500',
+  },
+  // Modal de idioma - Mismo diseño que ModalAlert
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  languageModal: {
+    width: '100%',
+    borderRadius: 16,
+    backgroundColor: colors.primary900,
+    borderWidth: 1,
+    borderColor: colors.gold,
+    padding: 20,
+  },
+  modalTitle: {
+    color: colors.gold,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  languageOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  selectedOption: {
+    backgroundColor: 'rgba(239, 184, 16, 0.2)',
+    borderWidth: 1,
+    borderColor: colors.gold,
+  },
+  languageText: {
+    color: '#ffffff',
+    flex: 1,
+  },
+  cancelButton: {
+    alignSelf: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.gold,
+    marginTop: 10,
+  },
+  cancelText: {
+    color: colors.gold,
+    fontWeight: '600',
+  },
+
+  // Modal de Editar Perfil
+  editProfileModal: {
+    width: '100%',
+    maxHeight: '80%',
+    borderRadius: 16,
+    backgroundColor: colors.primary900,
+    borderWidth: 1,
+    borderColor: colors.gold,
+    padding: 20,
+  },
+  editProfileForm: {
+    maxHeight: 400,
+    marginBottom: 20,
+  },
+  formField: {
+    marginBottom: 16,
+  },
+  fieldLabel: {
+    color: '#ffffff',
+    marginBottom: 8,
+    fontWeight: '500',
+  },
+  textInput: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    color: '#ffffff',
+    fontSize: 16,
+  },
+  inputError: {
+    borderColor: '#ef4444',
+  },
+  errorText: {
+    color: '#ef4444',
+    fontSize: 12,
+    marginTop: 4,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  saveButton: {
+    flex: 1,
+    backgroundColor: colors.gold,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  saveText: {
+    color: colors.primary900,
+    fontWeight: '600',
   },
 });

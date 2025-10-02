@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '@app/store';
-import { apiFetchUserProfile, apiCreateProfile, UserProfile, CreateProfileRequest } from '../services/profileApi';
+import { apiFetchUserProfile, apiCreateProfile, apiUpdateProfile, UserProfile, CreateProfileRequest, UpdateProfileRequest } from '../services/profileApi';
 
 type ProfileState = {
   data: UserProfile | null;
@@ -46,6 +46,22 @@ export const createProfile = createAsyncThunk<
   }
 );
 
+export const updateProfile = createAsyncThunk<
+  any,
+  UpdateProfileRequest,
+  { state: RootState; rejectValue: string }
+>(
+  'profile/updateProfile',
+  async (profileData, { rejectWithValue }) => {
+    try {
+      const data = await apiUpdateProfile(profileData);
+      return data;
+    } catch (error: any) {
+      return rejectWithValue(error?.message || 'Error al actualizar perfil');
+    }
+  }
+);
+
 const profileSlice = createSlice({
   name: 'profile',
   initialState,
@@ -75,6 +91,21 @@ const profileSlice = createSlice({
       .addCase(createProfile.rejected, (state, action) => {
         state.isLoading = false;
         state.error = (action.payload as string) || 'Error al crear perfil';
+      })
+      .addCase(updateProfile.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.isLoading = false;
+        // Actualizar los datos del perfil si están disponibles
+        if (action.payload?.data?.updateProfile) {
+          state.data = action.payload.data.updateProfile;
+        }
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = (action.payload as string) || 'Error al actualizar perfil';
       });
   },
 });

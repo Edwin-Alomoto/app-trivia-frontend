@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ErrorBoundary } from '@shared/presentation/components/ErrorBoundary';
 import { AppInitializer } from '@shared/presentation/components/AppInitializer';
 import { TypographyProvider } from '@shared/presentation/providers/TypographyProvider';
+import { LanguageProvider } from '@shared/domain/contexts/LanguageContext';
 
 import { store } from './src/app/store';
 import { AppNavigator } from './src/app/navigation/AppNavigator';
@@ -48,13 +49,15 @@ export default function App() {
     <Provider store={store}>
       <SafeAreaProvider>
         <GestureHandlerRootView style={styles.root}>
-          <AppInitializer>
-            <TypographyProvider>
-              <ErrorBoundary>
-                <AppNavigator />
-              </ErrorBoundary>
-            </TypographyProvider>
-          </AppInitializer>
+          <LanguageProvider>
+            <AppInitializer>
+              <TypographyProvider>
+                <ErrorBoundary>
+                  <AppNavigator />
+                </ErrorBoundary>
+              </TypographyProvider>
+            </AppInitializer>
+          </LanguageProvider>
           <StatusBar style="auto" />
         </GestureHandlerRootView>
       </SafeAreaProvider>

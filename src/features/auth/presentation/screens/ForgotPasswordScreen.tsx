@@ -29,6 +29,7 @@ import {
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { forgotPassword } from '../../domain/store/authSlice';
 import { Background, Letter } from '../../../../assets';
+import { useLanguage } from '@shared/domain/contexts/LanguageContext';
 
 type ForgotPasswordScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ForgotPassword'>;
 type ForgotPasswordScreenRouteProp = RouteProp<RootStackParamList, 'ForgotPassword'>;
@@ -37,6 +38,7 @@ export const ForgotPasswordScreen: React.FC = () => {
   const navigation = useNavigation<ForgotPasswordScreenNavigationProp>();
   const route = useRoute<ForgotPasswordScreenRouteProp>();
   const dispatch = useAppDispatch();
+  const { t } = useLanguage();
   
   const [email, setEmail] = useState(route.params?.email || '');
   const [emailError, setEmailError] = useState('');
@@ -80,12 +82,12 @@ export const ForgotPasswordScreen: React.FC = () => {
 
   const handleSendResetEmail = async () => {
     if (!email) {
-      setEmailError('Ingresa tu correo electrónico.');
+      setEmailError(t('auth.error.emailRequired'));
       return;
     }
 
     if (!validateEmail(email)) {
-      setEmailError('El correo electrónico no es válido.');
+      setEmailError(t('auth.error.invalidEmail'));
       return;
     }
 
@@ -140,10 +142,10 @@ export const ForgotPasswordScreen: React.FC = () => {
                     resizeMode="stretch"
                   />
                   <Text style={[getVariantStyle('h1'), forgotPasswordStyles.title]}>
-                    ¿Olvidaste tu contraseña?
+                    {t('auth.forgotPassword')}
                   </Text>
                   <Text style={[getVariantStyle('subtitle'), forgotPasswordStyles.subtitle]}>
-                    No te preocupes, te ayudamos a recuperarla.
+                    {t('auth.resetPassword')}
                   </Text>
                 </View>
               </View>
@@ -188,10 +190,9 @@ export const ForgotPasswordScreen: React.FC = () => {
       {/* Modal de Error */}
       <ModalAlert
         visible={showErrorModal}
-        title="Error"
-        message="No se pudo enviar el correo de recuperación. Inténtalo de nuevo."
+        title={t('auth.error.resetEmailFailed')}
+        message={t('auth.error.resetEmailFailed')}
         onClose={() => setShowErrorModal(false)}
-        confirmText="Entendido"
       />
     </ImageBackground>
   );

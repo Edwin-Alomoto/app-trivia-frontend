@@ -7,6 +7,7 @@ import { AuthButton } from '../AuthButton';
 import { AuthFooter } from '../AuthFooter';
 import { RememberMeCheckbox } from '../RememberMeCheckbox';
 import { getVariantStyle } from '@theme/typography';
+import { useLanguage } from '@shared/domain/contexts/LanguageContext';
 
 interface LoginFormProps {
   // Form data
@@ -67,11 +68,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   passwordInputRef,
   style,
 }) => {
+  const { t } = useLanguage();
   return (
     <View style={[styles.form, style]}>
       {/* Campo Email */}
       <AuthInput
-        placeholder="Correo electrónico"
+        placeholder={t('auth.email')}
         value={formData.email}
         onChangeText={(value) => onFormDataChange('email', value)}
         error={errors.email}
@@ -91,7 +93,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
       {/* Campo Contraseña */}
       <PasswordInput
-        placeholder="Contraseña"
+        placeholder={t('auth.password')}
         value={formData.password}
         onChangeText={(value) => onFormDataChange('password', value)}
         error={errors.password}
@@ -110,12 +112,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       <RememberMeCheckbox
         checked={rememberMe}
         onToggle={onRememberMeToggle}
-        text="Mantener sesión iniciada"
+        text={t('auth.rememberMe')}
       />
 
       {/* Botón de login */}
       <AuthButton
-        title={isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
+        title={isLoading ? t('auth.loginButton') + "..." : t('auth.loginButton')}
         onPress={onLogin}
         disabled={isLoading}
         loading={isLoading}
@@ -129,7 +131,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         onPress={onForgotPassword}
       >
         <Text style={[getVariantStyle('body'), styles.forgotPasswordText]}>
-          ¿Olvidaste tu contraseña?
+          {t('auth.forgotPassword')}
         </Text>
       </TouchableOpacity>
 
@@ -137,8 +139,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
       {/* Footer */}
       <AuthFooter
-        text="¿No tienes cuenta? "
-        linkText="Regístrate"
+        text={t('auth.dontHaveAccount')}
+        linkText={t('auth.register')}
         onLinkPress={onRegister}
       />
     </View>

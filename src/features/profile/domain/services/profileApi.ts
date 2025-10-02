@@ -42,4 +42,59 @@ export async function apiCreateProfile(profileData: CreateProfileRequest) {
   return resp.data;
 }
 
+// Tipos para actualización de perfil
+export interface UpdateProfileRequest {
+  email: string;
+  first_name: string;
+  last_name: string;
+  address: string;
+  username: string;
+  phone: string;
+}
+
+export interface UpdateProfileResponse {
+  status: number;
+  message: string;
+  data: {
+    updateProfile: {
+      profile_id: string;
+      user_id: string;
+      user_type: string;
+      profile_image: string | null;
+      total_points: number;
+      earned_points: number;
+      spent_points: number;
+      sale_points: number;
+      demo_points: number;
+      real_points: number;
+      created_at: string;
+      updated_at: string;
+    };
+    updateUser: {
+      user_id: string;
+      status: string;
+      first_name: string;
+      last_name: string;
+      address: string;
+      username: string;
+      email: string;
+      password_hash: string;
+      phone: string;
+      birth_date: string;
+      gender: string;
+      email_verified: boolean;
+      is_active: boolean;
+      expires_at: string | null;
+      created_at: string;
+      updated_at: string;
+    };
+  };
+  timestamp: string;
+}
+
+export async function apiUpdateProfile(profileData: UpdateProfileRequest): Promise<UpdateProfileResponse> {
+  const resp = await httpPost<UpdateProfileResponse>('/users-profile/update-profile', profileData);
+  return resp;
+}
+
 

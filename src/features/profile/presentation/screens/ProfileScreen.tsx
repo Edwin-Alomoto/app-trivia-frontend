@@ -254,10 +254,6 @@ export const ProfileScreen: React.FC = () => {
               <View style={styles.userInfo}>
                 <Text style={[getVariantStyle('h2'), styles.userNameText]}>{(vm ? vm.user : user)?.name || 'Usuario'}</Text>
                 <Text style={[getVariantStyle('body'), styles.userEmailText]}>{(vm ? vm.user : user)?.email || 'usuario@test.com'}</Text>
-                <View style={styles.userLevel}>
-                  <Ionicons name="star" size={16} color="#F59E0B" />
-                  <Text style={styles.userLevelTextDark}>Nivel Trivia Master</Text>
-                </View>
               </View>
             </View>
           </View>
@@ -437,16 +433,6 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     marginBottom: 8,
   },
-  userLevel: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  userLevelText: {
-    fontSize: 14,
-    color: '#fff',
-    marginLeft: 6,
-    fontWeight: '600',
-  },
   statsContainer: {
     marginTop: 20,
     paddingHorizontal: 20,
@@ -471,12 +457,6 @@ const styles = StyleSheet.create({
   userEmailText: {
     color: '#ffffff',
     marginBottom: 8,
-  },
-  userLevelTextDark: {
-    fontSize: 14,
-    color: '#ffffff',
-    marginLeft: 6,
-    fontWeight: '600',
   },
   sectionTitle: {
     fontSize: 20,

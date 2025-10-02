@@ -1,5 +1,4 @@
 import { useCallback, useEffect } from 'react';
-
 import { useAppDispatch, useAppSelector } from '@shared/domain/hooks';
 import { fetchPointBalance, selectPointBalance } from '@store/slices/pointsSlice';
 import { logoutUser } from '@features/auth/domain/store/authSlice';

@@ -9,19 +9,15 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 import * as Haptics from 'expo-haptics';
 
 import { getVariantStyle } from '@shared/presentation/theme/typography';
-import { colors } from '@shared/presentation/theme/colors';
-
-
+import { useLanguage } from '@shared/domain/contexts/LanguageContext';
 
 // Auth Screens
 import { LoginScreen } from '@features/auth/presentation/screens/LoginScreen';
 import { RegisterScreen } from '@features/auth/presentation/screens/RegisterScreen';
 import { ForgotPasswordScreen } from '@features/auth/presentation/screens/ForgotPasswordScreen';
 import { ModeSelectionScreen } from '@features/auth/presentation/screens/ModeSelectionScreen';
-
 // Purchase Screens
 import { BuyPointsScreen } from '@features/purchases/presentation/screens/BuyPointsScreen';
-
 // Main Screens
 import { HomeScreen } from '@features/main/presentation/screens/HomeScreen';
 import { CategoriesScreen } from '@features/main/presentation/screens/CategoriesScreen';
@@ -37,13 +33,86 @@ import { HelpScreen } from '@features/profile/presentation/screens/HelpScreen';
 import { NotificationsScreen } from '@features/notifications/presentation/screens/NotificationsScreen';
 import { SurveysScreen } from '@features/surveys/presentation/screens/SurveysScreen';
 import { TestimonialsScreen } from '@features/testimonials/presentation/screens/TestimonialsScreen';
-
 // Types
 import { RootStackParamList, MainTabParamList } from '@shared/domain/types';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
+
+// Ícono animado con efecto spring al enfocarse
+const AnimatedTabIcon: React.FC<{ name: keyof typeof Ionicons.glyphMap; size: number; color: string; focused: boolean }> = ({ name, size, color, focused }) => {
+  const scale = useSharedValue(1);
+  const translateY = useSharedValue(0);
+
+  React.useEffect(() => {
+    scale.value = withSpring(focused ? 1.1 : 1, { damping: 14, stiffness: 180, mass: 0.9 });
+    translateY.value = withSpring(focused ? -2 : 0, { damping: 14, stiffness: 180, mass: 0.9 });
+  }, [focused, scale, translateY]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scale: scale.value },
+      { translateY: translateY.value },
+    ],
+  }));
+
+  return (
+    <Animated.View style={animatedStyle}>
+      <Ionicons name={name} size={size} color={color} />
+    </Animated.View>
+  );
+};
+
+// Componente separado para evitar warnings de linting
+const TabBarTouchable: React.FC<any> = ({ onPress, onLongPress, accessibilityState, children, ...rest }) => {
+  const scale = useSharedValue(1);
+  const translateY = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scale: scale.value },
+      { translateY: translateY.value },
+    ],
+  }));
+
+  const handlePress = React.useCallback((e: any) => {
+    if (!accessibilityState?.selected) {
+      // Feedback ligero al cambiar de pestaña
+      Haptics.selectionAsync().catch(() => {});
+    }
+    if (onPress) onPress(e);
+  }, [onPress, accessibilityState?.selected]);
+
+  const handlePressIn = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    scale.value = withSpring(0.95, { damping: 15, stiffness: 150 });
+    translateY.value = withSpring(2, { damping: 15, stiffness: 150 });
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1, { damping: 15, stiffness: 150 });
+    translateY.value = withSpring(0, { damping: 15, stiffness: 150 });
+  };
+
+  return (
+    <Animated.View style={animatedStyle}>
+      <TouchableOpacity
+        accessibilityRole="tab"
+        accessibilityState={accessibilityState}
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        onPress={handlePress}
+        onLongPress={onLongPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        activeOpacity={0.8}
+        {...rest}
+      >
+        {children}
+      </TouchableOpacity>
+    </Animated.View>
+  );
+};
 
 const AppNavigator: React.FC = () => {
   const token = useAppSelector((s) => s.auth.token);
@@ -78,6 +147,7 @@ const AppNavigator: React.FC = () => {
 
 const MainTabNavigator: React.FC = () => {
   const insets = useSafeAreaInsets();
+  const { t } = useLanguage();
   
   return (
     <Tab.Navigator
@@ -139,92 +209,43 @@ const MainTabNavigator: React.FC = () => {
         name="Home" 
         component={HomeScreen}
         options={{ 
-          tabBarLabel: 'Inicio',
-          tabBarAccessibilityLabel: 'Inicio, pestaña 1 de 5',
+          tabBarLabel: t('nav.home'),
+          tabBarAccessibilityLabel: `${t('nav.home')}, pestaña 1 de 5`,
         }}
       />
       <Tab.Screen 
         name="Categories" 
         component={CategoriesScreen}
         options={{ 
-          tabBarLabel: 'Categorías',
-          tabBarAccessibilityLabel: 'Categorías, pestaña 2 de 5',
+          tabBarLabel: t('nav.trivia'),
+          tabBarAccessibilityLabel: `${t('nav.trivia')}, pestaña 2 de 5`,
         }}
       />
       <Tab.Screen 
         name="Rewards" 
         component={RewardsScreen}
         options={{ 
-          tabBarLabel: 'Premios',
-          tabBarAccessibilityLabel: 'Premios, pestaña 3 de 5',
+          tabBarLabel: t('nav.rewards'),
+          tabBarAccessibilityLabel: `${t('nav.rewards')}, pestaña 3 de 5`,
         }}
       />
       <Tab.Screen 
         name="Raffles" 
         component={RafflesScreen}
         options={{ 
-          tabBarLabel: 'Sorteos',
-          tabBarAccessibilityLabel: 'Sorteos, pestaña 4 de 5',
+          tabBarLabel: t('nav.raffles'),
+          tabBarAccessibilityLabel: `${t('nav.raffles')}, pestaña 4 de 5`,
         }}
       />
       <Tab.Screen 
         name="Profile" 
         component={ProfileScreen}
         options={{ 
-          tabBarLabel: 'Perfil',
-          tabBarAccessibilityLabel: 'Perfil, pestaña 5 de 5',
+          tabBarLabel: t('nav.profile'),
+          tabBarAccessibilityLabel: `${t('nav.profile')}, pestaña 5 de 5`,
         }}
       />
     </Tab.Navigator>
-  );
-};
-
-
-// Botón personalizado para mejorar accesibilidad, área táctil mínima y haptics
-const TabBarTouchable: React.FC<any> = ({ onPress, onLongPress, accessibilityState, children, ...rest }) => {
-  const handlePress = React.useCallback((e: any) => {
-    if (!accessibilityState?.selected) {
-      // Feedback ligero al cambiar de pestaña
-      Haptics.selectionAsync().catch(() => {});
-    }
-    if (onPress) onPress(e);
-  }, [onPress, accessibilityState?.selected]);
-
-  return (
-    <TouchableOpacity
-      accessibilityRole="tab"
-      accessibilityState={accessibilityState}
-      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-      onPress={handlePress}
-      onLongPress={onLongPress}
-      {...rest}
-    >
-      {children}
-    </TouchableOpacity>
-  );
-};
-
-// Ícono animado con efecto spring al enfocarse
-const AnimatedTabIcon: React.FC<{ name: keyof typeof Ionicons.glyphMap; size: number; color: string; focused: boolean }> = ({ name, size, color, focused }) => {
-  const scale = useSharedValue(1);
-  const translateY = useSharedValue(0);
-
-  React.useEffect(() => {
-    scale.value = withSpring(focused ? 1.1 : 1, { damping: 14, stiffness: 180, mass: 0.9 });
-    translateY.value = withSpring(focused ? -2 : 0, { damping: 14, stiffness: 180, mass: 0.9 });
-  }, [focused]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: scale.value },
-      { translateY: translateY.value },
-    ],
-  }));
-
-  return (
-    <Animated.View style={animatedStyle}>
-      <Ionicons name={name} size={size} color={color} />
-    </Animated.View>
   );
 };
 
