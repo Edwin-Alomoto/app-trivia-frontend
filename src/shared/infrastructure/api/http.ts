@@ -2,6 +2,8 @@ import * as SecureStore from 'expo-secure-store';
 import { API_ENV } from './env';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+const DEFAULT_TIMEOUT_MS = 25000; // 25s
+const MAX_RETRIES = 2; // total de intentos = 1 inicial + 2 reintentos
 
 let isRefreshing = false;
 let pendingWaiters: Array<(token: string | null) => void> = [];
@@ -46,27 +48,55 @@ async function refreshAccessToken(): Promise<string | null> {
 }
 
 async function request<T>(method: HttpMethod, path: string, body?: unknown): Promise<T> {
-  const headers = await attachAuth({});
-  const resp = await fetch(`${API_ENV.BASE_URL}${path}`, {
-    method,
-    headers,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  });
-  if (resp.status === 401) {
-    const newToken = await refreshAccessToken();
-    if (newToken) {
-      const retryHeaders = await attachAuth({});
-      const retry = await fetch(`${API_ENV.BASE_URL}${path}`, {
+  let attempt = 0;
+  let lastError: any = null;
+  while (attempt <= MAX_RETRIES) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
+    try {
+      const headers = await attachAuth({});
+      const resp = await fetch(`${API_ENV.BASE_URL}${path}`, {
         method,
-        headers: retryHeaders,
+        headers,
         body: body !== undefined ? JSON.stringify(body) : undefined,
+        signal: controller.signal,
       });
-      if (!retry.ok) throw await toError(retry);
-      return (await retry.json()) as T;
+      clearTimeout(timeout);
+
+      if (resp.status === 401) {
+        const newToken = await refreshAccessToken();
+        if (newToken) {
+          const retryHeaders = await attachAuth({});
+          const retry = await fetch(`${API_ENV.BASE_URL}${path}`, {
+            method,
+            headers: retryHeaders,
+            body: body !== undefined ? JSON.stringify(body) : undefined,
+            signal: controller.signal,
+          });
+          if (!retry.ok) throw await toError(retry);
+          return (await retry.json()) as T;
+        }
+      }
+
+      if (!resp.ok) throw await toError(resp);
+      return (await resp.json()) as T;
+    } catch (error: any) {
+      clearTimeout(timeout);
+      lastError = error;
+      // Reintentos solo para errores de red/timeout (AbortError/TypeError) o 5xx simulados por toError
+      const isAbort = error?.name === 'AbortError';
+      const isNetwork = error instanceof TypeError;
+      const shouldRetry = isAbort || isNetwork || /HTTP 5\d\d/.test(String(error?.message || ''));
+      if (attempt < MAX_RETRIES && shouldRetry) {
+        const backoffMs = 500 * Math.pow(2, attempt); // 0.5s, 1s
+        await new Promise(res => setTimeout(res, backoffMs));
+        attempt += 1;
+        continue;
+      }
+      throw error;
     }
   }
-  if (!resp.ok) throw await toError(resp);
-  return (await resp.json()) as T;
+  throw lastError ?? new Error('Network error');
 }
 
 async function toError(resp: Response): Promise<Error> {

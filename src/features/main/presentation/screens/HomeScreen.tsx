@@ -16,7 +16,7 @@ import {
   TouchableWithoutFeedback,
   ImageBackground,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { gradients } from "@theme/gradients";
 import { getVariantStyle } from "@theme/typography";
@@ -54,6 +54,7 @@ export const HomeScreen: React.FC = () => {
   const navigation = useAppNavigation();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+  const insets = useSafeAreaInsets();
   const { balance, isLoading: pointsLoading } = useAppSelector((state) => state.points);
   const { unreadCount } = useAppSelector((state) => state.notifications);
   const { categories } = useAppSelector((state) => state.trivia);
@@ -553,10 +554,10 @@ export const HomeScreen: React.FC = () => {
   
 
   return (
-    <ImageBackground source={Background} style={{ flex: 1 }} resizeMode="cover">
+    <ImageBackground source={Background} style={{ flex: 1, width: '100%', height: '100%' }} resizeMode="cover">
     <SafeAreaView style={styles.container}>
       <ScrollView
-        style={styles.scrollView}
+        style={[styles.scrollView, { paddingBottom: Math.max(insets.bottom + 80, 100) }]}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -1243,9 +1244,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "transparent",
+    width: '100%',
+    height: '100%',
   },
   scrollView: {
     flex: 1,
+    backgroundColor: 'red',
+    width: '100%',
   },
   header: {
     marginTop: 10,

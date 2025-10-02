@@ -3,7 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { useColorScheme, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 
@@ -76,8 +77,8 @@ const AppNavigator: React.FC = () => {
 };
 
 const MainTabNavigator: React.FC = () => {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const insets = useSafeAreaInsets();
+  
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -107,20 +108,19 @@ const MainTabNavigator: React.FC = () => {
             />
           );
         },
-        tabBarActiveTintColor: isDark ? colors.primary300 : colors.primary600,
-        tabBarInactiveTintColor: isDark ? colors.muted : '#6c757d',
+        tabBarActiveTintColor: '#efb810',
+        tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.6)',
         tabBarStyle: {
-          backgroundColor: '#fff',
+          backgroundColor: '#1a1a2e',
           borderTopWidth: 1,
-          borderTopColor: colors.primary100,
-          paddingBottom: 5,
-          paddingTop: 5,
-          height: 60,
-          // Sombra / elevación para separar del contenido
-          elevation: 14, // Android (más marcada)
-          shadowColor: '#000', // iOS
-          shadowOpacity: 0.22,
-          shadowOffset: { width: 0, height: -3 },
+          borderTopColor: '#efb810',
+          paddingBottom: Math.max(insets.bottom, 8),
+          paddingTop: 8,
+          height: 65 + Math.max(insets.bottom, 0),
+          elevation: 12,
+          shadowColor: '#000',
+          shadowOpacity: 0.25,
+          shadowOffset: { width: 0, height: -4 },
           shadowRadius: 12,
         },
         tabBarLabelStyle: {
