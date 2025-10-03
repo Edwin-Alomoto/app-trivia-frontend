@@ -3,3 +3,4 @@
 export * from './common';
 export * from './navigation';
 export * from './state';
+export * from './animations';

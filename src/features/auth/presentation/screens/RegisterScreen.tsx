@@ -199,6 +199,21 @@ export const RegisterScreen: React.FC = () => {
   };
 
 
+  // Sanitizar datos de entrada
+  const sanitizeInput = (input: string): string => {
+    return input.trim().replace(/[<>]/g, '');
+  };
+
+  // Validación de contraseña más robusta
+  const validatePassword = (password: string): string => {
+    if (!password) return 'Ingresa tu contraseña.';
+    if (password.length < 8) return 'La contraseña debe tener al menos 8 caracteres.';
+    if (!/(?=.*[a-z])/.test(password)) return 'La contraseña debe contener al menos una letra minúscula.';
+    if (!/(?=.*[A-Z])/.test(password)) return 'La contraseña debe contener al menos una letra mayúscula.';
+    if (!/(?=.*\d)/.test(password)) return 'La contraseña debe contener al menos un número.';
+    return '';
+  };
+
   // Validación del formulario
   const validateForm = () => {
     const newErrors: any = {
@@ -213,41 +228,52 @@ export const RegisterScreen: React.FC = () => {
       password: '',
     };
 
-    if (!formData.firstName) {
+    // Validar nombre
+    const firstName = sanitizeInput(formData.firstName);
+    if (!firstName) {
       newErrors.firstName = 'Ingresa tu nombre.';
+    } else if (firstName.length < 2) {
+      newErrors.firstName = 'El nombre debe tener al menos 2 caracteres.';
     }
-    if (!formData.lastName) {
+
+    // Validar apellido
+    const lastName = sanitizeInput(formData.lastName);
+    if (!lastName) {
       newErrors.lastName = 'Ingresa tu apellido.';
+    } else if (lastName.length < 2) {
+      newErrors.lastName = 'El apellido debe tener al menos 2 caracteres.';
     }
-    if (!formData.username) {
-      newErrors.username = 'Ingresa tu nombre de usuario.';
-    }
-    if (!formData.address) {
-      newErrors.address = 'Ingresa tu dirección.';
-    }
-    if (!formData.phone) {
-      newErrors.phone = 'Ingresa tu teléfono.';
-    }
-    if (!formData.email) {
+
+    // Validar email
+    const email = sanitizeInput(formData.email);
+    if (!email) {
       newErrors.email = 'Ingresa tu correo electrónico.';
-    } else if (!validateEmail(formData.email)) {
+    } else if (!validateEmail(email)) {
       newErrors.email = 'El correo electrónico no es válido.';
     }
 
-    if (!formData.password) {
-      newErrors.password = 'Ingresa tu contraseña.';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'La contraseña debe tener al menos 8 caracteres.';
-    }
+    // Validar contraseña
+    newErrors.password = validatePassword(formData.password);
 
+    // Validar fecha de nacimiento
     if (!formData.birthdate) {
       newErrors.birthdate = 'Ingresa tu fecha de nacimiento.';
     } else if (!validateBirthdate(formData.birthdate)) {
       newErrors.birthdate = 'La fecha no es válida. Usa DD/MM/AAAA.';
     }
 
+    // Validar género
     if (!formData.gender) {
       newErrors.gender = 'Selecciona tu género.';
+    }
+
+    // Validar campos opcionales si están presentes
+    if (formData.username && sanitizeInput(formData.username).length < 3) {
+      newErrors.username = 'El nombre de usuario debe tener al menos 3 caracteres.';
+    }
+
+    if (formData.phone && !/^[\d\s\-\+\(\)]+$/.test(formData.phone)) {
+      newErrors.phone = 'El teléfono contiene caracteres inválidos.';
     }
 
     setErrors(newErrors);
@@ -298,7 +324,34 @@ export const RegisterScreen: React.FC = () => {
       Alert.alert('Registro exitoso', 'Tu cuenta ha sido creada.');
       navigation.navigate('ModeSelection' as never);
       
-    } catch (registerError) {
+    } catch (registerError: any) {
+      console.error('Error en registro:', registerError);
+      
+      // Determinar tipo de error y mensaje específico
+      let errorTitle = 'Error de registro';
+      let errorMessage = 'No pudimos crear tu cuenta. Inténtalo nuevamente.';
+      
+      if (registerError?.message) {
+        if (registerError.message.includes('Network')) {
+          errorTitle = 'Error de conexión';
+          errorMessage = 'No se pudo conectar al servidor. Verifica tu conexión a internet.';
+        } else if (registerError.message.includes('timeout')) {
+          errorTitle = 'Tiempo de espera agotado';
+          errorMessage = 'El servidor tardó demasiado en responder. Inténtalo de nuevo.';
+        } else if (registerError.message.includes('409') || registerError.message.includes('email ya existe')) {
+          errorTitle = 'Email ya registrado';
+          errorMessage = 'Ya existe una cuenta con este email. Intenta iniciar sesión o usa otro email.';
+        } else if (registerError.message.includes('400')) {
+          errorTitle = 'Datos inválidos';
+          errorMessage = 'Los datos ingresados no son válidos. Verifica la información.';
+        } else if (registerError.message.includes('500')) {
+          errorTitle = 'Error del servidor';
+          errorMessage = 'Ocurrió un error interno. Inténtalo más tarde.';
+        } else {
+          errorMessage = registerError.message;
+        }
+      }
+      
       setShowErrorModal(true);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
@@ -346,14 +399,16 @@ export const RegisterScreen: React.FC = () => {
     );
   };
 
-  // Actualizar datos del formulario
+  // Actualizar datos del formulario con sanitización
   const updateFormData = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    // Sanitizar el valor antes de actualizar
+    const sanitizedValue = field === 'email' || field === 'password' ? value : sanitizeInput(value);
+    
+    setFormData(prev => ({ ...prev, [field]: sanitizedValue }));
     
     if (errors[field as keyof typeof errors]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
-
   };
 
 
@@ -467,7 +522,7 @@ export const RegisterScreen: React.FC = () => {
         {/* Modal de Error */}
         <ModalAlert
           visible={showErrorModal}
-          title="Error"
+          title="Error de registro"
           message="No pudimos crear tu cuenta. Inténtalo nuevamente."
           onClose={() => setShowErrorModal(false)}
           confirmText="Entendido"

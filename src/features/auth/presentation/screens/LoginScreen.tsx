@@ -21,7 +21,7 @@ import * as Haptics from 'expo-haptics';
 import { colors } from '@theme/colors';
 import { getVariantStyle } from '@theme/typography';
 import { RootStackParamList } from '@shared/domain/types';
-import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppDispatch, useLoginAnimations } from '@shared/domain/hooks';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { featureToggles } from '@config/featureToggles';
 import { useLanguage } from '@shared/domain/contexts/LanguageContext';
@@ -45,7 +45,7 @@ export const LoginScreen: React.FC = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const dispatch = useAppDispatch();
   const { t } = useLanguage();
-  const { isLoading } = useAppSelector((state) => state.auth);
+  const { isLoading, error: authError } = useAppSelector((state) => state.auth);
 
   // MVVM (desactivado por defecto)
   const vm = useLoginViewModel();
@@ -53,8 +53,8 @@ export const LoginScreen: React.FC = () => {
 
   // Estados del formulario
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: 'usuario888@ejemplo.com',
+    password: 'nuevaPassword123!',
   });
 
   const [errors, setErrors] = useState({
@@ -69,10 +69,8 @@ export const LoginScreen: React.FC = () => {
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
 
-  // Animaciones
-  const fadeAnim = useState(new Animated.Value(0))[0];
-  const slideAnim = useState(new Animated.Value(20))[0];
-  const scaleAnim = useState(new Animated.Value(0.98))[0];
+  // Animaciones globales
+  const { animationValues } = useLoginAnimations();
 
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
@@ -80,27 +78,7 @@ export const LoginScreen: React.FC = () => {
     { visible: false, title: '', message: '' }
   );
 
-  useEffect(() => {
-    // Animaciones de entrada muy suaves
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: 100,
-        friction: 8,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [fadeAnim, slideAnim, scaleAnim]);
+  // Las animaciones se ejecutan automáticamente con useLoginAnimations
 
 
   // Validación de email
@@ -210,6 +188,7 @@ export const LoginScreen: React.FC = () => {
           navigation.navigate('ModeSelection' as never);
         }
       } catch (error) {
+        console.warn('Error al obtener perfil del usuario:', error);
         // Si falla la consulta del perfil, usar el estado local
         if (result.user.subscriptionStatus === 'not_subscribed') {
           navigation.navigate('ModeSelection' as never);
@@ -219,10 +198,34 @@ export const LoginScreen: React.FC = () => {
       }
       
     } catch (loginError: any) {
+      console.error('Error en login:', loginError);
+      
+      // Determinar tipo de error y mensaje específico
+      let errorTitle = t('auth.error.loginFailed');
+      let errorMessage = t('auth.error.invalidCredentials');
+      
+      if (loginError?.message) {
+        if (loginError.message.includes('Network')) {
+          errorTitle = 'Error de conexión';
+          errorMessage = 'No se pudo conectar al servidor. Verifica tu conexión a internet.';
+        } else if (loginError.message.includes('timeout')) {
+          errorTitle = 'Tiempo de espera agotado';
+          errorMessage = 'El servidor tardó demasiado en responder. Inténtalo de nuevo.';
+        } else if (loginError.message.includes('401') || loginError.message.includes('credenciales')) {
+          errorTitle = t('auth.error.invalidCredentials');
+          errorMessage = 'Email o contraseña incorrectos. Verifica tus datos.';
+        } else if (loginError.message.includes('500')) {
+          errorTitle = 'Error del servidor';
+          errorMessage = 'Ocurrió un error interno. Inténtalo más tarde.';
+        } else {
+          errorMessage = loginError.message;
+        }
+      }
+      
       setModal({
         visible: true,
-        title: t('auth.error.invalidCredentials'),
-        message: loginError?.message ?? t('auth.error.invalidCredentials'),
+        title: errorTitle,
+        message: errorMessage,
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
@@ -257,6 +260,13 @@ export const LoginScreen: React.FC = () => {
     }
   };
 
+  // Limpiar errores de Redux cuando se actualiza el formulario
+  useEffect(() => {
+    if (authError) {
+      dispatch(clearError());
+    }
+  }, [formData.email, formData.password, dispatch, authError]);
+
   return (
     <ImageBackground source={Background} style={{ flex: 1 }} resizeMode="cover">
       <ModalAlert
@@ -282,8 +292,8 @@ export const LoginScreen: React.FC = () => {
           <Animated.View 
             style={[
               {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }],
+                opacity: animationValues.fadeAnim,
+                transform: [{ translateY: animationValues.slideAnim }],
               },
             ]}
           >
@@ -309,10 +319,10 @@ export const LoginScreen: React.FC = () => {
             style={[
               loginStyles.formContainer,
               {
-                opacity: fadeAnim,
+                opacity: animationValues.fadeAnim,
                 transform: [
-                  { translateY: slideAnim }, 
-                  { scale: scaleAnim }
+                  { translateY: animationValues.slideAnim }, 
+                  { scale: animationValues.scaleAnim }
                 ],
               },
             ]}

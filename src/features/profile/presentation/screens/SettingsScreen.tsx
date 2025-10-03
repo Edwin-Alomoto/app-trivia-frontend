@@ -17,10 +17,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Haptics from 'expo-haptics';
 
 import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { updateProfile } from '../../domain/store/profileSlice';
+import { logoutUser } from '@features/auth/domain/store/authSlice';
 import { featureToggles } from '@config/featureToggles';
 import { useProfileViewModel } from '../../domain/hooks/useProfileViewModel';
 import { Background } from '../../../../assets';
@@ -101,11 +103,44 @@ export const SettingsScreen: React.FC = () => {
         {
           text: 'Cerrar Sesión',
           style: 'destructive',
-          onPress: () => {
-            if (useAdvanced && vm) {
-              vm.logout();
+          onPress: async () => {
+            try {
+              // Mostrar loading si es necesario
+              if (useAdvanced && vm) {
+                vm.logout();
+              } else {
+                await dispatch(logoutUser()).unwrap();
+              }
+              
+              // Feedback de éxito
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+              
+              // Reset navigation stack to Login screen
+              (navigation as any).reset({
+                index: 0,
+                routes: [{ name: 'Login' }],
+              });
+              
+            } catch (error) {
+              // Manejar error
+              Alert.alert(
+                'Error', 
+                'No se pudo cerrar sesión correctamente. Inténtalo de nuevo.',
+                [
+                  {
+                    text: 'OK',
+                    onPress: () => {
+                      // Forzar navegación a login en caso de error
+                      (navigation as any).reset({
+                        index: 0,
+                        routes: [{ name: 'Login' }],
+                      });
+                    }
+                  }
+                ]
+              );
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
             }
-            Alert.alert('Sesión cerrada', 'Has cerrado sesión exitosamente');
           },
         },
       ]
@@ -291,7 +326,7 @@ export const SettingsScreen: React.FC = () => {
           title: t('settings.changePassword'),
           subtitle: t('settings.changePassword.subtitle'),
           type: 'navigate',
-          onPress: () => Alert.alert(t('settings.changePassword'), t('message.comingSoon')),
+          onPress: () => (navigation as any).navigate('ChangePassword'),
         },
         {
           id: 'privacy',
@@ -789,13 +824,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cancelButton: {
-    alignSelf: 'center',
+    flex: 1,
+    backgroundColor: 'transparent',
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.gold,
-    marginTop: 10,
+    alignItems: 'center',
   },
   cancelText: {
     color: colors.gold,

@@ -135,7 +135,23 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         </Text>
       </TouchableOpacity>
 
-      
+      {/* Credenciales de prueba */}
+      <View style={styles.testCredentialsContainer}>
+        <Text style={[getVariantStyle('caption'), styles.testCredentialsTitle]}>
+          Credenciales de prueba
+        </Text>
+        <TouchableOpacity
+          style={styles.testCredentialsButton}
+          onPress={() => {
+            onFormDataChange('email', 'usuario888@ejemplo.com');
+            onFormDataChange('password', 'nuevaPassword123!');
+          }}
+        >
+          <Text style={[getVariantStyle('caption'), styles.testCredentialsText]}>
+            Cargar credenciales
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Footer */}
       <AuthFooter

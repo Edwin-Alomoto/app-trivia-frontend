@@ -8,13 +8,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 
-import { getVariantStyle } from '@shared/presentation/theme/typography';
 import { useLanguage } from '@shared/domain/contexts/LanguageContext';
 
 // Auth Screens
 import { LoginScreen } from '@features/auth/presentation/screens/LoginScreen';
 import { RegisterScreen } from '@features/auth/presentation/screens/RegisterScreen';
 import { ForgotPasswordScreen } from '@features/auth/presentation/screens/ForgotPasswordScreen';
+import { ChangePasswordScreen } from '@features/auth/presentation/screens/ChangePasswordScreen';
 import { ModeSelectionScreen } from '@features/auth/presentation/screens/ModeSelectionScreen';
 // Purchase Screens
 import { BuyPointsScreen } from '@features/purchases/presentation/screens/BuyPointsScreen';
@@ -64,55 +64,6 @@ const AnimatedTabIcon: React.FC<{ name: keyof typeof Ionicons.glyphMap; size: nu
   );
 };
 
-// Componente separado para evitar warnings de linting
-const TabBarTouchable: React.FC<any> = ({ onPress, onLongPress, accessibilityState, children, ...rest }) => {
-  const scale = useSharedValue(1);
-  const translateY = useSharedValue(0);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: scale.value },
-      { translateY: translateY.value },
-    ],
-  }));
-
-  const handlePress = React.useCallback((e: any) => {
-    if (!accessibilityState?.selected) {
-      // Feedback ligero al cambiar de pestaña
-      Haptics.selectionAsync().catch(() => {});
-    }
-    if (onPress) onPress(e);
-  }, [onPress, accessibilityState?.selected]);
-
-  const handlePressIn = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    scale.value = withSpring(0.95, { damping: 15, stiffness: 150 });
-    translateY.value = withSpring(2, { damping: 15, stiffness: 150 });
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 150 });
-    translateY.value = withSpring(0, { damping: 15, stiffness: 150 });
-  };
-
-  return (
-    <Animated.View style={animatedStyle}>
-      <TouchableOpacity
-        accessibilityRole="tab"
-        accessibilityState={accessibilityState}
-        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        onPress={handlePress}
-        onLongPress={onLongPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        activeOpacity={0.8}
-        {...rest}
-      >
-        {children}
-      </TouchableOpacity>
-    </Animated.View>
-  );
-};
 
 const AppNavigator: React.FC = () => {
   const token = useAppSelector((s) => s.auth.token);
@@ -127,6 +78,7 @@ const AppNavigator: React.FC = () => {
             <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
           </>
         )}
+        <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
         <Stack.Screen name="ModeSelection" component={ModeSelectionScreen} />
         <Stack.Screen name="MainTabs" component={MainTabNavigator} />
         <Stack.Screen name="TriviaGame" component={TriviaGameScreen} />
@@ -179,14 +131,14 @@ const MainTabNavigator: React.FC = () => {
           );
         },
         tabBarActiveTintColor: '#efb810',
-        tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.6)',
+        tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.8)',
         tabBarStyle: {
           backgroundColor: '#1a1a2e',
           borderTopWidth: 1,
           borderTopColor: '#efb810',
           paddingBottom: Math.max(insets.bottom, 8),
           paddingTop: 8,
-          height: 65 + Math.max(insets.bottom, 0),
+          height: 80 + Math.max(insets.bottom, 0),
           elevation: 12,
           shadowColor: '#000',
           shadowOpacity: 0.25,
@@ -194,14 +146,17 @@ const MainTabNavigator: React.FC = () => {
           shadowRadius: 12,
         },
         tabBarLabelStyle: {
-          ...getVariantStyle('caption'),
+          fontSize: 12,
+          fontWeight: '600',
+          marginTop: 4,
+          color: '#ffffff',
         },
-        tabBarButton: (props) => (
-          <TabBarTouchable {...props} />
-        ),
+        tabBarLabelPosition: 'below-icon',
+        tabBarButton: undefined,
         headerShown: false,
         tabBarItemStyle: {
-          minHeight: 44,
+          minHeight: 60,
+          paddingVertical: 4,
         },
       })}
     >

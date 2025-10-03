@@ -15,6 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { getVariantStyle } from '@theme/typography';
+import * as Haptics from 'expo-haptics';
 
 import { Card } from '@shared/presentation/components/ui/Card';
 import { Button } from '@shared/presentation/components/ui/Button';
@@ -81,7 +82,44 @@ export const ProfileScreen: React.FC = () => {
         {
           text: 'Cerrar Sesión',
           style: 'destructive',
-          onPress: () => (vm ? vm.logout() : dispatch(logoutUser())),
+          onPress: async () => {
+            try {
+              if (vm) {
+                vm.logout();
+              } else {
+                await dispatch(logoutUser()).unwrap();
+              }
+              
+              // Feedback de éxito
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+              
+              // Reset navigation stack to Login screen
+              (navigation as any).reset({
+                index: 0,
+                routes: [{ name: 'Login' }],
+              });
+              
+            } catch (error) {
+              // Manejar error
+              Alert.alert(
+                'Error', 
+                'No se pudo cerrar sesión correctamente. Inténtalo de nuevo.',
+                [
+                  {
+                    text: 'OK',
+                    onPress: () => {
+                      // Forzar navegación a login en caso de error
+                      (navigation as any).reset({
+                        index: 0,
+                        routes: [{ name: 'Login' }],
+                      });
+                    }
+                  }
+                ]
+              );
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            }
+          },
         },
       ]
     );

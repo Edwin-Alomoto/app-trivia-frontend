@@ -26,7 +26,7 @@ import {
   SuccessMessage,
   ModalAlert
 } from '../components';
-import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppDispatch, useAppSelector } from '@shared/domain/hooks';
 import { forgotPassword } from '../../domain/store/authSlice';
 import { Background, Letter } from '../../../../assets';
 import { useLanguage } from '@shared/domain/contexts/LanguageContext';
@@ -42,10 +42,12 @@ export const ForgotPasswordScreen: React.FC = () => {
   
   const [email, setEmail] = useState(route.params?.email || '');
   const [emailError, setEmailError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  
+  // Usar estado de carga de Redux en lugar de local
+  const { isLoading } = useAppSelector((state) => state.auth);
 
   // Animaciones
   const fadeAnim = useState(new Animated.Value(0))[0];
@@ -91,20 +93,43 @@ export const ForgotPasswordScreen: React.FC = () => {
       return;
     }
 
-    setIsLoading(true);
     setEmailError('');
 
     try {
+      console.log('Enviando solicitud de recuperación de contraseña para:', email);
       await dispatch(forgotPassword({ email })).unwrap();
       
+      console.log('Email de recuperación enviado exitosamente');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setIsEmailSent(true);
       
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Error al enviar email de recuperación:', error);
+      
+      // Determinar tipo de error y mensaje específico
+      let errorTitle = t('auth.error.resetEmailFailed');
+      let errorMessage = 'No se pudo enviar el email de recuperación.';
+      
+      if (error?.message) {
+        if (error.message.includes('Network')) {
+          errorTitle = 'Error de conexión';
+          errorMessage = 'No se pudo conectar al servidor. Verifica tu conexión a internet.';
+        } else if (error.message.includes('timeout')) {
+          errorTitle = 'Tiempo de espera agotado';
+          errorMessage = 'El servidor tardó demasiado en responder. Inténtalo de nuevo.';
+        } else if (error.message.includes('404')) {
+          errorTitle = 'Email no encontrado';
+          errorMessage = 'No existe una cuenta con este email. Verifica la dirección.';
+        } else if (error.message.includes('429')) {
+          errorTitle = 'Demasiados intentos';
+          errorMessage = 'Has enviado demasiadas solicitudes. Espera unos minutos antes de intentar de nuevo.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       setShowErrorModal(true);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -190,8 +215,8 @@ export const ForgotPasswordScreen: React.FC = () => {
       {/* Modal de Error */}
       <ModalAlert
         visible={showErrorModal}
-        title={t('auth.error.resetEmailFailed')}
-        message={t('auth.error.resetEmailFailed')}
+        title="Error de recuperación"
+        message="No se pudo enviar el email de recuperación. Inténtalo de nuevo."
         onClose={() => setShowErrorModal(false)}
       />
     </ImageBackground>

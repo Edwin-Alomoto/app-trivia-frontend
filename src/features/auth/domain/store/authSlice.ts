@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 import * as SecureStore from 'expo-secure-store';
 
-import { AuthState, LoginCredentials } from '../types';
 import { User } from '@shared/domain/types';
 import { RootState } from '@app/store';
 
-import { apiLogin, apiRegister, apiForgotPassword, apiLogout } from '../services/authApi';
+import { AuthState, LoginCredentials } from '../types';
+
+import { apiLogin, apiRegister, apiForgotPassword, apiLogout, apiChangePassword } from '../services/authApi';
 
 const initialState: AuthState = {
   user: null, // Usuario no logueado inicialmente
@@ -148,15 +149,48 @@ export const logoutUser = createAsyncThunk<
   AuthThunkConfig
 >(
   'auth/logout',
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, dispatch }) => {
     try {
+      // 1. Obtener refresh token
       const refreshToken = await SecureStore.getItemAsync('auth_refresh_token');
+      
+      // 2. Invalidar token en servidor
       if (refreshToken) {
-        try { await apiLogout(refreshToken); } catch {}
+        try { 
+          await apiLogout(refreshToken); 
+        } catch (error) {
+          // Log del error pero continuar con limpieza local
+          console.warn('Error al invalidar token en servidor:', error);
+        }
       }
-      await SecureStore.deleteItemAsync('auth_access_token');
-      await SecureStore.deleteItemAsync('auth_refresh_token');
-      await SecureStore.deleteItemAsync('user_data');
+      
+      // 3. Limpiar todos los tokens y datos sensibles
+      await Promise.all([
+        SecureStore.deleteItemAsync('auth_access_token'),
+        SecureStore.deleteItemAsync('auth_refresh_token'),
+        SecureStore.deleteItemAsync('user_data'),
+        SecureStore.deleteItemAsync('user_type'),
+        SecureStore.deleteItemAsync('demo_expires_at'),
+        SecureStore.deleteItemAsync('subscription_expires_at'),
+      ]);
+      
+      // 4. Limpiar estado de Redux
+      dispatch({ type: 'auth/clearAllData' });
+      
+      // 5. Reset navigation stack to Login screen
+      dispatch({ type: 'navigation/reset', payload: { routeName: 'Login' } });
+      
+      // 6. Verificar que la limpieza fue exitosa
+      const remainingTokens = await Promise.all([
+        SecureStore.getItemAsync('auth_access_token'),
+        SecureStore.getItemAsync('auth_refresh_token'),
+        SecureStore.getItemAsync('user_data')
+      ]);
+      
+      if (remainingTokens.some(token => token !== null)) {
+        console.warn('Algunos tokens no fueron eliminados correctamente');
+      }
+      
       return null;
     } catch (error) {
       return rejectWithValue('Error al cerrar sesión');
@@ -198,6 +232,21 @@ export const forgotPassword = createAsyncThunk<
       await apiForgotPassword(email);
     } catch (error: any) {
       return rejectWithValue(error?.response?.data?.message || 'Error al solicitar recuperación');
+    }
+  }
+);
+
+export const changePassword = createAsyncThunk<
+  void,
+  { newPassword: string; confirmPassword: string },
+  AuthThunkConfig
+>(
+  'auth/changePassword',
+  async (payload, { rejectWithValue }) => {
+    try {
+      await apiChangePassword(payload);
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || 'Error al cambiar contraseña');
     }
   }
 );
@@ -403,6 +452,12 @@ const authSlice = createSlice({
         state.user.points = action.payload;
       }
     },
+    clearAllData: (state) => {
+      state.user = null;
+      state.token = null;
+      state.isLoading = false;
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -530,7 +585,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearError, updateUserPoints } = authSlice.actions;
+export const { clearError, updateUserPoints, clearAllData } = authSlice.actions;
 export default authSlice.reducer;
 
 // Selectores memoizados

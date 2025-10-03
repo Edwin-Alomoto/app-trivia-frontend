@@ -19,7 +19,7 @@ import { getVariantStyle } from '@theme/typography';
 
 import { Card } from '@shared/presentation/components/ui/Card';
 import { Button } from '@shared/presentation/components/ui/Button';
-import { useAppDispatch } from '@shared/domain/hooks/useAppDispatch';
+import { useAppDispatch, useBasicAnimations } from '@shared/domain/hooks';
 import { useAppSelector } from '@shared/domain/hooks/useAppSelector';
 import { fetchCategories } from '@store/slices/triviaSlice';
 import { featureToggles } from '@config/featureToggles';
@@ -37,11 +37,8 @@ export const CategoriesScreen: React.FC = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<'all' | 'easy' | 'medium' | 'hard'>('all');
   const [hasError, setHasError] = useState(false);
 
-  // Animaciones
-  const fadeAnim = useState(new Animated.Value(0))[0];
-  const slideAnim = useState(new Animated.Value(50))[0];
-  const scaleAnim = useState(new Animated.Value(0.9))[0];
-  const pulseAnim = useState(new Animated.Value(1))[0];
+  // Animaciones globales
+  const { animationValues, startPulseAnimation } = useBasicAnimations();
 
   useEffect(() => {
     if (vm) {
@@ -51,41 +48,9 @@ export const CategoriesScreen: React.FC = () => {
       loadCategories();
     }
     
-    // Animaciones de entrada
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: 50,
-        friction: 7,
-        useNativeDriver: true,
-      }),
-    ]).start();
-
-    // Animación de pulso para elementos interactivos
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.05,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
+    // Las animaciones de entrada se ejecutan automáticamente
+    // Iniciar animación de pulso para elementos interactivos
+    startPulseAnimation();
   }, []);
 
   // Detectar errores
@@ -210,10 +175,10 @@ export const CategoriesScreen: React.FC = () => {
     <Animated.View
       key={category.id}
       style={{
-        opacity: fadeAnim,
+        opacity: animationValues.fadeAnim,
         transform: [
-          { translateY: slideAnim },
-          { scale: scaleAnim },
+          { translateY: animationValues.slideAnim },
+          { scale: animationValues.scaleAnim },
         ],
       }}
     >
@@ -262,7 +227,7 @@ export const CategoriesScreen: React.FC = () => {
               style={[
                 styles.playButton,
                 {
-                  transform: [{ scale: pulseAnim }],
+                  transform: [{ scale: animationValues.pulseAnim }],
                 },
               ]}
             >
